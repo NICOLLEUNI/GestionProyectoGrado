@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-API-GATEWAY/Microservicio-API-GATEWAY/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-EjecucionDeProyecto/Microservicio-EjecucionDeProyecto/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Evaluacion/Microservicio-Evaluacion/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-FrontEnd/Microservicio-FrontEnd/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Ingreso/Microservicio-Ingreso/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Notificacion/Microservicio-Notificacion/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Submission/Microservicio-Submission/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-API-GATEWAY/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-EjecucionDeProyecto/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Evaluacion/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-FrontEnd/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Ingreso/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Notificacion/pom.xml" />
+        <option value="$PROJECT_DIR$/Microservicio-Submission/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

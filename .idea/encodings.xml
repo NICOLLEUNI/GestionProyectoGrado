@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Microservicio-API-GATEWAY/Microservicio-API-GATEWAY/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-API-GATEWAY/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-EjecucionDeProyecto/Microservicio-EjecucionDeProyecto/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-EjecucionDeProyecto/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Evaluacion/Microservicio-Evaluacion/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Evaluacion/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-FrontEnd/Microservicio-FrontEnd/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-FrontEnd/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Ingreso/Microservicio-Ingreso/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Ingreso/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Notificacion/Microservicio-Notificacion/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Notificacion/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Submission/Microservicio-Submission/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Microservicio-Submission/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
