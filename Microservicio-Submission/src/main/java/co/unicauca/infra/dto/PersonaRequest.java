@@ -1,0 +1,14 @@
+package co.unicauca.infra.dto;
+
+import java.util.Set;
+
+public record PersonaRequest (
+        //aquí recibo el objeto persona de la cola
+        //Record - No se modifica
+        String id,
+        String name,
+        String lastname,
+        String email,
+        String password,
+        Set<String> roles
+){ }
