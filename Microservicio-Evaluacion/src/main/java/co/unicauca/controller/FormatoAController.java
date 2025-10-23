@@ -52,13 +52,12 @@ public class FormatoAController {
      * @param observaciones comentarios del coordinador
      * @return FormatoAResponse actualizado
      */
-    @PutMapping("/{id}/estado")
+    @PutMapping("/{id}/estado/{nuevoEstado}/{observaciones}")
     public ResponseEntity<FormatoAResponse> actualizarEstado(
             @PathVariable Long id,
-            @RequestParam EnumEstado nuevoEstado,
-            @RequestParam(required = false) String observaciones
+            @PathVariable EnumEstado nuevoEstado,
+            @PathVariable(required = false) String observaciones
     ) {
         FormatoAResponse response = formatoAFacade.actualizarEstado(id, nuevoEstado, observaciones);
         return ResponseEntity.ok(response);
-    }
-}
+    }}
