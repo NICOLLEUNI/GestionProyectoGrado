@@ -1,10 +1,8 @@
 package co.unicauca.controller;
 
 
-import co.unicauca.entity.EnumEstado;
-import co.unicauca.entity.FormatoA;
-import co.unicauca.infra.dto.FormatoARequest;
-import co.unicauca.infra.dto.FormatoAResponse;
+import co.unicauca.entity.*;
+import co.unicauca.infra.dto.*;
 import co.unicauca.service.facade.FormatoAFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

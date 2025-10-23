@@ -1,15 +1,15 @@
 package co.unicauca.controller;
 
 
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.infra.dto.PersonaRequest;
 import co.unicauca.service.PersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controlador REST para gestionar operaciones sobre Personas.
@@ -37,5 +37,11 @@ public class PersonaController {
     public ResponseEntity<Persona> guardarPersona(@RequestBody PersonaRequest request) {
         Persona personaGuardada = personaService.guardarPersona(request);
         return ResponseEntity.ok(personaGuardada);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Persona>> listarPersona() {
+        List<Persona> personas = personaService.findAll();
+        return ResponseEntity.ok(personas);
     }
 }

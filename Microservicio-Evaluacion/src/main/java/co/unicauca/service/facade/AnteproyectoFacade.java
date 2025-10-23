@@ -1,8 +1,7 @@
 package co.unicauca.service.facade;
 
 import co.unicauca.entity.Anteproyecto;
-import co.unicauca.infra.dto.AnteproyectoRequest;
-import co.unicauca.infra.dto.AnteproyectoResponse;
+import co.unicauca.infra.dto.*;
 import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.service.AnteproyectoService;
 import org.springframework.beans.factory.annotation.Autowired;

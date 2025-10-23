@@ -1,7 +1,6 @@
 package co.unicauca.controller;
 
-import co.unicauca.infra.dto.AnteproyectoRequest;
-import co.unicauca.infra.dto.AnteproyectoResponse;
+import co.unicauca.infra.dto.*;
 import co.unicauca.service.facade.AnteproyectoFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
