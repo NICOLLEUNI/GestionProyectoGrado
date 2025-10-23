@@ -16,12 +16,15 @@ import java.util.EnumSet;
 @Entity
 public class Persona {
     @Id
+    @Column(nullable = false)
     private Long idUsuario;
     private String name;
     private String lastname;
+
+    @Column(nullable = false, unique = true)
     private String email;
     private String password;
-    private String Departamento;
+    private String department;
 
     @ElementCollection(targetClass = EnumRol.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "persona_roles", joinColumns = @JoinColumn(name = "idUsuario"))

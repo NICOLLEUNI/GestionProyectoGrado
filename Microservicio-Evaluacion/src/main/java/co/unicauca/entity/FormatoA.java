@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,22 +19,34 @@ import java.util.List;
 public class FormatoA {
 
     @Id
+    @Column(nullable = false)
     private Long id;
     private String title;
     private String mode;
-    private String projectManager;
-    private String projectCoManager;
+
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    private Persona projectManager;
+
+    @ManyToOne
+    @JoinColumn(name = "codirector_id")
+    private Persona projectCoManager;
+    private String projectCoManagerEmail;
     private LocalDate date;
     private String generalObjetive;
     private String specificObjetives;
     private String archivoPDF;
     private String cartaLaboral;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "formatoa_estudiantes", joinColumns = @JoinColumn(name = "formato_a_id"))
-    @Column(name = "email_estudiante")
-    private List<String> estudiantes;
     private int counter;
+
+    // 🔹 Relación con Persona (estudiantes)
+    @ManyToMany
+    @JoinTable(
+            name = "formatoa_estudiantes",
+            joinColumns = @JoinColumn(name = "formatoa_id"),
+            inverseJoinColumns = @JoinColumn(name = "persona_id")
+    )
+    private List<Persona> estudiantes = new ArrayList<>();
     @Enumerated(EnumType.STRING)
     private EnumEstado state = EnumEstado.ENTREGADO ;
     private String observations;        // Observaciones del coordinador
