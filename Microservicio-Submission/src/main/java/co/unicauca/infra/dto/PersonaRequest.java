@@ -9,6 +9,6 @@ public record PersonaRequest (
         String name,
         String lastname,
         String email,
-        String password,
-        Set<String> roles
+        Set<String> roles,
+        String department
 ){ }

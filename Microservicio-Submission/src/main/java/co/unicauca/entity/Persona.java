@@ -17,11 +17,10 @@ public class Persona {
 
     @Id
     private long id;
-
     private String name;
     private String lastname;
     private  String email;
-    private String password;
     private List<String> roles;
+    private String department;
 
 }

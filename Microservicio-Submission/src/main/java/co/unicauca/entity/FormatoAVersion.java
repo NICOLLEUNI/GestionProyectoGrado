@@ -16,7 +16,8 @@ public class FormatoAVersion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private int numeroVersion; // 1, 2, 3
+    private int numeroVersion;// 1, 2, 3
+
     private LocalDate fecha;
 
     // Copia de campos versionables
@@ -31,11 +32,13 @@ public class FormatoAVersion {
     private EnumEstado state;        // entregado, aprobado, rechazado
     private String observations;     // comentarios del coordinador
 
+    private int counter;
+
     // Relación con FormatoA principal
     @ManyToOne(fetch = FetchType.LAZY)
     private FormatoA formatoA;
 
-    public FormatoAVersion(long id, int numeroVersion, LocalDate fecha, String title, EnumModalidad mode, String generalObjetive, String specificObjetives, String archivoPDF, String cartaLaboral, EnumEstado state, String observations, FormatoA formatoA) {
+    public FormatoAVersion(long id, int numeroVersion, LocalDate fecha, String title, EnumModalidad mode, String generalObjetive, String specificObjetives, String archivoPDF, String cartaLaboral, EnumEstado state, String observations, int counter, FormatoA formatoA) {
         this.id = id;
         this.numeroVersion = numeroVersion;
         this.fecha = fecha;
@@ -47,6 +50,7 @@ public class FormatoAVersion {
         this.cartaLaboral = cartaLaboral;
         this.state = state;
         this.observations = observations;
+        this.counter = counter;
         this.formatoA = formatoA;
     }
 

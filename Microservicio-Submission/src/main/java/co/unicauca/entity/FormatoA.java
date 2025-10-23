@@ -60,8 +60,9 @@ public class FormatoA {
     @Column(columnDefinition = "TEXT")
     private String observations;
 
+    private int counter;
 
-    public FormatoA(Long id, String title, EnumModalidad mode, String projectManagerEmail, String projectCoManagerEmail, LocalDate date, String generalObjetive, String specificObjetives, String archivoPDF, String cartaLaboral, List<String> estudianteEmails, EnumEstado state, String observations) {
+    public FormatoA(Long id, String title, EnumModalidad mode, String projectManagerEmail, String projectCoManagerEmail, LocalDate date, String generalObjetive, String specificObjetives, String archivoPDF, String cartaLaboral, List<String> estudianteEmails, EnumEstado state, String observations, int counter) {
         this.id = id;
         this.title = title;
         this.mode = mode;
@@ -75,6 +76,7 @@ public class FormatoA {
         this.estudianteEmails = estudianteEmails;
         this.state = state;
         this.observations = observations;
+        this.counter = counter;
     }
 
     public FormatoA() {}
