@@ -3,7 +3,7 @@ package co.unicauca.infra.dto;
 import java.util.Set;
 
 public record PersonaRequest(
-        int id,
+        Long id,
         String name,
         String lastname,
         String email,

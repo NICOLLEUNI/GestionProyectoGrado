@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,11 +24,10 @@ public class Persona {
 
     @Column(nullable = false, unique = true)
     private String email;
-    private String password;
     private String department;
 
     @ElementCollection(targetClass = EnumRol.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "persona_roles", joinColumns = @JoinColumn(name = "idUsuario"))
     @Enumerated(EnumType.STRING)
-    private EnumSet<EnumRol> roles;
+    private Set<EnumRol> roles;
 }

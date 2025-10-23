@@ -15,28 +15,29 @@ public class RabbitMQPublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    private void publish(String exchange, String routingKey, Object message) {
+    // Enviar mensaje directamente a una cola
+    private void publish(String queueName, Object message) {
         try {
-            rabbitTemplate.convertAndSend(exchange, routingKey, message);
-            System.out.println("✅ Mensaje enviado → " + routingKey);
+            rabbitTemplate.convertAndSend(queueName, message);
+            System.out.println("✅ Mensaje enviado → " + queueName);
         } catch (Exception e) {
             System.err.println("❌ Error al enviar mensaje: " + e.getMessage());
         }
     }
 
     public void publishFormatoA(Object formatoAResponse) {
-        publish(
-                RabbitMQConfig.EVALUACION_EXCHANGE,
-                RabbitMQConfig.FORMATOA_ROUTING_KEY,
-                formatoAResponse
-        );
+        publish(RabbitMQConfig.FORMATOA_QUEUE, formatoAResponse);
+    }
+
+    public void publishFormatoAEvaluado(Object formatoAResponse) {
+        publish(RabbitMQConfig.FORMATOA_EVALUADO_QUEUE, formatoAResponse);
     }
 
     public void publishAnteproyecto(Object anteproyectoResponse) {
-        publish(
-                RabbitMQConfig.EVALUACION_EXCHANGE,
-                RabbitMQConfig.ANTEPROYECTO_ROUTING_KEY,
-                anteproyectoResponse
-        );
+        publish(RabbitMQConfig.ANTEPROYECTO_QUEUE, anteproyectoResponse);
+    }
+
+    public void publishUsuario(Object usuarioResponse) {
+        publish(RabbitMQConfig.USUARIO_QUEUE, usuarioResponse);
     }
 }

@@ -30,8 +30,16 @@ public class FormatoAService {
      * Crea o actualiza un FormatoA en la base de datos.
      */
     public FormatoA guardarFormatoA(FormatoARequest request) {
-        FormatoA formatoA = new FormatoA();
+        FormatoA formatoA;
 
+        if (request.id() != null) {
+            // 🔹 Intentar buscar el formato existente
+            formatoA = formatoARepository.findById(request.id())
+                    .orElseGet(FormatoA::new); // Si no existe, crear uno nuevo
+        } else {
+            formatoA = new FormatoA();
+        }
+        formatoA.setId(request.id());
         formatoA.setTitle(request.title());
         formatoA.setMode(request.mode());
         formatoA.setGeneralObjetive(request.generalObjetive());
@@ -65,21 +73,15 @@ public class FormatoAService {
     /**
      * Obtiene todos los formatos A registrados.
      */
-    public List<FormatoAResponse> findAll() {
-        return formatoARepository.findAll()
-                .stream()
-                .map(f -> new FormatoAResponse(
-                        Math.toIntExact(f.getId()),
-                        f.getTitle(),
-                        f.getState().toString(),
-                        f.getObservations()))
-                .collect(Collectors.toList());
+    public List<FormatoA> findAll() {
+        return formatoARepository.findAll();
     }
 
 
 
     /**
-     * Actualiza el estado del Formato A (por ejemplo, aprobado o rechazado).
+     * Actualiza el estado del Formato A (por ejemplo, aprobado o rechazado)
+     * y aumenta el contador en 1.
      */
     public Optional<FormatoAResponse> actualizarEstado(Long id, EnumEstado newState, String observations) {
         Optional<FormatoA> formatoAOpt = formatoARepository.findById(id);
@@ -88,13 +90,18 @@ public class FormatoAService {
         FormatoA formatoA = formatoAOpt.get();
         formatoA.setState(newState);
         formatoA.setObservations(observations);
+
+        // 🔹 Incrementar contador
+        formatoA.setCounter(formatoA.getCounter() + 1);
+
         formatoARepository.save(formatoA);
 
         return Optional.of(new FormatoAResponse(
                 Math.toIntExact(formatoA.getId()),
                 formatoA.getTitle(),
                 formatoA.getState().toString(),
-                formatoA.getObservations()
+                formatoA.getObservations(),
+                formatoA.getCounter()
         ));
     }
 }

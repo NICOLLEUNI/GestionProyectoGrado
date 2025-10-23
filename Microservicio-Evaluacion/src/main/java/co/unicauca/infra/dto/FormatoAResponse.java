@@ -5,5 +5,6 @@ public record FormatoAResponse(
         int id,
         String title,
         String state,
-        String observations
+        String observations,
+        int counter
 ) {}

@@ -31,8 +31,6 @@ public class FormatoA {
     @ManyToOne
     @JoinColumn(name = "codirector_id")
     private Persona projectCoManager;
-    private String projectCoManagerEmail;
-    private LocalDate date;
     private String generalObjetive;
     private String specificObjetives;
     private String archivoPDF;

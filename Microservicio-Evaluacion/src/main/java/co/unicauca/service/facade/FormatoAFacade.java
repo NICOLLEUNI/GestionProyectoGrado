@@ -35,7 +35,8 @@ public class FormatoAFacade {
                 formato.getId().intValue(),
                 formato.getTitle(),
                 formato.getState().name(),
-                formato.getObservations()
+                formato.getObservations(),
+                formato.getCounter()
         );
 
         // ✅ Enviar el evento con el método ya existente del Publisher
@@ -47,15 +48,8 @@ public class FormatoAFacade {
     /**
      * Lista todos los FormatoA existentes.
      */
-    public List<FormatoAResponse> listarFormatosA() {
-        return formatoAService.findAll().stream()
-                .map(f -> new FormatoAResponse(
-                        f.id(),
-                        f.title(),
-                        f.state(),
-                        f.observations()
-                ))
-                .collect(Collectors.toList());
+    public List<FormatoA> listarFormatosA() {
+        return formatoAService.findAll();
     }
     /**
      * Actualiza el estado de un FormatoA y notifica por RabbitMQ.
@@ -73,8 +67,9 @@ public class FormatoAFacade {
 
         FormatoAResponse response = responseOpt.get();
 
-        // ✅ Publicar el evento actualizado
-        publisher.publishFormatoA(response);
+
+        // ✅ Publicar en la cola de formatos evaluados
+        publisher.publishFormatoAEvaluado(response);
 
         return response;
     }
