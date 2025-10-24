@@ -19,13 +19,13 @@ public class PersonaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    // Nombre completo (concatenación de name + lastname)
-    private String nombre;
 
+    private String name;
+    private String lastname;
     // Correo electrónico
-    private String correo;
+    private String email;
 
     // 🔹 Roles como Set<String>
     @ElementCollection(fetch = FetchType.EAGER)
@@ -34,10 +34,7 @@ public class PersonaEntity {
     private Set<String> roles = new HashSet<>();
 
     // Departamento
-    private String departamento;
-
-    // Activo o no (opcional, si quieres controlar estado)
-    private Boolean activo;
+    private String department;
 
     // 🔗 Relación inversa con proyectos
     @ManyToMany(mappedBy = "personas")

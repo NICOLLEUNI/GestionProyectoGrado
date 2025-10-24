@@ -18,9 +18,14 @@ public class FormatoAVersionEntity {
     private Long id;
 
     private int numVersion;
+    private LocalDate fecha;
+    private String titulo;
+    private String modalidad;
     private String estado;
     private String observaciones;
-    private LocalDate fecha;
+    private int counter;
+    private int IdformatoA;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formato_a_id")

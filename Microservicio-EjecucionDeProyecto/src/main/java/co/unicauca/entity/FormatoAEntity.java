@@ -18,12 +18,13 @@ public class FormatoAEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String titulo;
     private String estado;
     private String modalidad;
     private int counter;
+    private String observaciones;
 
     // 🔗 Relación inversa con Proyecto
     @ManyToOne(fetch = FetchType.LAZY)

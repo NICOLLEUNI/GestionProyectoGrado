@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import co.unicauca.entity.FormatoAEntity;
 
 
-public interface FormatoARepository extends JpaRepository<FormatoAEntity, String> {
+public interface FormatoARepository extends JpaRepository<FormatoAEntity, Long> {
 }

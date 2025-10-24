@@ -2,7 +2,6 @@ package co.unicauca.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +26,10 @@ public class ProyectoGradoEntity {
     @OneToOne(mappedBy = "proyectoGrado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AnteproyectoEntity anteproyecto;
 
-    // 🔗 Relación 1:N con FormatoA
-    @OneToMany(mappedBy = "proyectoGrado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<FormatoAEntity> formatosA = new ArrayList<>();
+    // 🔗 Relación 1:1 con FormatoA activo
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "formato_a_id")
+    private FormatoAEntity formatoAActual;
 
     // 🔗 Relación N:N con Personas (estudiantes, jurados, etc.)
     @ManyToMany
