@@ -36,29 +36,31 @@ public class ProyectoGrado {
     @JoinColumn(name = "proyecto_grado_id")
     private List<FormatoAVersion> historialFormatosA = new ArrayList<>();
 
+    private String estado; //este se trabajará con el patron state mas adelante
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "anteproyecto_id")
     private Anteproyecto anteproyecto;
 
-    //quiero tener el atributo estado, pero quiero hacerlo usando el patron State
 
-
-    public ProyectoGrado(long id, String nombre, LocalDateTime fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA) {
+    public ProyectoGrado(long id, String nombre, LocalDateTime fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, String estado) {
         this.id = id;
         this.nombre = nombre;
         this.fechaCreacion = fechaCreacion;
         this.estudiantesEmail = estudiantesEmail;
         this.formatoAActual = formatoAActual;
         this.historialFormatosA = historialFormatosA;
+        this.estado = estado;
     }
 
-    public ProyectoGrado(long id, String nombre, LocalDateTime fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, Anteproyecto anteproyecto) {
+    public ProyectoGrado(long id, String nombre, LocalDateTime fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, String estado, Anteproyecto anteproyecto) {
         this.id = id;
         this.nombre = nombre;
         this.fechaCreacion = fechaCreacion;
         this.estudiantesEmail = estudiantesEmail;
         this.formatoAActual = formatoAActual;
         this.historialFormatosA = historialFormatosA;
+        this.estado = estado;
         this.anteproyecto = anteproyecto;
     }
 

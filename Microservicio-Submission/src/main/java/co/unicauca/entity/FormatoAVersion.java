@@ -26,12 +26,11 @@ public class FormatoAVersion {
     private String generalObjetive;
     private String specificObjetives;
     private String archivoPDF;
-    private String cartaLaboral;
+    private String cartaLaboral; //opcional
 
     // Estado de la versión
     private EnumEstado state;        // entregado, aprobado, rechazado
-    private String observations;     // comentarios del coordinador
-
+    private String observations;     // comentarios del coordinador - inicia en null
     private int counter;
 
     // Relación con FormatoA principal
