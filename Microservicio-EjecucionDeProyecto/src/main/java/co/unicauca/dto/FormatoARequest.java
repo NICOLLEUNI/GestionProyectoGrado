@@ -11,7 +11,7 @@ import lombok.*;
 @Data
 public class FormatoARequest {
 
-  private  String id;
+    private Long id;
     private String title;
     private String mode;
     private String projectManagerEmail;

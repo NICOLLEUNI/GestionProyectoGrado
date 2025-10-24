@@ -2,22 +2,27 @@ package co.unicauca.mapper;
 
 import co.unicauca.dto.FormatoARequest;
 import co.unicauca.entity.FormatoAEntity;
+import co.unicauca.entity.ProyectoGradoEntity;
 
 public class FormatoAMapper {
 
-    public static FormatoAEntity fromRequest(FormatoARequest dto) {
+    /**
+     * Convierte DTO de entrada en Entity
+     * @param dto FormatoARequest
+     * @param proyecto ProyectoGradoEntity asociado
+     * @return FormatoAEntity listo para persistir
+     */
+    public static FormatoAEntity fromRequest(FormatoARequest dto, ProyectoGradoEntity proyecto) {
+        if (dto == null) return null;
+
         return FormatoAEntity.builder()
-                .id(dto.getId())
-                .title(dto.getTitle())
-                .mode(dto.getMode())
-                .projectManagerEmail(dto.getProjectManagerEmail())
-                .projectCoManagerEmail(dto.getProjectCoManagerEmail())
-                .generalObjetive(dto.getGeneralObjetive())
-                .specificObjetives(dto.getSpecificObjetives())
-                .archivoPDF(dto.getArchivoPDF())
-                .cartaLaboral(dto.getCartaLaboral())
-                .estudiantes(dto.getEstudiante())
-                .counter(dto.getCounter())
+                .id(dto.getId())                 // ya es Long
+                .titulo(dto.getTitle())
+                .modalidad(dto.getMode())
+                .estado("EN_PROCESO")
+                .proyectoGrado(proyecto)
+                .counter(dto.getCounter())       // agregamos el counter
                 .build();
     }
+
 }

@@ -8,9 +8,9 @@ import java.time.LocalDate;
 @Table(name = "formato_a_version")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class FormatoAVersionEntity {
 
     @Id
@@ -18,21 +18,10 @@ public class FormatoAVersionEntity {
     private Long id;
 
     private int numVersion;
-
+    private String estado;
+    private String observaciones;
     private LocalDate fecha;
 
-    private String titulo;
-
-    private String modalidad;
-
-    private String estado;
-
-    @Column(columnDefinition = "TEXT")
-    private String observaciones;
-
-    private int counter;
-
-    // Relación con FormatoAEntity (muchas versiones pueden pertenecer a un FormatoA)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formato_a_id")
     private FormatoAEntity formatoA;

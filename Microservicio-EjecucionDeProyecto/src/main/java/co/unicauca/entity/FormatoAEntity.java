@@ -3,46 +3,34 @@ package co.unicauca.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "formato_a")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class FormatoAEntity {
 
     @Id
-    private String id; // viene como String desde Submission (puede ser UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String title;
-    private String mode;
+    private String titulo;
+    private String estado;
+    private String modalidad;
+    private int counter;
 
-    @Column(name = "director_email")
-    private String projectManagerEmail;
+    // 🔗 Relación inversa con Proyecto
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "proyecto_id")
+    private ProyectoGradoEntity proyectoGrado;
 
-    @Column(name = "codirector_email")
-    private String projectCoManagerEmail;
-
-    @Column(columnDefinition = "TEXT")
-    private String generalObjetive;
-
-    @Column(columnDefinition = "TEXT")
-    private String specificObjetives;
-
-    private String archivoPDF;   // ruta o identificador del archivo en el storage
-    private String cartaLaboral; // idem
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "formato_a_estudiantes",
-            joinColumns = @JoinColumn(name = "formato_a_id")
-    )
-    @Column(name = "email_estudiante")
-    private List<String> estudiantes;
-
-    private int counter; // número de revisión o versión
-
+    // 🔗 Relación 1:N con versiones
+    @OneToMany(mappedBy = "formatoA", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FormatoAVersionEntity> versiones = new ArrayList<>();
 }

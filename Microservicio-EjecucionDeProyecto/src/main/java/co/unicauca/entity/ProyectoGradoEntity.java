@@ -3,41 +3,40 @@ package co.unicauca.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "proyecto_grado")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class ProyectoGradoEntity {
 
     @Id
-    private Long id;                         // mismo id que en Submission
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String nombre;
+    private String titulo;
+    private String descripcion;
+    private String estado;
 
-    private LocalDate fecha;                 // fecha de creación o aprobación
+    // 🔗 Relación 1:1 con Anteproyecto
+    @OneToOne(mappedBy = "proyectoGrado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private AnteproyectoEntity anteproyecto;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "proyecto_estudiantes",
-            joinColumns = @JoinColumn(name = "proyecto_id")
+    // 🔗 Relación 1:N con FormatoA
+    @OneToMany(mappedBy = "proyectoGrado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<FormatoAEntity> formatosA = new ArrayList<>();
+
+    // 🔗 Relación N:N con Personas (estudiantes, jurados, etc.)
+    @ManyToMany
+    @JoinTable(
+            name = "proyecto_persona",
+            joinColumns = @JoinColumn(name = "proyecto_id"),
+            inverseJoinColumns = @JoinColumn(name = "persona_id")
     )
-    @Column(name = "email_estudiante")
-    private List<String> estudiantesEmail;   // correos de los estudiantes asociados
-
-    @Column(name = "id_formato_a")
-    private Long idFormatoA;
-
-    @Column(name = "id_anteproyecto")
-    private Long idAnteproyecto;
-
-    // Estados propios del microservicio Ejecución
-    private String estado;                   // EN_EJECUCION, FINALIZADO, SUSPENDIDO
-    private String versionActiva;            // versión actual del Formato A o documento
-
+    private List<PersonaEntity> personas = new ArrayList<>();
 }

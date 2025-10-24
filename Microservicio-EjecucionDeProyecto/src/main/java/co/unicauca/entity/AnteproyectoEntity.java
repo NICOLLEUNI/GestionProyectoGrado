@@ -9,10 +9,9 @@ import java.time.LocalDate;
 @Table(name = "anteproyecto")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class AnteproyectoEntity {
 
     @Id
@@ -20,16 +19,11 @@ public class AnteproyectoEntity {
     private Long id;
 
     private String titulo;
-
-    private LocalDate fecha;
-
     private String estado;
-
-    @Column(columnDefinition = "TEXT")
+    private LocalDate fecha;
     private String observaciones;
 
-    // Relación: muchos anteproyectos pueden estar ligados a un proyecto de grado (histórico o iteraciones)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "proyecto_grado_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "proyecto_id")
     private ProyectoGradoEntity proyectoGrado;
 }
