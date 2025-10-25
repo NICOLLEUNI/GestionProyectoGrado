@@ -24,6 +24,7 @@ public class Persona {
     @Column(nullable = false, unique = true)
     private String email;
     private String department;
+    private String programa;
 
     @ElementCollection(targetClass = EnumRol.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "persona_roles", joinColumns = @JoinColumn(name = "idUsuario"))

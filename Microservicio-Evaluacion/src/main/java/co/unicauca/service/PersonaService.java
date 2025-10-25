@@ -33,6 +33,7 @@ public class PersonaService {
         persona.setLastname(request.lastname());
         persona.setEmail(request.email());
         persona.setDepartment(request.department());
+        persona.setPrograma(request.programa());
 
         // Convertir los roles del request (Set<String>) a EnumSet<EnumRol>
         persona.setRoles(convertirRoles(request.roles()));
