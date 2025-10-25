@@ -15,11 +15,9 @@ import java.util.stream.Collectors;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "formato_a")
 public class FormatoAEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
     private String title;

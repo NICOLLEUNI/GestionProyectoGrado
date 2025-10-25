@@ -20,11 +20,11 @@ public class AnteproyectoService {
     /**
      * Método que mapea el AnteproyectoResponse y lo guarda internamente en la base de datos
      */
-    public void saveInterno(AnteproyectoResponse request) {
-        // Obtener ProyectoGrado de la base de datos usando el idProyectoGrado
+    public AnteproyectoEntity saveInterno(AnteproyectoResponse request) {
+      /*  // Obtener ProyectoGrado de la base de datos usando el idProyectoGrado
         ProyectoGradoEntity proyectoGrado = proyectoGradoRepository.findById(request.idProyectoGrado())
                 .orElseThrow(() -> new RuntimeException("Proyecto Grado no encontrado"));
-
+*/
         // Crear una nueva entidad AnteproyectoEntity con la información recibida
         AnteproyectoEntity anteproyecto = new AnteproyectoEntity();
         anteproyecto.setId(request.id());
@@ -34,9 +34,9 @@ public class AnteproyectoService {
         anteproyecto.setFechaCreacion(request.fecha());
 
         // Asociar el Anteproyecto con el ProyectoGrado
-        anteproyecto.setProyectoGrado(proyectoGrado);
+       // anteproyecto.setProyectoGrado(proyectoGrado);
 
         // Guardar el Anteproyecto en la base de datos
-        anteproyectoRepository.save(anteproyecto);
+        return anteproyectoRepository.save(anteproyecto);
     }
 }

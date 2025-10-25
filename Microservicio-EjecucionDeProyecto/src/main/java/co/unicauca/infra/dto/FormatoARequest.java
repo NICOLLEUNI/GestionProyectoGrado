@@ -5,7 +5,7 @@ import java.util.List;
 
 public record FormatoARequest (
 
-     String id,
+     Long id,
      String title,
      String mode,
      String estado,
@@ -16,6 +16,7 @@ public record FormatoARequest (
      String archivoPDF,
      String cartaLaboral,
      List<String> estudiante,
-     int counter
+     int counter,
+     String state
 )
 {}

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "persona")
 @Getter
 @Setter
 @Builder
@@ -17,7 +16,6 @@ import java.util.Set;
 public class PersonaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

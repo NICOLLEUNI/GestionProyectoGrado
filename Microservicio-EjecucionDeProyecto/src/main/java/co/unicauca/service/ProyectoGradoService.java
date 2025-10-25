@@ -28,7 +28,7 @@ public class ProyectoGradoService {
      * Método para guardar internamente un ProyectoGrado
      * @param response Respuesta del ProyectoGrado (ProyectoGradoResponse)
      */
-    public void saveInterno(ProyectoGradoResponse response) {
+    public ProyectoGradoEntity saveInterno(ProyectoGradoResponse response) {
         // Obtener FormatoA y Anteproyecto desde la base de datos usando los IDs
         FormatoAEntity formatoA = formatoARepository.findById(response.idFormatoA())
                 .orElseThrow(() -> new RuntimeException("Formato A no encontrado"));
@@ -44,6 +44,6 @@ public class ProyectoGradoService {
         proyectoGrado.setAnteproyecto(anteproyecto);
 
         // Guardar el ProyectoGrado en la base de datos
-        proyectoGradoRepository.save(proyectoGrado);
+       return proyectoGradoRepository.save(proyectoGrado);
     }
 }

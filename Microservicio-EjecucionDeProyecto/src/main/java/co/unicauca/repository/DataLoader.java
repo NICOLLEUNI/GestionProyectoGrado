@@ -32,6 +32,7 @@ public class DataLoader implements CommandLineRunner {
         // ✅ Crear Personas
         PersonaEntity director = new PersonaEntity();
 
+        director.setId(8L);
         director.setName("Carlos Arteaga");
         director.setLastname("López");
         director.setEmail("carlos.arteaga@unicauca.edu.co");
@@ -40,6 +41,7 @@ public class DataLoader implements CommandLineRunner {
 
         PersonaEntity codirector = new PersonaEntity();
 
+        codirector.setId(9L);
         codirector.setName("María Soto");
         codirector.setLastname("Pérez");
         codirector.setEmail("maria.soto@unicauca.edu.co");
@@ -49,6 +51,7 @@ public class DataLoader implements CommandLineRunner {
         PersonaEntity estudiante1 = new PersonaEntity();
 
         estudiante1.setName("Nicolle");
+        estudiante1.setId(7L);
         estudiante1.setLastname("Montaño");
         estudiante1.setEmail("nicolle.montano@unicauca.edu.co");
         estudiante1.setDepartment("Ingeniería de Sistemas");
@@ -57,6 +60,7 @@ public class DataLoader implements CommandLineRunner {
         PersonaEntity estudiante2 = new PersonaEntity();
 
         estudiante2.setName("Juan");
+        estudiante2.setId(6L);
         estudiante2.setLastname("Pérez");
         estudiante2.setEmail("juan.perez@unicauca.edu.co");
         estudiante2.setDepartment("Ingeniería de Sistemas");
@@ -75,6 +79,7 @@ public class DataLoader implements CommandLineRunner {
         // ✅ Crear un FormatoA asociado
         FormatoAEntity formatoA = new FormatoAEntity();
 
+        formatoA.setId(1L);
         formatoA.setTitle("Formato A - Sistema Inteligente");
         formatoA.setMode("Presencial");
         formatoA.setProjectManager(director);

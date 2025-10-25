@@ -3,7 +3,7 @@ package co.unicauca.infra.dto;
 import java.util.List;
 
 public record FormatoAResponse(
-        String id,
+        Long id,
         String title,
         String mode,
         String projectManagerEmail,
@@ -13,5 +13,7 @@ public record FormatoAResponse(
         String archivoPDF,
         String cartaLaboral,
         List<String> estudiante,
-        int counter
+        int counter,
+        String state
+
 ) {}
