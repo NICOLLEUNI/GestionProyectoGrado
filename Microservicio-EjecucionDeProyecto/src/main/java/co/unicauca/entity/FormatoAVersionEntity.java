@@ -1,7 +1,9 @@
 package co.unicauca.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "formato_a_version")
 public class FormatoAVersionEntity {
 
@@ -16,23 +20,21 @@ public class FormatoAVersionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int numVersion;
-    private LocalDate fecha;  // `date` corresponde aquí
+    private int numeroVersion;// 1, 2, 3
 
+    private LocalDate fecha;
+
+    // Copia de campos versionables
     private String title;
-
-    @Enumerated(EnumType.STRING)  // Aquí usamos Enum para el mode
-    private EnumModalidad mode; // Usamos EnumModalidad en lugar de String
-
+    private EnumModalidad mode;
     private String generalObjetive;
     private String specificObjetives;
     private String archivoPDF;
-    private String cartaLaboral;
+    private String cartaLaboral; //opcional
 
-    @Enumerated(EnumType.STRING)  // Aquí usamos Enum para el state
-    private EnumEstado state; // Usamos EnumEstado en lugar de String
-
-    private String observations;  // `observations` corresponde aquí
+    // Estado de la versión
+    private EnumEstado state;        // entregado, aprobado, rechazado
+    private String observations;     // comentarios del coordinador - inicia en null
     private int counter;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FormatoAService {
@@ -24,29 +25,41 @@ public class FormatoAService {
     /**
      * Método que mapea los datos de FormatoAResponse y guarda el FormatoA en la base de datos.
      */
-    public void saveFormatoA(FormatoAResponse response) {
+    public void saveFormatoA(FormatoAResponse request) {
         // Crear un nuevo FormatoAEntity con los datos del response
         FormatoAEntity formatoA = new FormatoAEntity();
 
-        // Obtener los estudiantes por sus emails
-        List<PersonaEntity> estudiantes = personaRepository.findAllByEmailIn(response.estudiante());
-
-        // Asignar los estudiantes al formatoA
-        formatoA.setEstudiantes(estudiantes);
+        // 🔹 Buscar los estudiantes por sus correos
+        if (request.estudiante() != null) {
+            List<PersonaEntity> estudiantes = request.estudiante().stream()
+                    .map(email -> personaRepository.findByEmail(email).orElse(null))
+                    .filter(e -> e != null)
+                    .collect(Collectors.toList());
+            formatoA.setEstudiantes(estudiantes);
+        }
 
         // Asignar el resto de los campos a la entidad
-        formatoA.setId(Long.valueOf(response.id()));  // Convertir el ID de String a Long
-        formatoA.setTitle(response.title());
-        formatoA.setMode(EnumModalidad.valueOf(response.mode()));  // Usar EnumModalidad
-        formatoA.setState(EnumEstado.valueOf("CREADO"));  // Estado inicial
-        formatoA.setCounter(response.counter());
-        formatoA.setProjectCoManagerEmail(response.projectCoManagerEmail());
-        formatoA.setArchivoPDF(response.archivoPDF());
-        formatoA.setCartaLaboral(response.cartaLaboral());
-        formatoA.setGeneralObjetive(response.generalObjetive());
-        formatoA.setSpecificObjetives(response.specificObjetives());
+        formatoA.setId(Long.valueOf(request.id()));  // Convertir el ID de String a Long
+        formatoA.setTitle(request.title());
+        formatoA.setMode(request.mode());  // Usar EnumModalidad
+        formatoA.setState(EnumEstado.ENTREGADO);  // Estado inicial
+        formatoA.setCounter(request.counter());
+        formatoA.setArchivoPDF(request.archivoPDF());
+        formatoA.setCartaLaboral(request.cartaLaboral());
+        formatoA.setGeneralObjetive(request.generalObjetive());
+        formatoA.setSpecificObjetives(request.specificObjetives());
+
+        // 🔹 Buscar director y codirector por correo (Persona)
+        PersonaEntity director = personaRepository.findByEmail(request.projectManagerEmail()).orElse(null);
+        PersonaEntity codirector = personaRepository.findByEmail(request.projectCoManagerEmail()).orElse(null);
+
+        formatoA.setProjectManager(director);
+        formatoA.setProjectCoManager(codirector);
 
         // Guardar el FormatoA en la base de datos
         formatoARepository.save(formatoA);
     }
+
+
+
 }

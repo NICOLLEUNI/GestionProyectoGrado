@@ -20,7 +20,7 @@ public class AnteproyectoEntity {
 
     private String titulo;
     private String estado;
-    private LocalDate fecha;
+    private LocalDate fechaCreacion;
     private String observaciones;
 
     @OneToOne(fetch = FetchType.LAZY)

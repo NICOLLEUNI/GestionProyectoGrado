@@ -1,6 +1,7 @@
 package co.unicauca.service;
 
 import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.EnumModalidad;
 import co.unicauca.entity.FormatoAEntity;
 import co.unicauca.entity.FormatoAVersionEntity;
 import co.unicauca.infra.dto.FormatoAUpdateResponse;
@@ -30,7 +31,7 @@ public class FormatoAVersionService {
         // Crear una nueva versión de FormatoA
         FormatoAVersionEntity version = new FormatoAVersionEntity();
         version.setTitle(formatoA.getTitle()); // Mantener el título del formato original
-        version.setMode(formatoA.getMode()); // Mantener la modalidad del formato original
+        version.setMode(EnumModalidad.valueOf(formatoA.getMode())); // Mantener la modalidad del formato original
         version.setGeneralObjetive(formatoA.getGeneralObjetive()); // Mantener el objetivo general
         version.setSpecificObjetives(formatoA.getSpecificObjetives()); // Mantener los objetivos específicos
         version.setArchivoPDF(formatoA.getArchivoPDF()); // Mantener el archivo PDF original

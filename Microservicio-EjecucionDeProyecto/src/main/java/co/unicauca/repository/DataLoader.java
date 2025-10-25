@@ -1,103 +1,99 @@
 package co.unicauca.repository;
 
+
 import co.unicauca.entity.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
+import java.util.List;
 
-@Configuration
-public class DataLoader {
+/**
+ * Carga datos iniciales de prueba para el microservicio Evaluación.
+ */
+@Component
+public class DataLoader implements CommandLineRunner {
 
-    private final FormatoARepository formatoARepository;
-    private final ProyectoGradoRepository proyectoGradoRepository;
-    private final PersonaRepository personaRepository;
+    @Autowired
+    private PersonaRepository personaRepository;
 
-    public DataLoader(FormatoARepository formatoARepository,
-                      ProyectoGradoRepository proyectoGradoRepository,
-                      PersonaRepository personaRepository) {
-        this.formatoARepository = formatoARepository;
-        this.proyectoGradoRepository = proyectoGradoRepository;
-        this.personaRepository = personaRepository;
-    }
+    @Autowired
+    private AnteproyectoRepository anteproyectoRepository;
 
-    @Bean
-    @Transactional
-    public CommandLineRunner loadData() {
-        return args -> {
-            // 1. Guardar Personas PRIMERO
-            PersonaEntity estudiante1 = new PersonaEntity(
-                    "juan.perez@unicauca.edu.co",
-                    "Juan Pérez",
-                    "juan.perez@unicauca.edu.co",
-                    new HashSet<>(Arrays.asList("ESTUDIANTE")),
-                    "Ingeniería de Sistemas"
-            );
+    @Autowired
+    private FormatoARepository formatoARepository;
 
-            PersonaEntity estudiante2 = new PersonaEntity(
-                    "maria.lopez@unicauca.edu.co",
-                    "María López",
-                    "maria.lopez@unicauca.edu.co",
-                    new HashSet<>(Arrays.asList("ESTUDIANTE")),
-                    "Ingeniería de Sistemas"
-            );
+    @Override
+    public void run(String... args) throws Exception {
 
-            PersonaEntity projectManager = new PersonaEntity(
-                    "director.proyecto@unicauca.edu.co",
-                    "Dr. Carlos Rodríguez",
-                    "director.proyecto@unicauca.edu.co",
-                    new HashSet<>(Arrays.asList("DIRECTOR")),
-                    "Ingeniería de Sistemas"
-            );
+        // ✅ Crear Personas
+        PersonaEntity director = new PersonaEntity();
 
-            // Guardar todas las personas ANTES de usarlas en otras entidades
-            personaRepository.saveAll(Arrays.asList(estudiante1, estudiante2, projectManager));
+        director.setName("Carlos Arteaga");
+        director.setLastname("López");
+        director.setEmail("carlos.arteaga@unicauca.edu.co");
+        director.setDepartment("Ingeniería Electrónica");
+        director.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
-            System.out.println("Personas guardadas exitosamente.");
+        PersonaEntity codirector = new PersonaEntity();
 
-            // 2. Crear Proyecto Grado SIN formatoA (primero)
-            ProyectoGradoEntity proyectoGrado = new ProyectoGradoEntity();
-            proyectoGrado.setTitulo("Proyecto de Inteligencia Artificial");
-            proyectoGrado.setFechaCreacion(LocalDateTime.now()); // ← AGREGAR FECHA
-            proyectoGrado.setEstado("ACTIVO");
-            proyectoGrado.setEstudiantesEmail(Arrays.asList(
-                    estudiante1.getEmail(),
-                    estudiante2.getEmail()
-            ));
-            // NO asignar formatoAActual todavía
-            proyectoGrado = proyectoGradoRepository.save(proyectoGrado);
+        codirector.setName("María Soto");
+        codirector.setLastname("Pérez");
+        codirector.setEmail("maria.soto@unicauca.edu.co");
+        codirector.setDepartment("Ingeniería de Sistemas");
+        codirector.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
-            System.out.println("Proyecto de Grado guardado exitosamente con ID: " + proyectoGrado.getId());
+        PersonaEntity estudiante1 = new PersonaEntity();
 
-            // 3. Crear y guardar Formato A
-            FormatoAEntity formatoA = new FormatoAEntity();
-            formatoA.setTitle("Formato A de Proyecto Grado");
-            formatoA.setMode(EnumModalidad.PRACTICA_PROFESIONAL);
-            formatoA.setState(EnumEstado.ENTREGADO);
-            formatoA.setProjectManagerEmail(projectManager.getEmail());
-            formatoA.setGeneralObjetive("Desarrollar un sistema de inteligencia artificial para análisis predictivo");
-            formatoA.setSpecificObjetives("1. Implementar algoritmos de Machine Learning\n2. Crear interfaz de usuario intuitiva\n3. Realizar pruebas de rendimiento");
+        estudiante1.setName("Nicolle");
+        estudiante1.setLastname("Montaño");
+        estudiante1.setEmail("nicolle.montano@unicauca.edu.co");
+        estudiante1.setDepartment("Ingeniería de Sistemas");
+        estudiante1.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
 
-            // Asignar estudiantes que YA están persistidos
-            formatoA.setEstudiantes(Arrays.asList(estudiante1, estudiante2));
+        PersonaEntity estudiante2 = new PersonaEntity();
 
-            // Guardar formatoA
-            formatoA = formatoARepository.save(formatoA);
+        estudiante2.setName("Juan");
+        estudiante2.setLastname("Pérez");
+        estudiante2.setEmail("juan.perez@unicauca.edu.co");
+        estudiante2.setDepartment("Ingeniería de Sistemas");
+        estudiante2.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
 
-            System.out.println("Formato A guardado exitosamente con ID: " + formatoA.getId());
+        personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2));
 
-            // 4. Actualizar el proyecto con el formatoA YA PERSISTIDO
-            proyectoGrado.setFormatoAActual(formatoA);
-            proyectoGradoRepository.save(proyectoGrado);
+        // ✅ Crear un Anteproyecto
+        AnteproyectoEntity anteproyecto = new AnteproyectoEntity();
+        anteproyecto.setTitulo("Sistema Inteligente para la Gestión de Proyectos de Grado");
+        anteproyecto.setEstado("EN_REVISION");
+        anteproyecto.setObservaciones("Pendiente de revisión por el coordinador");
+        anteproyecto.setFechaCreacion(LocalDate.now());
+        anteproyectoRepository.save(anteproyecto);
 
-            System.out.println("Proyecto actualizado con Formato A.");
-            System.out.println("===========================================");
-            System.out.println("Datos de ejemplo cargados exitosamente.");
-            System.out.println("===========================================");
-        };
+        // ✅ Crear un FormatoA asociado
+        FormatoAEntity formatoA = new FormatoAEntity();
+
+        formatoA.setTitle("Formato A - Sistema Inteligente");
+        formatoA.setMode("Presencial");
+        formatoA.setProjectManager(director);
+        formatoA.setProjectCoManager(codirector);
+        formatoA.setGeneralObjetive("Desarrollar un sistema inteligente que optimice la gestión de proyectos de grado.");
+        formatoA.setSpecificObjetives("1. Implementar IA.\n2. Diseñar base de datos.\n3. Crear API REST.");
+        formatoA.setArchivoPDF("formatoA1.pdf");
+        formatoA.setCartaLaboral("carta_laboral_1.pdf");
+        formatoA.setEstudiantes(List.of(estudiante1, estudiante2));
+        formatoA.setCounter(2);
+        formatoA.setState(EnumEstado.ENTREGADO);
+
+
+        formatoARepository.save(formatoA);
+
+        // ✅ Logs
+        System.out.println("📘 Datos iniciales cargados correctamente:");
+        System.out.println("- Personas: " + personaRepository.count());
+        System.out.println("- Anteproyectos: " + anteproyectoRepository.count());
+        System.out.println("- Formatos A: " + formatoARepository.count());
     }
 }

@@ -18,8 +18,8 @@ public class FormatoACreacionListener {
      * Recibe el mensaje de creación de FormatoA y lo procesa a través del servicio.
      */
     @RabbitListener(queues = RabbitMQConfig.FORMATOA_QUEUE) // Cola donde llega el mensaje de creación de FormatoA
-    public void handleFormatoACreacionResponse(FormatoAResponse response) {
+    public void handleFormatoACreacionResponse(FormatoAResponse request) {
         // Llamamos al servicio para guardar el FormatoA en la base de datos
-        formatoAService.saveFormatoA(response);
+        formatoAService.saveFormatoA(request);
     }
 }

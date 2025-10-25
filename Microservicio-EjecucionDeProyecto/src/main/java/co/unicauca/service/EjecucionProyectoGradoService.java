@@ -42,21 +42,24 @@ public class EjecucionProyectoGradoService {
                 .orElseThrow(() -> new RuntimeException("Versión de Formato A no encontrada"));
 
         // Validar que no exista un ProyectoGrado activo para estos estudiantes
-        for (String emailEstudiante : formatoA.getEstudiantesEmails()) {
+        for (String emailEstudiante : formatoA.getEstudianteEmails()) {
             if (proyectoGradoRepository.existsByEstudiantesEmailContainsAndEstadoNot(emailEstudiante, "CANCELADO")) {
                 throw new RuntimeException("El estudiante " + emailEstudiante + " ya tiene un proyecto activo");
             }
         }
 
-        // Obtener la lista de estudiantes de la base de datos usando los correos electrónicos
-        List<PersonaEntity> estudiantes = personaRepository.findAllByEmailIn(formatoA.getEstudiantesEmails());
+        // Validar que no existe proyecto activo para estos estudiantes
+        for (String emailEstudiante : formatoA.getEstudianteEmails()) {
+            if (proyectoGradoRepository.existsByEstudiantesEmailContainsAndEstadoNot(emailEstudiante, "CANCELADO")) {
+                throw new RuntimeException("El estudiante " + emailEstudiante + " ya tiene un proyecto activo");
+            }
+        }
 
         // Crear un nuevo ProyectoGrado
         ProyectoGradoEntity proyectoGrado = new ProyectoGradoEntity();
         proyectoGrado.setTitulo(formatoA.getTitle());
         proyectoGrado.setFechaCreacion(java.time.LocalDateTime.now());
-        proyectoGrado.setEstudiantesEmail(formatoA.getEstudiantesEmails()); // Establecer los correos electrónicos
-        proyectoGrado.setEstudiantes(estudiantes); // Asociar los estudiantes a través de la relación ManyToMany
+        proyectoGrado.setEstudiantesEmail(formatoA.getEstudianteEmails()); // Establecer los correos electrónicos
         proyectoGrado.setFormatoAActual(formatoA);
         proyectoGrado.setEstado("ACTIVO");
         proyectoGrado.setAnteproyecto(null);  // El anteproyecto aún no está asociado en este punto

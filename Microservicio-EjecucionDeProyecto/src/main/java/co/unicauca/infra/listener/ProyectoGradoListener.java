@@ -15,11 +15,11 @@ public class ProyectoGradoListener {
 
     /**
      * Método que maneja la creación de ProyectoGrado.
-     * @param response Respuesta de ProyectoGradoResponse
+     * @param request Respuesta de ProyectoGradoResponse
      */
     @RabbitListener(queues = RabbitMQConfig.FORMATOA_QUEUE)  // Cola donde llega el mensaje
-    public void handleProyectoGradoResponse(ProyectoGradoResponse response) {
+    public void handleProyectoGradoResponse(ProyectoGradoResponse request) {
         // Delegar la lógica al service para guardar el ProyectoGrado
-        proyectoGradoService.saveInterno(response);
+        proyectoGradoService.saveInterno(request);
     }
 }

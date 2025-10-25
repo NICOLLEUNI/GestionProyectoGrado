@@ -1,32 +1,27 @@
 package co.unicauca.infra.listener;
 
-import co.unicauca.entity.PersonaEntity;
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.repository.PersonaRepository;
 import co.unicauca.infra.dto.PersonaResponse;
+import co.unicauca.service.PersonaService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class PersonaListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(PersonaListener.class);
 
-    private PersonaRepository personaRepository;
+    @Autowired
+    private PersonaService personaService;
 
-    @RabbitListener(queues = RabbitMQConfig.USUARIO_QUEUE) // Cola donde llega el mensaje de la creación de Persona
-    public void handlePersonaResponse(PersonaResponse response) {
-        // Crear una nueva PersonaEntity con los datos del response
-        PersonaEntity persona = new PersonaEntity();
-        persona.setId(Long.parseLong(response.id()));
-        persona.setName(response.name());
-        persona.setLastname(response.lastname());
-        persona.setEmail(response.email());
-        persona.setDepartment(response.department());
-        persona.setRoles(response.roles());
+    @RabbitListener(queues = RabbitMQConfig.USUARIO_QUEUE)
+    public void handlePersonaResponse(PersonaResponse request) {
+        logger.info("Recibido mensaje de persona desde RabbitMQ: {}", request.id());
 
-        // Guardar la Persona en la base de datos
-        personaRepository.save(persona);
+        // Delegar toda la lógica al service
+        personaService.saveInterno(request);
     }
 }

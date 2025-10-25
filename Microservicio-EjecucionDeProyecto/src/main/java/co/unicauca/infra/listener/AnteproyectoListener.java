@@ -15,8 +15,8 @@ public class AnteproyectoListener {
     private AnteproyectoService anteproyectoService;
 
     @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_QUEUE)  // Cola que envía el microservicio de evaluación
-    public void handleAnteproyectoResponse(AnteproyectoResponse response) {
+    public void handleAnteproyectoResponse(AnteproyectoResponse request) {
         // Llamar al servicio para guardar el Anteproyecto
-        anteproyectoService.saveInterno(response);
+        anteproyectoService.saveInterno(request);
     }
 }
