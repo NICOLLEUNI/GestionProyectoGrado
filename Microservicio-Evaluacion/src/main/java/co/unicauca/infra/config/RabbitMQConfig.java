@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,9 +19,13 @@ public class RabbitMQConfig {
 
     // 📨 Colas donde Evaluación RECIBE mensajes
     public static final String FORMATOA_CREADO_QUEUE = "formatoa.creado.queue";
-    public static final String FORMATOA_EVALUADO_QUEUE = "formatoa.evaluado.queue"; // nueva cola
+    // 📨 Colas donde Evaluación ENVÍA mensajes al ser evaluado
+    public static final String FORMATOA_EVALUADO_SUBMISSION_QUEUE = "formatoa.evaluado.submission.queue";
+    public static final String FORMATOA_EVALUADO_NOTIFICATION_QUEUE = "formatoa.evaluado.notification.queue"; // nueva cola
     public static final String ANTEPROYECTO_CREADO_QUEUE = "anteproyecto.creado.queue";
     public static final String USUARIO_QUEUE = "usuario.queue";
+
+
 
     /**
      * Declaración de las colas. Persistentes para que no se eliminen al reiniciar RabbitMQ.
@@ -31,8 +36,13 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue formatoAEvaluadoQueue() {
-        return new Queue(FORMATOA_EVALUADO_QUEUE, true);
+    public Queue formatoAEvaluadoSubmissionQueue() {
+        return new Queue(FORMATOA_EVALUADO_SUBMISSION_QUEUE, true);
+    }
+
+    @Bean
+    public Queue formatoAEvaluadoNotificationQueue() {
+        return new Queue(FORMATOA_EVALUADO_NOTIFICATION_QUEUE, true);
     }
 
     @Bean
