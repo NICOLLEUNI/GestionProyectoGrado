@@ -2,9 +2,8 @@ package co.unicauca.infra.listener;
 
 import co.unicauca.entity.FormatoAVersionEntity;
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.infra.dto.FormatoAUpdateRequest;
-import co.unicauca.infra.dto.FormatoAUpdateResponse;
-import co.unicauca.service.FormatoAService;
+import co.unicauca.infra.dto.FormatoARequest;
+import co.unicauca.infra.dto.FormatoAVersionRequest;
 import co.unicauca.service.FormatoAVersionService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,8 @@ public class FormatoAListener {
      * Método que maneja la actualización de FormatoA.
      * @param request Respuesta de FormatoAUpdateResponse
      */
-    @RabbitListener(queues = RabbitMQConfig.FORMATOA_QUEUE) // Cola donde llega el mensaje
-    public void handleFormatoAUpdateResponse(FormatoAUpdateRequest request) {
+    @RabbitListener(queues = RabbitMQConfig.FORMATOA_EVALUADO_QUEUE) // Cola donde llega el mensaje
+    public void handleFormatoAUpdateResponse(FormatoARequest request) {
         System.out.println("📩 Mensaje recibido en formatoa.evaluado.queue: " + request);
         FormatoAVersionEntity formatoA = formatoAVersionService.saveInterno(request);
         System.out.println("✅ Formato A guardado con ID: " + formatoA.getId());

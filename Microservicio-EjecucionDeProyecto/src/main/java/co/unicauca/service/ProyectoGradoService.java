@@ -38,7 +38,7 @@ public class ProyectoGradoService {
         // Crear una nueva entidad ProyectoGrado con los datos del response
         ProyectoGradoEntity proyectoGrado = new ProyectoGradoEntity();
         proyectoGrado.setId(response.id());
-        proyectoGrado.setTitulo(response.nombre());
+        proyectoGrado.setTitulo(response.title());
         proyectoGrado.setFechaCreacion(response.fecha().atStartOfDay());  // Convertir fecha a LocalDateTime
         proyectoGrado.setFormatoAActual(formatoA);
         proyectoGrado.setAnteproyecto(anteproyecto);

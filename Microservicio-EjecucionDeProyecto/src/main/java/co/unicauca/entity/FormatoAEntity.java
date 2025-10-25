@@ -22,6 +22,7 @@ public class FormatoAEntity {
     private Long id;
     private String title;
     private String mode;
+    private String observations;
 
 
     @ManyToOne

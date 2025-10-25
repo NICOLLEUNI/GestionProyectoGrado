@@ -4,8 +4,10 @@ import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.EnumModalidad;
 import co.unicauca.entity.FormatoAEntity;
 import co.unicauca.entity.FormatoAVersionEntity;
+import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.infra.dto.FormatoAUpdateRequest;
 import co.unicauca.infra.dto.FormatoAUpdateResponse;
+import co.unicauca.infra.dto.FormatoAVersionRequest;
 import co.unicauca.repository.FormatoAVersionRepository;
 import co.unicauca.repository.FormatoARepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class FormatoAVersionService {
      * Método para guardar internamente una versión de FormatoA
      * @param request Respuesta de FormatoAUpdateResponse
      */
-    public FormatoAVersionEntity saveInterno(FormatoAUpdateRequest request) {
+    public FormatoAVersionEntity saveInterno(FormatoARequest request) {
         // Obtener el FormatoA original desde la base de datos utilizando el id recibido en el response
         FormatoAEntity formatoA = formatoARepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("FormatoA no encontrado"));
@@ -37,8 +39,8 @@ public class FormatoAVersionService {
         version.setSpecificObjetives(formatoA.getSpecificObjetives()); // Mantener los objetivos específicos
         version.setArchivoPDF(formatoA.getArchivoPDF()); // Mantener el archivo PDF original
         version.setCartaLaboral(formatoA.getCartaLaboral()); // Mantener la carta laboral original
-        version.setState(EnumEstado.valueOf(request.estado()));  // Asignar el nuevo estado recibido
-        version.setObservations(request.observaciones()); // Asignar las observaciones recibidas
+        version.setState(EnumEstado.valueOf(request.state()));  // Asignar el nuevo estado recibido
+        version.setObservations(request.observations()); // Asignar las observaciones recibidas
         version.setCounter(request.counter()); // Asignar el contador recibido
 
         // Asociar la nueva versión al FormatoA
@@ -48,7 +50,7 @@ public class FormatoAVersionService {
         formatoAVersionRepository.save(version);
 
         // Actualizar el FormatoA con los nuevos valores de estado y observaciones
-        formatoA.setState(EnumEstado.valueOf(request.estado()));
+        formatoA.setState(EnumEstado.valueOf(request.state()));
         formatoA.setCounter(request.counter()); // Actualizar el contador si es necesario
         formatoARepository.save(formatoA); // Guardar el FormatoA actualizado en la base de datos
 

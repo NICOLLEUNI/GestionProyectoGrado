@@ -11,7 +11,7 @@ import java.util.Set;
 public record ProyectoGradoRequest(
 
    Long id,
-   String nombre,
+   String title,
    LocalDate fecha,
    List<String> estudiantesEmail,
    String IdFormatoA,

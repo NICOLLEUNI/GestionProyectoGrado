@@ -23,7 +23,7 @@ public class FormatoACreacionListener {
      * Listener para manejar la creación de un nuevo FormatoA.
      * Recibe el mensaje de creación de FormatoA y lo procesa a través del servicio.
      */
-    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_QUEUE) // Cola donde llega el mensaje de creación de FormatoA
+    @RabbitListener(queues = RabbitMQConfig.FORMATOA_QUEUE) // Cola donde llega el mensaje de creación de FormatoA
     public void handleFormatoACreacionResponse(FormatoARequest request) {
         System.out.println("📩 Mensaje recibido en formatoa.queue: " + request);
         FormatoAEntity formatoA = formatoAService.saveFormatoA(request);

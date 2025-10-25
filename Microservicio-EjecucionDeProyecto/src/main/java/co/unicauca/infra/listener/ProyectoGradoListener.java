@@ -23,7 +23,7 @@ public class ProyectoGradoListener {
      * Método que maneja la creación de ProyectoGrado.
      * @param request Respuesta de ProyectoGradoResponse
      */
-    @RabbitListener(queues = RabbitMQConfig.FORMATOA_QUEUE)  // Cola donde llega el mensaje
+    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_QUEUE)  // Cola donde llega el mensaje
     public void handleProyectoGradoResponse(ProyectoGradoResponse request) {
 
         System.out.println("📩 Mensaje recibido en por definir: " + request);

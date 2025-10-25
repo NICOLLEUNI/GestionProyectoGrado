@@ -43,7 +43,8 @@ public class FormatoAFacade {
                 formatoAEntity.getCartaLaboral(),
                 formatoAEntity.getEstudianteEmails(),
                 formatoAEntity.getCounter(),
-                formatoAEntity.getState().name()
+                formatoAEntity.getState().name(),
+                formatoAEntity.getObservations()
 
         );
 
@@ -75,7 +76,8 @@ public class FormatoAFacade {
                         formatoAEntity.getCartaLaboral(),
                         formatoAEntity.getEstudianteEmails(),
                         formatoAEntity.getCounter(),
-                        formatoAEntity.getState().name()
+                        formatoAEntity.getState().name(),
+                        formatoAEntity.getObservations()
                 ))
                 .collect(Collectors.toList());
     }

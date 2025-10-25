@@ -14,6 +14,7 @@ public record FormatoAResponse(
         String cartaLaboral,
         List<String> estudiante,
         int counter,
-        String state
+        String state,
+        String observations
 
 ) {}

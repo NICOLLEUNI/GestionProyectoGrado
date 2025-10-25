@@ -17,6 +17,7 @@ public record FormatoARequest (
      String cartaLaboral,
      List<String> estudiante,
      int counter,
-     String state
+     String state,
+     String observations
 )
 {}

@@ -7,13 +7,13 @@ import java.time.LocalDate;
 
 public record FormatoAVersionRequest (
 
-     String id,
+     Long id,
      int numVersion,
      LocalDate fecha,
-     String titulo,
+     String title,
      String modalidad,
-     String estado,
-     String observaciones,
+     String state,
+     String observations,
      int counter,
      int IdformatoA
      )
