@@ -1,13 +1,17 @@
 package co.unicauca.service;
 
 import co.unicauca.entity.*;
+import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.repository.FormatoARepository;
 import co.unicauca.repository.FormatoVersionRepository;
 import co.unicauca.repository.PersonaRepository;
 import co.unicauca.repository.ProyectoRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+@Service
 public class FormatoAService {
 
     private final FormatoARepository formatoARepository;
@@ -23,6 +27,7 @@ public class FormatoAService {
     }
 
     //metodo para subir un formatoA
+    @Transactional
     public FormatoA subirFormatoA(FormatoA formatoA) {
 
         // VALIDAR participantes del FormatoA
@@ -39,6 +44,30 @@ public class FormatoAService {
 
         return formatoAGuardado;
     }
+
+    @Transactional
+    public FormatoA actualizarFormatoAEvaluado(FormatoARequest request) {
+        // 1. BUSCAR FormatoA existente
+        FormatoA formatoA = formatoARepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + request.id()));
+
+        // 2. ACTUALIZAR FormatoA principal
+        formatoA.setState(EnumEstado.valueOf(request.state()));
+        formatoA.setObservations(request.observations());
+        formatoA.setCounter(Integer.parseInt(request.counter()));
+
+        FormatoA formatoAActualizado = formatoARepository.save(formatoA);
+
+        // 3. CREAR NUEVA VERSIÓN (llamando a VersionService)
+        FormatoAVersion nuevaVersion = versionService.crearVersionConEvaluacion(formatoAActualizado, request);
+
+        // 4. AGREGAR nueva versión al ProyectoGrado
+        proyectoService.agregarVersionAProyectoGrado(formatoAActualizado, nuevaVersion);
+
+        return formatoAActualizado;
+    }
+
+
 
     private void validarParticipantes(FormatoA formatoA) {
         // Validar director

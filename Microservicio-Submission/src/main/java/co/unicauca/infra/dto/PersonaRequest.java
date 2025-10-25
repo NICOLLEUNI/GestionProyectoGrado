@@ -5,7 +5,7 @@ import java.util.Set;
 public record PersonaRequest (
         //aquí recibo el objeto persona de la cola
         //Record - No se modifica
-        String id,
+        Long id,
         String name,
         String lastname,
         String email,

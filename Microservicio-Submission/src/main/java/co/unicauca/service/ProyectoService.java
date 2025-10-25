@@ -6,6 +6,8 @@ import co.unicauca.entity.ProyectoGrado;
 import co.unicauca.repository.ProyectoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProyectoService {
 
@@ -34,4 +36,19 @@ public class ProyectoService {
         return proyectoRepository.save(proyectoGrado);
     }
 
+    public ProyectoGrado agregarVersionAProyectoGrado(FormatoA formatoA, FormatoAVersion nuevaVersion) {
+        // Buscar el proyecto que tiene este FormatoA como formatoAActual
+        Optional<ProyectoGrado> proyectoOpt = proyectoRepository.findByFormatoAActualId(formatoA.getId());
+
+        if (proyectoOpt.isPresent()) {
+            ProyectoGrado proyecto = proyectoOpt.get();
+            proyecto.getHistorialFormatosA().add(nuevaVersion);
+            return proyectoRepository.save(proyecto);
+        } else {
+            throw new RuntimeException("No se encontró proyecto asociado al FormatoA: " + formatoA.getId());
+        }
+    }
+
 }
+
+

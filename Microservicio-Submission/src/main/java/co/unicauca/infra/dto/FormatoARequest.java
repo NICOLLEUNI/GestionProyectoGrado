@@ -4,7 +4,7 @@ package co.unicauca.infra.dto;
 public record FormatoARequest (
 
         //Es lo que recibo cuando se evalua un formatoA por el coordinador
-        int id,
+        long id,
         String title,
         String state,
         String observations,

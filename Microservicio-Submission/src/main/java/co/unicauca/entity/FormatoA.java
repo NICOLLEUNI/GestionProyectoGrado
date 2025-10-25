@@ -27,6 +27,7 @@ public class FormatoA {
     private EnumModalidad mode;
 
     // CORREO del docente director
+    //Deberia ser de tipo persona? No, yo no necesito el acoplamiento, solo envio los correos
     @Column(nullable = false)
     private String projectManagerEmail;
 

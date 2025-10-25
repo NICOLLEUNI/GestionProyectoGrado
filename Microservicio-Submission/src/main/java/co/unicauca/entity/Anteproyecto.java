@@ -22,28 +22,23 @@ public class Anteproyecto {
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    @Column(nullable = false)
-    private String archivoPDF; // Ruta o nombre del archivo
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EnumEstadoAnteproyecto estado = EnumEstadoAnteproyecto.ENTREGADO;
 
-    @Column(columnDefinition = "TEXT")
-    private String observaciones; // Comentarios del jefe de departamento
 
     // Relación con ProyectoGrado
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "proyecto_grado_id")
     private ProyectoGrado proyectoGrado;
 
-    public Anteproyecto(Long id, String titulo, LocalDate fechaCreacion, String archivoPDF, EnumEstadoAnteproyecto estado, String observaciones, ProyectoGrado proyectoGrado) {
+    public Anteproyecto(Long id, String titulo, LocalDate fechaCreacion, EnumEstadoAnteproyecto estado, ProyectoGrado proyectoGrado) {
         this.id = id;
         this.titulo = titulo;
         this.fechaCreacion = fechaCreacion;
-        this.archivoPDF = archivoPDF;
         this.estado = estado;
-        this.observaciones = observaciones;
         this.proyectoGrado = proyectoGrado;
     }
+
 }

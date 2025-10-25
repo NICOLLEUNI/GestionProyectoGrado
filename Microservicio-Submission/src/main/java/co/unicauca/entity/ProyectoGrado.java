@@ -38,8 +38,7 @@ public class ProyectoGrado {
 
     private String estado; //este se trabajará con el patron state mas adelante
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "anteproyecto_id")
+    @OneToOne(mappedBy = "proyectoGrado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Anteproyecto anteproyecto;
 
 

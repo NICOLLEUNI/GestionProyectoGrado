@@ -3,7 +3,7 @@ package co.unicauca.infra.dto;
 import java.util.List;
 
 public record FormatoAResponse (
-    String id,
+    Long id,
     String title,
     String mode,
     String projectManagerEmail,

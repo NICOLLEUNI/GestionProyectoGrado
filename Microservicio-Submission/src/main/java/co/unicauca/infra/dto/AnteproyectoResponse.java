@@ -8,7 +8,6 @@ public record AnteproyectoResponse(
     String titulo,
     LocalDate fecha,
     String estado,
-    String observaciones,
     Long idProyectoGrado
 
 ){}
