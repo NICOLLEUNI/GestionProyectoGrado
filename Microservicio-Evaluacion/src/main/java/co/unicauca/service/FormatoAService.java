@@ -5,6 +5,7 @@ import co.unicauca.infra.dto.*;
 import co.unicauca.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,7 +80,10 @@ public class FormatoAService {
      * Actualiza el estado del Formato A (por ejemplo, aprobado o rechazado)
      * y aumenta el contador en 1.
      */
-    public Optional<FormatoAResponse> actualizarEstado(Long id, EnumEstado newState, String observations) {
+    /**
+     * 🔹 Actualiza el estado del FormatoA y devuelve el objeto completo
+     */
+    public Optional<FormatoA> actualizarEstado(Long id, EnumEstado newState, String observations) {
         Optional<FormatoA> formatoAOpt = formatoARepository.findById(id);
         if (formatoAOpt.isEmpty()) return Optional.empty();
 
@@ -87,18 +91,54 @@ public class FormatoAService {
         formatoA.setState(newState);
         formatoA.setObservations(observations);
 
-        // 🔹 Incrementar contador
+        // Incrementar contador
         formatoA.setCounter(formatoA.getCounter() + 1);
 
         formatoARepository.save(formatoA);
 
-        return Optional.of(new FormatoAResponse(
+        return Optional.of(formatoA);
+    }
+
+
+    /**
+     * 🧭 Mapea un FormatoA a su DTO FormatoAResponse (para Submission)
+     */
+    public FormatoAResponse mapToFormatoAResponse(FormatoA formatoA) {
+        return new FormatoAResponse(
                 Math.toIntExact(formatoA.getId()),
                 formatoA.getTitle(),
                 formatoA.getState().toString(),
                 formatoA.getObservations(),
                 formatoA.getCounter()
-        ));
+        );
+    }
+
+    /**
+     * ✉️ Mapea un FormatoA a su DTO FormatoAResponseNotificacion (para Notificación)
+     */
+    public FormatoAReponseNotificacion mapToFormatoAResponseNotificacion(FormatoA formatoA) {
+        // 🔹 Obtener correos de estudiantes
+        List<String> correosEstudiantes = formatoA.getEstudiantes()
+                .stream()
+                .map(Persona::getEmail)
+                .toList();
+
+        // 🔹 Obtener correos de docentes (director y codirector, si existen)
+        List<String> correosDocentes = new ArrayList<>();
+        if (formatoA.getProjectManager() != null && formatoA.getProjectManager().getEmail() != null) {
+            correosDocentes.add(formatoA.getProjectManager().getEmail());
+        }
+        if (formatoA.getProjectCoManager() != null && formatoA.getProjectCoManager().getEmail() != null) {
+            correosDocentes.add(formatoA.getProjectCoManager().getEmail());
+        }
+
+        // 🔹 Crear y devolver el DTO
+        return new FormatoAReponseNotificacion(
+                formatoA.getId(),
+                formatoA.getTitle(),
+                correosEstudiantes,
+                correosDocentes
+        );
     }
 }
 

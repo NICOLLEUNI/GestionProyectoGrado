@@ -56,20 +56,26 @@ public class FormatoAFacade {
      * Actualiza el estado de un FormatoA y notifica por RabbitMQ.
      */
     public FormatoAResponse actualizarEstado(Long id, EnumEstado nuevoEstado, String observaciones) {
-        // 🔹 El service devuelve un Optional<FormatoAResponse>
-        Optional<FormatoAResponse> responseOpt = formatoAService.actualizarEstado(id, nuevoEstado, observaciones);
+        Optional<FormatoA> formatoAOpt = formatoAService.actualizarEstado(id, nuevoEstado, observaciones);
 
-        if (responseOpt.isEmpty()) {
+        if (formatoAOpt.isEmpty()) {
             throw new RuntimeException("❌ No se encontró el FormatoA con id: " + id);
         }
 
-        FormatoAResponse response = responseOpt.get();
+        FormatoA formatoA = formatoAOpt.get();
 
+        // 🔹 Mapear a los dos DTOs
+        FormatoAResponse formatoAResponse = formatoAService.mapToFormatoAResponse(formatoA);
+        FormatoAReponseNotificacion formatoAResponseNotificacion = formatoAService.mapToFormatoAResponseNotificacion(formatoA);
 
-        // ✅ Publicar en la cola de formatos evaluados
-        publisher.publishFormatoAEvaluado(response);
+        // 📤 Publicar a Submission
+        publisher.publishFormatoAEvaluado(formatoAResponse);
 
-        return response;
+        // 📤 Publicar a Notificación
+        publisher.publishFormatoAEvaluadoNotificacion(formatoAResponseNotificacion);
+
+        // ✅ Devolver respuesta al cliente
+        return formatoAResponse;
     }
 
 }
