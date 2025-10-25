@@ -1,10 +1,15 @@
 package co.unicauca.service;
 
+import co.unicauca.entity.EnumRol;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.dto.PersonaRequest;
 import co.unicauca.repository.PersonaRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PersonaService {
@@ -29,6 +34,7 @@ public class PersonaService {
         persona.setLastname(request.lastname());
         persona.setEmail(request.email());
         persona.setDepartment(request.department());
+        persona.setPrograma(request.programa());
 
         // Convertir los roles del request (Set<String>) a EnumSet<EnumRol>
         persona.setRoles(convertirRoles(request.roles()));

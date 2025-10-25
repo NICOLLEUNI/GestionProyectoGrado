@@ -1,4 +1,13 @@
 package co.unicauca.infra.dto;
 
-public record PersonaRequest() {
-}
+import java.util.Set;
+
+public record PersonaRequest(
+        Long id,
+        String name,
+         String lastname,
+         String email,
+         Set<String> roles,
+        String department,
+          String programa
+) { }

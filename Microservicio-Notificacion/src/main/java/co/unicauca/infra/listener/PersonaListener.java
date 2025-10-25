@@ -1,6 +1,10 @@
 package co.unicauca.infra.listener;
 
+import co.unicauca.infra.config.RabbitMQConfig;
+import co.unicauca.infra.dto.PersonaRequest;
+import co.unicauca.service.PersonaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
