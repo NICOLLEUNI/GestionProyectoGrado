@@ -17,9 +17,9 @@ import org.springframework.context.annotation.*;
 public class RabbitMQConfig {
 
     // 📨 Colas donde Evaluación RECIBE mensajes
-    public static final String FORMATOA_QUEUE = "formatoa.queue";
+    public static final String FORMATOA_CREADO_QUEUE = "formatoa.creado.queue";
     public static final String FORMATOA_EVALUADO_QUEUE = "formatoa.evaluado.queue"; // nueva cola
-    public static final String ANTEPROYECTO_QUEUE = "anteproyecto.queue";
+    public static final String ANTEPROYECTO_CREADO_QUEUE = "anteproyecto.creado.queue";
     public static final String USUARIO_QUEUE = "usuario.queue";
 
     /**
@@ -27,7 +27,7 @@ public class RabbitMQConfig {
      */
     @Bean
     public Queue formatoAQueue() {
-        return new Queue(FORMATOA_QUEUE, true);
+        return new Queue(FORMATOA_CREADO_QUEUE, true);
     }
 
     @Bean
@@ -37,7 +37,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue anteproyectoQueue() {
-        return new Queue(ANTEPROYECTO_QUEUE, true);
+        return new Queue(ANTEPROYECTO_CREADO_QUEUE, true);
     }
 
     @Bean

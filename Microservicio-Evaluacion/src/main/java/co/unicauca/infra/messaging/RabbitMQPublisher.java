@@ -26,7 +26,7 @@ public class RabbitMQPublisher {
     }
 
     public void publishFormatoA(Object formatoAResponse) {
-        publish(RabbitMQConfig.FORMATOA_QUEUE, formatoAResponse);
+        publish(RabbitMQConfig.FORMATOA_CREADO_QUEUE, formatoAResponse);
     }
 
     public void publishFormatoAEvaluado(Object formatoAResponse) {
@@ -34,7 +34,7 @@ public class RabbitMQPublisher {
     }
 
     public void publishAnteproyecto(Object anteproyectoResponse) {
-        publish(RabbitMQConfig.ANTEPROYECTO_QUEUE, anteproyectoResponse);
+        publish(RabbitMQConfig.ANTEPROYECTO_CREADO_QUEUE, anteproyectoResponse);
     }
 
     public void publishUsuario(Object usuarioResponse) {
