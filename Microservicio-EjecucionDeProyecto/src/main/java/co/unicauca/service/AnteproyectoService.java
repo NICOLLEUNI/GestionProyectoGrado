@@ -1,44 +1,42 @@
 package co.unicauca.service;
 
 import co.unicauca.entity.AnteproyectoEntity;
+import co.unicauca.entity.ProyectoGradoEntity;
 import co.unicauca.repository.AnteproyectoRepository;
+import co.unicauca.repository.ProyectoGradoRepository;
+import co.unicauca.infra.dto.AnteproyectoResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class AnteproyectoService {
 
-    private final AnteproyectoRepository anteproyectoRepository;
+    @Autowired
+    private AnteproyectoRepository anteproyectoRepository;
 
-    public AnteproyectoService(AnteproyectoRepository anteproyectoRepository) {
-        this.anteproyectoRepository = anteproyectoRepository;
-    }
-
-    /**
-     * Guarda la entidad si es nueva o actualiza si ya existe.
-     */
-    public AnteproyectoEntity saveOrUpdate(AnteproyectoEntity entity) {
-        if (entity.getId() != null) {
-            Optional<AnteproyectoEntity> existing = anteproyectoRepository.findById(entity.getId());
-            if (existing.isPresent()) {
-                AnteproyectoEntity actual = existing.get();
-                actual.setTitulo(entity.getTitulo());
-                actual.setEstado(entity.getEstado());
-                actual.setFecha(entity.getFecha());
-                actual.setObservaciones(entity.getObservaciones());
-                actual.setProyectoGrado(entity.getProyectoGrado());
-                return anteproyectoRepository.save(actual);
-            }
-        }
-        return anteproyectoRepository.save(entity);
-    }
+    @Autowired
+    private ProyectoGradoRepository proyectoGradoRepository;
 
     /**
-     * Buscar por ID
+     * Método que mapea el AnteproyectoResponse y lo guarda internamente en la base de datos
      */
-    public AnteproyectoEntity findById(Long id) {
-        return anteproyectoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Anteproyecto no encontrado con ID: " + id));
+    public void saveInterno(AnteproyectoResponse response) {
+        // Obtener ProyectoGrado de la base de datos usando el idProyectoGrado
+        ProyectoGradoEntity proyectoGrado = proyectoGradoRepository.findById(response.idProyectoGrado())
+                .orElseThrow(() -> new RuntimeException("Proyecto Grado no encontrado"));
+
+        // Crear una nueva entidad AnteproyectoEntity con la información recibida
+        AnteproyectoEntity anteproyecto = new AnteproyectoEntity();
+        anteproyecto.setId(response.id());
+        anteproyecto.setTitulo(response.titulo());
+        anteproyecto.setEstado(response.estado());
+        anteproyecto.setObservaciones(response.observaciones());
+        anteproyecto.setFecha(response.fecha());
+
+        // Asociar el Anteproyecto con el ProyectoGrado
+        anteproyecto.setProyectoGrado(proyectoGrado);
+
+        // Guardar el Anteproyecto en la base de datos
+        anteproyectoRepository.save(anteproyecto);
     }
 }

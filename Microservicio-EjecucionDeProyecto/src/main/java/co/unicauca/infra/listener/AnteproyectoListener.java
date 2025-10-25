@@ -1,38 +1,22 @@
 package co.unicauca.infra.listener;
 
-import co.unicauca.entity.AnteproyectoEntity;
-import co.unicauca.infra.dto.AnteproyectoRequest;
+import co.unicauca.infra.config.RabbitMQConfig;
+import co.unicauca.infra.dto.AnteproyectoResponse;
 import co.unicauca.service.AnteproyectoService;
-import co.unicauca.service.mapper.AnteproyectoMapperService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Component
 public class AnteproyectoListener {
 
-    private final AnteproyectoService anteproyectoService;
-    private final AnteproyectoMapperService mapper;
 
-    public AnteproyectoListener(AnteproyectoService anteproyectoService,
-                                AnteproyectoMapperService mapper) {
-        this.anteproyectoService = anteproyectoService;
-        this.mapper = mapper;
-    }
+    private AnteproyectoService anteproyectoService;
 
-    /**
-     * Listener para la cola "q.anteproyecto.created".
-     * Recibe un AnteproyectoRequest, lo mapea a entidad y persiste.
-     */
-    @RabbitListener(queues = "q.anteproyecto.created")
-    public void recibirAnteproyecto(AnteproyectoRequest request) {
-
-        // 🔹 Mapear DTO a entidad
-        AnteproyectoEntity entity = mapper.mapFromRequest(request);
-
-        // 🔹 Persistir: guarda nuevo o actualiza existente
-        anteproyectoService.saveOrUpdate(entity);
-
-        // 🔹 Log opcional
-        System.out.println("Anteproyecto procesado y persistido: " + entity.getTitulo());
+    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_QUEUE)  // Cola que envía el microservicio de evaluación
+    public void handleAnteproyectoResponse(AnteproyectoResponse response) {
+        // Llamar al servicio para guardar el Anteproyecto
+        anteproyectoService.saveInterno(response);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PersonaRepository extends JpaRepository<PersonaEntity, Long> {
-    List<PersonaEntity> findByEmailIn(List<String> emails);
+    // Método que permite buscar personas por una lista de correos electrónicos
+    List<PersonaEntity> findAllByEmailIn(List<String> emails);
 
 }

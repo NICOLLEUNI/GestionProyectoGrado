@@ -4,11 +4,14 @@ import java.util.List;
 
 public record FormatoAResponse(
         String id,
-        String titulo,
+        String title,
         String mode,
-        String estado,
-        String observaciones,
-        int counter,
-        Long idProyectoGrado,
-        List<Long> versionesIds
+        String projectManagerEmail,
+        String projectCoManagerEmail,
+        String generalObjetive,
+        String specificObjetives,
+        String archivoPDF,
+        String cartaLaboral,
+        List<String> estudiante,
+        int counter
 ) {}

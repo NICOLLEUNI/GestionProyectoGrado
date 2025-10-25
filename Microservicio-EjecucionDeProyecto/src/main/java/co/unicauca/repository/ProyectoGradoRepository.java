@@ -2,20 +2,22 @@ package co.unicauca.repository;
 
 import co.unicauca.entity.ProyectoGradoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface ProyectoGradoRepository extends JpaRepository<ProyectoGradoEntity, String> {
+@Repository
+public interface ProyectoGradoRepository extends JpaRepository<ProyectoGradoEntity, Long> {
 
-    @Query("""
-        SELECT p FROM ProyectoGradoEntity p
-        LEFT JOIN FETCH p.anteproyecto
-        LEFT JOIN FETCH p.formatoAActual f
-        LEFT JOIN FETCH f.versiones
-        LEFT JOIN FETCH p.personas
-        WHERE p.id = :id
-    """)
-    Optional<ProyectoGradoEntity> findByIdWithAllRelations(@Param("id") Long id);
+    // Método para encontrar un ProyectoGradoEntity por id
+    Optional<ProyectoGradoEntity> findById(Long id);
+
+    // Puedes agregar más métodos personalizados según sea necesario
+    // Ejemplo: Buscar por título
+    Optional<ProyectoGradoEntity> findByTitulo(String titulo);
+
+    // Método para obtener el ProyectoGrado por estado
+    Optional<ProyectoGradoEntity> findByEstado(String estado);
+
+    boolean existsByEstudiantesEmailContainsAndEstadoNot(String emailEstudiante, String estado);
 }

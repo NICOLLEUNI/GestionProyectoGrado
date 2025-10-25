@@ -1,54 +1,53 @@
 package co.unicauca.service;
 
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.FormatoAEntity;
 import co.unicauca.entity.FormatoAVersionEntity;
-import co.unicauca.infra.dto.FormatoAVersionRequest;
-import co.unicauca.service.mapper.FormatoAVersionMapperService;
+import co.unicauca.infra.dto.FormatoAUpdateResponse;
 import co.unicauca.repository.FormatoAVersionRepository;
+import co.unicauca.repository.FormatoARepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 public class FormatoAVersionService {
 
-    private final FormatoAVersionRepository repository;
-    private final FormatoAVersionMapperService mapper;
+    @Autowired
+    private FormatoARepository formatoARepository;
 
-    public FormatoAVersionService(FormatoAVersionRepository repository, FormatoAVersionMapperService mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
-    }
+    @Autowired
+    private FormatoAVersionRepository formatoAVersionRepository;
 
     /**
-     * Guarda una nueva versión o actualiza si ya existe.
+     * Método para guardar internamente una versión de FormatoA
+     * @param response Respuesta de FormatoAUpdateResponse
      */
-    @Transactional
-    public FormatoAVersionEntity saveOrUpdate(FormatoAVersionEntity entity) {
-        if (entity.getId() != null) {
-            Optional<FormatoAVersionEntity> existing = repository.findById(entity.getId());
-            if (existing.isPresent()) {
-                FormatoAVersionEntity actual = existing.get();
-                actual.setNumVersion(entity.getNumVersion());
-                actual.setFecha(entity.getFecha());
-                actual.setTitulo(entity.getTitulo());
-                actual.setModalidad(entity.getModalidad());
-                actual.setEstado(entity.getEstado());
-                actual.setObservaciones(entity.getObservaciones());
-                actual.setCounter(entity.getCounter());
-                actual.setFormatoA(entity.getFormatoA());
-                return repository.save(actual);
-            }
-        }
-        return repository.save(entity);
-    }
+    public void saveInterno(FormatoAUpdateResponse response) {
+        // Obtener el FormatoA original desde la base de datos utilizando el id recibido en el response
+        FormatoAEntity formatoA = formatoARepository.findById(Long.valueOf(response.id()))
+                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado"));
 
-    /**
-     * Guardar directamente desde request
-     */
-    @Transactional
-    public FormatoAVersionEntity guardarVersion(FormatoAVersionRequest request) {
-        FormatoAVersionEntity entity = mapper.mapFromRequest(request);
-        return saveOrUpdate(entity);
+        // Crear una nueva versión de FormatoA
+        FormatoAVersionEntity version = new FormatoAVersionEntity();
+        version.setTitle(formatoA.getTitle()); // Mantener el título del formato original
+        version.setMode(formatoA.getMode()); // Mantener la modalidad del formato original
+        version.setGeneralObjetive(formatoA.getGeneralObjetive()); // Mantener el objetivo general
+        version.setSpecificObjetives(formatoA.getSpecificObjetives()); // Mantener los objetivos específicos
+        version.setArchivoPDF(formatoA.getArchivoPDF()); // Mantener el archivo PDF original
+        version.setCartaLaboral(formatoA.getCartaLaboral()); // Mantener la carta laboral original
+        version.setState(EnumEstado.valueOf(response.estado()));  // Asignar el nuevo estado recibido
+        version.setObservations(response.observaciones()); // Asignar las observaciones recibidas
+        version.setCounter(response.counter()); // Asignar el contador recibido
+
+        // Asociar la nueva versión al FormatoA
+        version.setFormatoA(formatoA);
+
+        // Guardar la nueva versión en la base de datos
+        formatoAVersionRepository.save(version);
+
+        // Actualizar el FormatoA con los nuevos valores de estado y observaciones
+        formatoA.setState(EnumEstado.valueOf(response.estado()));
+        formatoA.setCounter(response.counter()); // Actualizar el contador si es necesario
+        formatoARepository.save(formatoA); // Guardar el FormatoA actualizado en la base de datos
     }
 }

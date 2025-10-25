@@ -1,16 +1,15 @@
 package co.unicauca.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "formato_a_version")
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
+@Table(name = "formato_a_version")
 public class FormatoAVersionEntity {
 
     @Id
@@ -18,14 +17,23 @@ public class FormatoAVersionEntity {
     private Long id;
 
     private int numVersion;
-    private LocalDate fecha;
-    private String titulo;
-    private String modalidad;
-    private String estado;
-    private String observaciones;
-    private int counter;
-    private int IdformatoA;
+    private LocalDate fecha;  // `date` corresponde aquí
 
+    private String title;
+
+    @Enumerated(EnumType.STRING)  // Aquí usamos Enum para el mode
+    private EnumModalidad mode; // Usamos EnumModalidad en lugar de String
+
+    private String generalObjetive;
+    private String specificObjetives;
+    private String archivoPDF;
+    private String cartaLaboral;
+
+    @Enumerated(EnumType.STRING)  // Aquí usamos Enum para el state
+    private EnumEstado state; // Usamos EnumEstado en lugar de String
+
+    private String observations;  // `observations` corresponde aquí
+    private int counter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "formato_a_id")

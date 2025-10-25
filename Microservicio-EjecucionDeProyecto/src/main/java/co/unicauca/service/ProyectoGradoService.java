@@ -1,71 +1,49 @@
 package co.unicauca.service;
 
-import co.unicauca.entity.*;
-import co.unicauca.repository.*;
+import co.unicauca.entity.AnteproyectoEntity;
+import co.unicauca.entity.FormatoAEntity;
+import co.unicauca.entity.ProyectoGradoEntity;
+import co.unicauca.repository.AnteproyectoRepository;
+import co.unicauca.repository.FormatoARepository;
+import co.unicauca.repository.ProyectoGradoRepository;
+import co.unicauca.infra.dto.ProyectoGradoResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class ProyectoGradoService {
 
-    private final ProyectoGradoRepository proyectoRepository;
-    private final FormatoARepository formatoARepository;
-    private final FormatoAVersionRepository versionRepository;
-    private final AnteproyectoRepository anteproyectoRepository;
-    private final PersonaRepository personaRepository;
+    @Autowired
+    private ProyectoGradoRepository proyectoGradoRepository;
 
-    public ProyectoGradoService(
-            ProyectoGradoRepository proyectoRepository,
-            FormatoARepository formatoARepository,
-            FormatoAVersionRepository versionRepository,
-            AnteproyectoRepository anteproyectoRepository,
-            PersonaRepository personaRepository) {
-        this.proyectoRepository = proyectoRepository;
-        this.formatoARepository = formatoARepository;
-        this.versionRepository = versionRepository;
-        this.anteproyectoRepository = anteproyectoRepository;
-        this.personaRepository = personaRepository;
-    }
+    @Autowired
+    private FormatoARepository formatoARepository;
+
+    @Autowired
+    private AnteproyectoRepository anteproyectoRepository;
 
     /**
-     * Reconstruye y persiste un ProyectoGrado completo a partir de las piezas.
+     * Método para guardar internamente un ProyectoGrado
+     * @param response Respuesta del ProyectoGrado (ProyectoGradoResponse)
      */
-    @Transactional
-    public ProyectoGradoEntity reconstruirProyecto(
-            Long formatoAId,
-            Long versionId,
-            Long anteproyectoId,
-            List<Long> estudiantesIds
-    ) {
-        // 🔹 Buscar entidades por ID
-        FormatoAEntity formatoA = formatoARepository.findById(Long.valueOf(String.valueOf(formatoAId)))
-                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + formatoAId));
+    public void saveInterno(ProyectoGradoResponse response) {
+        // Obtener FormatoA y Anteproyecto desde la base de datos usando los IDs
+        FormatoAEntity formatoA = formatoARepository.findById(response.idFormatoA())
+                .orElseThrow(() -> new RuntimeException("Formato A no encontrado"));
+        AnteproyectoEntity anteproyecto = anteproyectoRepository.findById(response.idAnteproyecto())
+                .orElseThrow(() -> new RuntimeException("Anteproyecto no encontrado"));
 
-        FormatoAVersionEntity version = versionRepository.findById(versionId)
-                .orElseThrow(() -> new RuntimeException("Version FormatoA no encontrada: " + versionId));
+        // Crear una nueva entidad ProyectoGrado con los datos del response
+        ProyectoGradoEntity proyectoGrado = new ProyectoGradoEntity();
+        proyectoGrado.setId(response.id());
+        proyectoGrado.setTitulo(response.nombre());
+        proyectoGrado.setFechaCreacion(response.fecha().atStartOfDay());  // Convertir fecha a LocalDateTime
+        proyectoGrado.setFormatoAActual(formatoA);
+        proyectoGrado.setAnteproyecto(anteproyecto);
 
-        AnteproyectoEntity anteproyecto = anteproyectoRepository.findById(anteproyectoId)
-                .orElseThrow(() -> new RuntimeException("Anteproyecto no encontrado: " + anteproyectoId));
-
-        List<PersonaEntity> estudiantes = personaRepository.findAllById(estudiantesIds);
-
-        // 🔹 Asociar la versión al FormatoA si no está ya
-        if (!formatoA.getVersiones().contains(version)) {
-            formatoA.getVersiones().add(version);
-            version.setFormatoA(formatoA);
-        }
-
-        // 🔹 Crear ProyectoGradoEntity
-        ProyectoGradoEntity proyecto = new ProyectoGradoEntity();
-        proyecto.setFormatoAActual(formatoA);
-        proyecto.setAnteproyecto(anteproyecto);
-        proyecto.setPersonas(estudiantes);
-        proyecto.setTitulo(formatoA.getTitulo());
-        proyecto.setEstado("ACTIVO");
-
-        // 🔹 Persistir proyecto completo
-        return proyectoRepository.save(proyecto);
+        // Guardar el ProyectoGrado en la base de datos
+        proyectoGradoRepository.save(proyectoGrado);
     }
 }
