@@ -2,14 +2,15 @@ package co.unicauca.service;
 
 import co.unicauca.entity.*;
 import co.unicauca.infra.dto.FormatoARequest;
+import co.unicauca.infra.dto.FormatoAResponse;
+import co.unicauca.infra.dto.notification.FormatoAnotification;
+import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.FormatoARepository;
-import co.unicauca.repository.FormatoVersionRepository;
 import co.unicauca.repository.PersonaRepository;
-import co.unicauca.repository.ProyectoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class FormatoAService {
@@ -18,12 +19,14 @@ public class FormatoAService {
     private final PersonaRepository personaRepository;
     private final ProyectoService proyectoService;
     private final VersionService versionService;
+    private final RabbitMQPublisher rabbitMQPublisher;
 
-    public FormatoAService(FormatoARepository formatoARepository, PersonaRepository personaRepository, ProyectoService proyectoService, VersionService versionService) {
+    public FormatoAService(FormatoARepository formatoARepository, PersonaRepository personaRepository, ProyectoService proyectoService, VersionService versionService, RabbitMQPublisher rabbitMQPublisher) {
         this.formatoARepository = formatoARepository;
         this.personaRepository = personaRepository;
         this.proyectoService = proyectoService;
         this.versionService = versionService;
+        this.rabbitMQPublisher = rabbitMQPublisher;
     }
 
     //metodo para subir un formatoA
@@ -42,7 +45,43 @@ public class FormatoAService {
 
         proyectoService.crearProyectoGrado(formatoAGuardado, version1);
 
+        // ⭐⭐ CONVERTIR A RESPONSE Y PUBLICAR ⭐⭐
+        FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
+        rabbitMQPublisher.publicarFormatoACreado(response);
+
+        // 2. Para notificaciones (solo correos)
+        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
+        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
+
         return formatoAGuardado;
+    }
+
+    /**
+     * Convierte FormatoA entity a FormatoAResponse DTO
+     */
+    private FormatoAResponse convertirAFormatoAResponse(FormatoA formatoA) {
+        return new FormatoAResponse(
+                formatoA.getId(),
+                formatoA.getTitle(),
+                formatoA.getMode().name(),
+                formatoA.getProjectManagerEmail(),
+                formatoA.getProjectCoManagerEmail(),
+                formatoA.getGeneralObjetive(),
+                formatoA.getSpecificObjetives(),
+                formatoA.getArchivoPDF(),
+                formatoA.getCartaLaboral(),
+                formatoA.getEstudianteEmails(), // ← Asegúrate que este método existe
+                formatoA.getCounter()
+        );
+    }
+
+    private FormatoAnotification convertirAFormatoANotificacionEvent(FormatoA formatoA) {
+        return new FormatoAnotification(
+                formatoA.getId(),
+                formatoA.getTitle(),
+                formatoA.getEstudianteEmails(), // Estudiantes para buscar programa
+                formatoA.getProjectManagerEmail() // Director para buscar departamento
+        );
     }
 
     @Transactional
@@ -65,6 +104,20 @@ public class FormatoAService {
         proyectoService.agregarVersionAProyectoGrado(formatoAActualizado, nuevaVersion);
 
         return formatoAActualizado;
+    }
+
+    public List<FormatoA> listarFormatosAPorDocente(String emailDocente) {
+        // Validar que el docente existe y es realmente docente
+        Persona docente = personaRepository.findByEmail(emailDocente)
+                .orElseThrow(() -> new RuntimeException("Docente no encontrado: " + emailDocente));
+
+        if (!docente.esDocente()) {
+            throw new RuntimeException("El usuario " + emailDocente + " no es docente");
+        }
+
+        // Buscar formatos donde el docente sea director O codirector
+        return formatoARepository.findByProjectManagerEmailOrProjectCoManagerEmail(
+                emailDocente, emailDocente);
     }
 
 

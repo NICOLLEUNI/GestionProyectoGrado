@@ -4,6 +4,9 @@ import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.EnumEstadoAnteproyecto;
 import co.unicauca.entity.ProyectoGrado;
+import co.unicauca.infra.dto.AnteproyectoResponse;
+import co.unicauca.infra.dto.notification.AnteproyectoNotification;
+import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.AnteproyectoRepository;
 import co.unicauca.repository.ProyectoRepository;
 import jakarta.transaction.Transactional;
@@ -17,10 +20,12 @@ public class AnteproyectoService {
 
     private final AnteproyectoRepository anteproyectoRepository;
     private final ProyectoRepository proyectoRepository;
+    private final RabbitMQPublisher rabbitMQPublisher; // ← AGREGAR
 
-    public AnteproyectoService(AnteproyectoRepository anteproyectoRepository, ProyectoRepository proyectoRepository) {
+    public AnteproyectoService(AnteproyectoRepository anteproyectoRepository, ProyectoRepository proyectoRepository, RabbitMQPublisher rabbitMQPublisher) {
         this.anteproyectoRepository = anteproyectoRepository;
         this.proyectoRepository = proyectoRepository;
+        this.rabbitMQPublisher = rabbitMQPublisher;
     }
 
     /**
@@ -52,7 +57,36 @@ public class AnteproyectoService {
         proyecto.setAnteproyecto(anteproyectoGuardado);
         proyectoRepository.save(proyecto);
 
+        // ⭐⭐ CONVERTIR Y PUBLICAR ANTEPROYECTOResponse ⭐⭐
+        AnteproyectoResponse response = convertirAAnteproyectoResponse(anteproyectoGuardado);
+        rabbitMQPublisher.publicarAnteproyectoCreado(response);
+
+        // 2. Para notificaciones (solo correos)
+        AnteproyectoNotification notificacion = convertirAAnteproyectoNotificacionEvent(anteproyectoGuardado);
+        rabbitMQPublisher.publicarNotificacionAnteproyectoCreado(notificacion);
+
         return anteproyectoGuardado;
+    }
+
+    /**
+     * Convierte Anteproyecto entity a AnteproyectoResponse DTO
+     */
+    private AnteproyectoResponse convertirAAnteproyectoResponse(Anteproyecto anteproyecto) {
+        return new AnteproyectoResponse(
+                anteproyecto.getId(),
+                anteproyecto.getTitulo(),
+                anteproyecto.getFechaCreacion(),
+                anteproyecto.getEstado().name(), // ← Convertir Enum a String
+                anteproyecto.getProyectoGrado().getId()
+        );
+    }
+
+    private AnteproyectoNotification convertirAAnteproyectoNotificacionEvent(Anteproyecto anteproyecto) {
+        return new AnteproyectoNotification(
+                anteproyecto.getId(),
+                anteproyecto.getTitulo(),
+                anteproyecto.getProyectoGrado().getFormatoAActual().getProjectManagerEmail() // Director del proyecto
+        );
     }
 
     private void validarPuedeSubirAnteproyecto(ProyectoGrado proyecto) {

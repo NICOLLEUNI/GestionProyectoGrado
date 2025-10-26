@@ -4,6 +4,9 @@ import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.FormatoAVersion;
 import co.unicauca.infra.dto.FormatoARequest;
+import co.unicauca.infra.dto.FormatoAVersionResponse;
+import co.unicauca.infra.dto.notification.VersionNotification;
+import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.FormatoVersionRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +14,11 @@ import org.springframework.stereotype.Service;
 public class VersionService {
 
     private final FormatoVersionRepository formatoVersionRepository;
+    private final RabbitMQPublisher rabbitMQPublisher;
 
-    public VersionService(FormatoVersionRepository formatoVersionRepository) {
+    public VersionService(FormatoVersionRepository formatoVersionRepository, RabbitMQPublisher rabbitMQPublisher) {
         this.formatoVersionRepository = formatoVersionRepository;
+        this.rabbitMQPublisher = rabbitMQPublisher;
     }
 
     public FormatoAVersion crearVersionInicial(FormatoA formatoA) {
@@ -31,7 +36,17 @@ public class VersionService {
         version1.setCounter(0);
         version1.setFormatoA(formatoA);
 
-        return formatoVersionRepository.save(version1);
+        FormatoAVersion versionGuardada = formatoVersionRepository.save(version1);
+
+        // ⭐⭐ PUBLICAR VERSIÓN INICIAL ⭐⭐
+        FormatoAVersionResponse response = convertirAVersionResponse(versionGuardada);
+        rabbitMQPublisher.publicarVersionCreada(response);
+
+        // 2. Para notificaciones (solo correos)
+        VersionNotification notificacion = convertirAVersionNotificacionEvent(versionGuardada);
+        rabbitMQPublisher.publicarNotificacionVersionCreada(notificacion);
+
+        return versionGuardada;
     }
 
     public FormatoAVersion crearVersionConEvaluacion(FormatoA formatoAActualizado, FormatoARequest request) {
@@ -51,7 +66,47 @@ public class VersionService {
         version.setCounter(formatoAActualizado.getCounter()); //Counter ACTUALIZADO
         version.setFormatoA(formatoAActualizado);
 
-        return formatoVersionRepository.save(version);
+        FormatoAVersion versionGuardada = formatoVersionRepository.save(version);
+
+        // ⭐⭐ PUBLICAR NUEVA VERSIÓN ⭐⭐
+        FormatoAVersionResponse response = convertirAVersionResponse(versionGuardada);
+        rabbitMQPublisher.publicarVersionCreada(response);
+
+        VersionNotification notificacion = convertirAVersionNotificacionEvent(versionGuardada);
+        rabbitMQPublisher.publicarNotificacionVersionCreada(notificacion);
+
+        return versionGuardada;
+    }
+
+    /**
+     * Convierte FormatoAVersion entity a FormatoAVersionResponse DTO
+     */
+    private FormatoAVersionResponse convertirAVersionResponse(FormatoAVersion version) {
+        return new FormatoAVersionResponse(
+                version.getId(),
+                version.getNumeroVersion(),
+                version.getFecha(),
+                version.getTitle(),
+                version.getMode().name(), // ← Convertir Enum a String
+                version.getState().name(), // ← Convertir Enum a String
+                version.getObservations(),
+                version.getCounter(),
+                version.getFormatoA().getId()
+        );
+    }
+
+    private VersionNotification convertirAVersionNotificacionEvent(FormatoAVersion version) {
+        // Usar la relación para obtener el FormatoA padre
+        FormatoA formatoA = version.getFormatoA();
+
+        return new VersionNotification(
+                version.getId(),
+                formatoA.getId(),
+                version.getNumeroVersion(),
+                version.getState().name(),
+                formatoA.getEstudianteEmails(), // ← Del FormatoA relacionado
+                formatoA.getProjectManagerEmail() // ← Del FormatoA relacionado
+        );
     }
 
     public int obtenerProximaVersion(FormatoA formatoA) {

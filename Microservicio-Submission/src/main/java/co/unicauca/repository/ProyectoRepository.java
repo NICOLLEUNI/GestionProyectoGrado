@@ -13,9 +13,9 @@ public interface ProyectoRepository extends JpaRepository<ProyectoGrado, Long> {
      * Consulta personalizada con @Query - JPQL
      * JPQL trabaja con NOMBRES DE CLASES y ATRIBUTOS, no con tablas y columnas
      */
-    @Query("SELECT COUNT(p) > 0 FROM ProyectoGrado p WHERE :emailEstudiante MEMBER OF p.estudiantesEmail AND p.estado != :estado")
-    boolean existsByEstudiantesEmailContainsAndEstadoNot(@Param("emailEstudiante") String emailEstudiante,
-                                                         @Param("estado") String estado);
+    @Query("SELECT COUNT(p) > 0 FROM ProyectoGrado p JOIN p.estudiantesEmail e WHERE e = :emailEstudiante AND p.estado <> :estado")
+    boolean existsByEstudianteEmailAndEstadoNot(@Param("emailEstudiante") String emailEstudiante,
+                                                @Param("estado") String estado);
 
     //Buscar proyecto por ID del FormatoA actual
     @Query("SELECT p FROM ProyectoGrado p WHERE p.formatoAActual.id = :formatoAId")
@@ -27,5 +27,8 @@ public interface ProyectoRepository extends JpaRepository<ProyectoGrado, Long> {
             @Param("titulo") String titulo,
             @Param("estado") EnumEstado estado
     );
+
+    // En ProyectoRepository.java - AGREGAR ESTE MÉTODO
+    Optional<ProyectoGrado> findByFormatoAActualTitle(String title);
 
 }

@@ -41,4 +41,6 @@ public class Anteproyecto {
         this.proyectoGrado = proyectoGrado;
     }
 
+    public Anteproyecto() {
+    }
 }

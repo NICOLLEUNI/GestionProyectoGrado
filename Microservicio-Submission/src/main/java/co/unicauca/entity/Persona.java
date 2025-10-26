@@ -1,48 +1,56 @@
 package co.unicauca.entity;
 
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
-@Entity
-@Table (name = "persona")
-public class Persona {
+@AllArgsConstructor
+@NoArgsConstructor
 
+@Entity
+public class Persona {
     @Id
-    private Long id;
+    @Column(nullable = false)
+    private Long idUsuario;
     private String name;
     private String lastname;
-    private String email;
-    private List<String> roles;
-    private String department;
 
-    // MÉTODOS PARA VALIDAR ROLES
+    @Column(nullable = false, unique = true)
+    private String email;
+    private String department;
+    private String programa;
+
+    @ElementCollection(targetClass = EnumRol.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "persona_roles", joinColumns = @JoinColumn(name = "idUsuario"))
+    @Enumerated(EnumType.STRING)
+    private Set<EnumRol> roles;
+
+    // comparan con EnumRol
     public boolean esDocente() {
-        return this.roles != null && this.roles.stream()
-                .anyMatch(rol -> "DOCENTE".equalsIgnoreCase(rol));
+        return this.roles != null && this.roles.contains(EnumRol.DOCENTE);
     }
 
     public boolean esEstudiante() {
-        return this.roles != null && this.roles.stream()
-                .anyMatch(rol -> "ESTUDIANTE".equalsIgnoreCase(rol));
+        return this.roles != null && this.roles.contains(EnumRol.ESTUDIANTE);
     }
 
     public boolean esCoordinador() {
-        return this.roles != null && this.roles.stream()
-                .anyMatch(rol -> "COORDINADOR".equalsIgnoreCase(rol));
+        return this.roles != null && this.roles.contains(EnumRol.COORDINADOR);
     }
 
     public boolean esJefeDepartamento() {
-        return this.roles != null && this.roles.stream()
-                .anyMatch(rol -> "JEFE_DEPARTAMENTO".equalsIgnoreCase(rol));
+        return this.roles != null && this.roles.contains(EnumRol.JEFE_DEPARTAMENTO);
     }
 
-
+    //MÉTODO GENERAL PARA CUALQUIER ROL
+    public boolean tieneRol(EnumRol rol) {
+        return this.roles != null && this.roles.contains(rol);
+    }
 }
+

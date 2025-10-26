@@ -25,7 +25,9 @@ public class ProyectoGrado {
     @Column(nullable = false)
     private LocalDateTime fechaCreacion;
 
-    @Column(nullable = false, unique = true)
+    @ElementCollection
+    @CollectionTable(name = "proyecto_estudiantes", joinColumns = @JoinColumn(name = "proyecto_id"))
+    @Column(name = "email_estudiante")
     private List<String> estudiantesEmail; //un estudiante solo puede tener un proyecto activo
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
