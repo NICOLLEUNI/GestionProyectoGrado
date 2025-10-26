@@ -59,8 +59,7 @@ public class ProyectoService {
                 proyectoGrado.getNombre(),
                 proyectoGrado.getFechaCreacion().toLocalDate(), // ← Convertir LocalDateTime a LocalDate
                 proyectoGrado.getEstudiantesEmail(),
-                proyectoGrado.getFormatoAActual().getId(),
-                proyectoGrado.getAnteproyecto() != null ? proyectoGrado.getAnteproyecto().getId() : null
+                proyectoGrado.getFormatoAActual().getId()
         );
     }
 
