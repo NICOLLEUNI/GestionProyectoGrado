@@ -26,7 +26,7 @@ public class RabbitMQPublisher {
     }
 
     public void publishFormatoA(Object formatoAResponse) {
-        publish(RabbitMQConfig.FORMATOA_CREADO_QUEUE, formatoAResponse);
+        publish(RabbitMQConfig.FORMATOA_EVALUACION_QUEUE, formatoAResponse);
     }
 
     // 📤 Publicar evento cuando se evalúa un Formato A (se envía a dos colas)
