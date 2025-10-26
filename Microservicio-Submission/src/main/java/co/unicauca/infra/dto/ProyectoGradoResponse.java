@@ -9,7 +9,5 @@ public record ProyectoGradoResponse (
         String nombre,
         LocalDate fecha,
         List<String> estudiantesEmail,
-        Long IdFormatoA,
-        Long IdAnteproyecto
-
+        Long IdFormatoA
 ){ }
