@@ -23,6 +23,5 @@ public class Anteproyecto {
     private LocalDate fechaCreacion;
     private String archivoPDF;
     private String estado;
-    private String observaciones;
     private Long idProyectoGrado;
 }

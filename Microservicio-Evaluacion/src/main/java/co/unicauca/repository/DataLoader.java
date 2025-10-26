@@ -68,7 +68,6 @@ public class DataLoader implements CommandLineRunner {
         Anteproyecto anteproyecto = new Anteproyecto();
         anteproyecto.setTitulo("Sistema Inteligente para la Gestión de Proyectos de Grado");
         anteproyecto.setEstado("EN_REVISION");
-        anteproyecto.setObservaciones("Pendiente de revisión por el coordinador");
         anteproyecto.setFechaCreacion(LocalDate.now());
         anteproyecto.setIdProyectoGrado(1L);
         anteproyectoRepository.save(anteproyecto);

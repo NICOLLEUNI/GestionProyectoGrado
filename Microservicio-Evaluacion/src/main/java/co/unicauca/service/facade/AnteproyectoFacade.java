@@ -31,10 +31,9 @@ public class AnteproyectoFacade {
         AnteproyectoResponse response = new AnteproyectoResponse(
                 anteproyecto.getId(),
                 anteproyecto.getTitulo(),
+                anteproyecto.getFechaCreacion(),
                 anteproyecto.getEstado(),
-                anteproyecto.getObservaciones(),
-                anteproyecto.getIdProyectoGrado(),
-                anteproyecto.getFechaCreacion()
+                anteproyecto.getIdProyectoGrado()
         );
 
         // ✅ Publicar evento a RabbitMQ
@@ -51,10 +50,9 @@ public class AnteproyectoFacade {
                 .map(a -> new AnteproyectoResponse(
                         a.getId(),
                         a.getTitulo(),
+                        a.getFechaCreacion(),
                         a.getEstado(),
-                        a.getObservaciones(),
-                        a.getIdProyectoGrado(),
-                        a.getFechaCreacion()
+                        a.getIdProyectoGrado()
                 ))
                 .collect(Collectors.toList());
     }
@@ -68,10 +66,9 @@ public class AnteproyectoFacade {
         AnteproyectoResponse response = new AnteproyectoResponse(
                 anteproyecto.getId(),
                 anteproyecto.getTitulo(),
+                anteproyecto.getFechaCreacion(),
                 anteproyecto.getEstado(),
-                anteproyecto.getObservaciones(),
-                anteproyecto.getIdProyectoGrado(),
-                anteproyecto.getFechaCreacion()
+                anteproyecto.getIdProyectoGrado()
         );
 
         return response;

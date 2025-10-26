@@ -23,7 +23,6 @@ public class AnteproyectoService {
         Anteproyecto anteproyecto = new Anteproyecto();
         anteproyecto.setTitulo(request.titulo());
         anteproyecto.setEstado(request.estado() != null ? request.estado() : "PENDIENTE");
-        anteproyecto.setObservaciones(request.observaciones());
         anteproyecto.setIdProyectoGrado(request.idProyectoGrado());
         anteproyecto.setArchivoPDF("pendiente.pdf"); // 🔸 valor por defecto o temporal
         anteproyecto.setFechaCreacion(request.fecha() != null ? request.fecha() : LocalDate.now());
