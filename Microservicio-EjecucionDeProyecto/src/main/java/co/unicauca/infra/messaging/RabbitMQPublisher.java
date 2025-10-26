@@ -16,54 +16,59 @@ public class RabbitMQPublisher {
     }
 
     /**
-     * Publica un mensaje cuando se crea un Formato A.
-     */
-    public void publishFormatoACreado(Object formatoAResponse) {
-        logger.debug("📤 Enviando mensaje de Formato A creado: {}", formatoAResponse);
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.FORMATOA_CREADO_EXCHANGE,
-                RabbitMQConfig.FORMATOA_CREADO_ROUTING_KEY,
-                formatoAResponse
-        );
-    }
-
-    /**
-     * Publica un mensaje cuando se crea un Anteproyecto.
-     */
-    public void publishAnteproyectoCreado(Object anteproyectoResponse) {
-        logger.debug("📤 Enviando mensaje de Anteproyecto creado: {}", anteproyectoResponse);
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.ANTEPROYECTO_CREADO_EXCHANGE,
-                RabbitMQConfig.ANTEPROYECTO_CREADO_ROUTING_KEY,
-                anteproyectoResponse
-        );
-    }
-
-    /**
-     * Publica un mensaje cuando se crea una FormatoAVersion.
+     * Publica FormatoAVersion a la cola correspondiente
      */
     public void publishFormatoAVersionCreada(Object formatoVersionResponse) {
-        logger.debug("📤 Enviando mensaje de FormatoAVersion creada: {}", formatoVersionResponse);
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.FORMATOAVERSION_CREADA_EXCHANGE,
-                RabbitMQConfig.FORMATOAVERSION_CREADA_ROUTING_KEY,
-                formatoVersionResponse
-        );
+        try {
+            logger.info("📤 Enviando FormatoAVersion a RabbitMQ: {}", formatoVersionResponse);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.COLA_FORMATO_A_VERSION, formatoVersionResponse);
+            logger.info("✅ FormatoAVersion enviada a cola: {}", RabbitMQConfig.COLA_FORMATO_A_VERSION);
+        } catch (Exception e) {
+            logger.error("❌ Error enviando FormatoAVersion a RabbitMQ: {}", e.getMessage());
+        }
     }
 
     /**
-     * Publica un mensaje cuando se crea un Proyecto de Grado.
+     * Publica Anteproyecto a la cola correspondiente
+     */
+    public void publishAnteproyectoCreado(Object anteproyectoResponse) {
+        try {
+            logger.info("📤 Enviando Anteproyecto a RabbitMQ: {}", anteproyectoResponse);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.COLA_ANTEPROYECTO, anteproyectoResponse);
+            logger.info("✅ Anteproyecto enviado a cola: {}", RabbitMQConfig.COLA_ANTEPROYECTO);
+        } catch (Exception e) {
+            logger.error("❌ Error enviando Anteproyecto a RabbitMQ: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Publica ProyectoGrado a la cola correspondiente
      */
     public void publishProyectoGradoCreado(Object proyectoResponse) {
-        logger.debug("📤 Enviando mensaje de Proyecto de Grado creado: {}", proyectoResponse);
-        rabbitTemplate.convertAndSend(RabbitMQConfig.PROYECTO_GRADO_CREADO_QUEUE, proyectoResponse);
+        try {
+            logger.info("📤 Enviando ProyectoGrado a RabbitMQ: {}", proyectoResponse);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.COLA_PROYECTO_GRADO, proyectoResponse);
+            logger.info("✅ ProyectoGrado enviado a cola: {}", RabbitMQConfig.COLA_PROYECTO_GRADO);
+        } catch (Exception e) {
+            logger.error("❌ Error enviando ProyectoGrado a RabbitMQ: {}", e.getMessage());
+        }
     }
 
     /**
-     * Publica un mensaje cuando se crea un Usuario.
+     * Publica FormatoA a la cola correspondiente
      */
-    public void publishUsuarioCreado(Object usuarioResponse) {
-        logger.debug("📤 Enviando mensaje de Usuario creado: {}", usuarioResponse);
-        rabbitTemplate.convertAndSend(RabbitMQConfig.USUARIO_QUEUE, usuarioResponse);
+    public void publishFormatoACreado(Object formatoAResponse) {
+        try {
+            logger.info("📤 Enviando FormatoA a RabbitMQ: {}", formatoAResponse);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.COLA_FORMATO_A, formatoAResponse);
+            logger.info("✅ FormatoA enviado a cola: {}", RabbitMQConfig.COLA_FORMATO_A);
+        } catch (Exception e) {
+            logger.error("❌ Error enviando FormatoA a RabbitMQ: {}", e.getMessage());
+        }
     }
-}
+
+    /**
+     * Publica Usuario a la cola correspondiente
+     */
+
+    }

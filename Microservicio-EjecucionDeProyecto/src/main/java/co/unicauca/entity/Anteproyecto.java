@@ -1,5 +1,6 @@
 package co.unicauca.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class Anteproyecto {
     @Column(nullable = false)
     private String titulo;
 
-    @Column(nullable = false)
+    @Column(name = "fecha_creacion", nullable = false)
     private LocalDate fechaCreacion;
 
     @Enumerated(EnumType.STRING)
@@ -31,9 +32,12 @@ public class Anteproyecto {
     @Column(length = 1000) // Para observaciones más largas
     private String observaciones;
 
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "proyecto_grado_id")
+    @JoinColumn(
+            name = "proyecto_grado_id",
+            unique = false,  // ← CAMBIA ESTO A false
+            foreignKey = @ForeignKey(name = "fk_anteproyecto_proyecto")
+    )
     private ProyectoGrado proyectoGrado;
-
-
 }

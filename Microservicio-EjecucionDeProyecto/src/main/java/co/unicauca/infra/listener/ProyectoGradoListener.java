@@ -2,6 +2,7 @@ package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
 import co.unicauca.infra.dto.ProyectoGradoRequest;
+import co.unicauca.infra.dto.ProyectoGradoResponse;
 import co.unicauca.service.ProyectoGradoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -18,14 +19,14 @@ public class ProyectoGradoListener {
         this.proyectoGradoService = proyectoGradoService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.PROYECTO_GRADO_CREADO_QUEUE)
-    public void receiveProyectoGrado(ProyectoGradoRequest proyectoGradoRequest) {
-        logger.info("📥 [PROYECTO_GRADO] Mensaje recibido: {}", proyectoGradoRequest);
+    @RabbitListener(queues = RabbitMQConfig.COLA_PROYECTO_GRADO)
+    public void receiveProyectoGrado(ProyectoGradoResponse proyectoResponse) {
+        logger.info("📥 [PROYECTO_GRADO] Mensaje recibido: {}", proyectoResponse.nombre());
 
         try {
-            // Crear o actualizar el proyecto de grado
-            proyectoGradoService.crearProyecto(proyectoGradoRequest);
-            logger.info("✅ [PROYECTO_GRADO] Proyecto procesado exitosamente: {}", proyectoGradoRequest.id());
+            // ✅ Usar el Service directamente
+            proyectoGradoService.procesarProyectoRecibido(proyectoResponse);
+            logger.info("✅ [PROYECTO_GRADO] Proyecto procesado exitosamente: {}", proyectoResponse.nombre());
         } catch (Exception e) {
             logger.error("❌ [PROYECTO_GRADO] Error procesando proyecto: {}", e.getMessage(), e);
         }

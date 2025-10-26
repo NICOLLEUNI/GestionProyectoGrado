@@ -18,23 +18,16 @@ public class AnteproyectoListener {
         this.anteproyectoService = anteproyectoService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.COLA_ANTEPROYECTO)
     public void receiveAnteproyecto(AnteproyectoRequest anteproyectoRequest) {
         logger.info("📥 [ANTEPROYECTO] Mensaje recibido: {}", anteproyectoRequest);
 
         try {
-            // Crear o actualizar el anteproyecto
-            anteproyectoService.crearAnteproyecto(anteproyectoRequest);
-            logger.info("✅ [ANTEPROYECTO] Anteproyecto procesado exitosamente: {}", anteproyectoRequest.id());
+            // ✅ CAMBIADO: Usar crearOActualizar en lugar de crear
+            anteproyectoService.crearOActualizarAnteproyecto(anteproyectoRequest);
+            logger.info("✅ [ANTEPROYECTO] Anteproyecto procesado exitosamente (creado o actualizado)");
         } catch (Exception e) {
             logger.error("❌ [ANTEPROYECTO] Error procesando anteproyecto: {}", e.getMessage(), e);
         }
-    }
-
-    // Opcional: También puedes escuchar en la cola de notificaciones si es necesario
-    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_NOTIFICACIONES_QUEUE)
-    public void receiveAnteproyectoNotificaciones(AnteproyectoRequest anteproyectoRequest) {
-        logger.info("📥 [ANTEPROYECTO-NOTIF] Mensaje recibido para notificaciones: {}", anteproyectoRequest);
-        // Lógica específica para notificaciones si es necesario
     }
 }

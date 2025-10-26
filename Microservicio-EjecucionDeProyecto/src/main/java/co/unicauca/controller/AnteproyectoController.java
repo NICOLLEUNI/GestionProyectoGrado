@@ -2,55 +2,64 @@ package co.unicauca.controller;
 
 import co.unicauca.infra.dto.AnteproyectoRequest;
 import co.unicauca.infra.dto.AnteproyectoResponse;
-import co.unicauca.service.facade.AnteproyectoFacade;
+import co.unicauca.service.AnteproyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
-/**
- * Controlador REST para manejar las operaciones sobre los Anteproyectos.
- */
 @RestController
 @RequestMapping("/api/anteproyectos")
+@CrossOrigin(origins = "*")
 public class AnteproyectoController {
 
-    private final AnteproyectoFacade anteproyectoFacade;
-
     @Autowired
-    public AnteproyectoController(AnteproyectoFacade anteproyectoFacade) {
-        this.anteproyectoFacade = anteproyectoFacade;
-    }
+    private AnteproyectoService anteproyectoService;
 
-    /**
-     * Crear un nuevo Anteproyecto.
-     *
-     * @param request Datos del anteproyecto (en formato AnteproyectoRequest)
-     * @return Anteproyecto creado
-     */
     @PostMapping("/crear")
-    public ResponseEntity<AnteproyectoResponse> crearAnteproyecto(@RequestBody AnteproyectoRequest request) {
-        AnteproyectoResponse response = anteproyectoFacade.crearAnteproyecto(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> crearAnteproyecto(@RequestBody AnteproyectoRequest request) {
+        try {
+            System.out.println("📨 Recibiendo petición para crear anteproyecto:");
+            System.out.println("   Título: " + request.titulo());
+            System.out.println("   Proyecto Grado ID: " + request.idProyectoGrado());
+
+            AnteproyectoResponse response = anteproyectoService.crearAnteproyecto(request);
+
+            System.out.println("✅ Anteproyecto creado exitosamente: " + response.id());
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            // Manejar error de "Proyecto no encontrado"
+            if (e.getMessage() != null && e.getMessage().contains("Proyecto no encontrado")) {
+                System.err.println("❌ ERROR: " + e.getMessage());
+                return ResponseEntity.badRequest().body(
+                        Map.of(
+                                "error", "No se puede crear el anteproyecto",
+                                "detalle", e.getMessage(),
+                                "tipo", "PROYECTO_NO_ENCONTRADO"
+                        )
+                );
+            }
+            throw e;
+
+        } catch (Exception e) {
+            System.err.println("❌ ERROR inesperado: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(
+                    Map.of("error", "Error interno del servidor")
+            );
+        }
     }
 
-    /**
-     * Obtener todos los anteproyectos registrados.
-     *
-     * @return Lista de anteproyectos
-     */
-
-
-    /**
-     * Obtener un anteproyecto por su ID.
-     *
-     * @param id Identificador del anteproyecto
-     * @return Anteproyecto encontrado
-     */
+    // Puedes agregar otros endpoints si los necesitas
     @GetMapping("/{id}")
     public ResponseEntity<AnteproyectoResponse> obtenerPorId(@PathVariable Long id) {
-        AnteproyectoResponse anteproyecto = anteproyectoFacade.obtenerPorId(id);
-        return ResponseEntity.ok(anteproyecto);
+        try {
+            AnteproyectoResponse response = anteproyectoService.buscarPorId(id);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

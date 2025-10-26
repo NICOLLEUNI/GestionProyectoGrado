@@ -2,7 +2,7 @@ package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
 import co.unicauca.infra.dto.FormatoAVersionResponse;
-import co.unicauca.service.facade.FormatoAVersionFacade;
+import co.unicauca.service.FormatoAVersionService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
@@ -12,23 +12,23 @@ import org.slf4j.LoggerFactory;
 public class FormatoAVersionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(FormatoAVersionListener.class);
-    private final FormatoAVersionFacade formatoAVersionFacade;
+    private final FormatoAVersionService formatoAVersionService;
 
-    public FormatoAVersionListener(FormatoAVersionFacade formatoAVersionFacade) {
-        this.formatoAVersionFacade = formatoAVersionFacade;
+    public FormatoAVersionListener(FormatoAVersionService formatoAVersionService) {
+        this.formatoAVersionService = formatoAVersionService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.FORMATOAVERSION_HISTORICO_QUEUE)
-    public void receiveFormatoAVersion(FormatoAVersionResponse versionResponse) {
-        logger.info("📥 [LISTENER] Mensaje recibido de FormatoAVersion: {}", versionResponse);
+    @RabbitListener(queues = RabbitMQConfig.COLA_FORMATO_A)
+    public void receiveFormatoA(FormatoAVersionResponse formatoResponse) {
+        logger.info("📥 [FORMATO_A] Mensaje recibido: {} - v{}",
+                formatoResponse.title(), formatoResponse.numVersion());
 
         try {
-            // Delegar toda la lógica a la Facade
-            formatoAVersionFacade.procesarVersionRecibida(versionResponse);
-
-            logger.info("✅ [LISTENER] Versión {} procesada exitosamente", versionResponse.numVersion());
+            // ✅ Usar el Service directamente
+            formatoAVersionService.procesarVersionRecibida(formatoResponse);
+            logger.info("✅ [FORMATO_A] Versión procesada exitosamente: v{}", formatoResponse.numVersion());
         } catch (Exception e) {
-            logger.error("❌ [LISTENER] Error procesando versión: {}", e.getMessage(), e);
+            logger.error("❌ [FORMATO_A] Error procesando versión: {}", e.getMessage(), e);
         }
     }
 }

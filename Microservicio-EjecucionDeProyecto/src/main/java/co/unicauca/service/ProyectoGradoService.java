@@ -2,8 +2,11 @@ package co.unicauca.service;
 
 import co.unicauca.entity.*;
 import co.unicauca.infra.dto.*;
+import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.ProyectoGradoRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +20,16 @@ import java.util.stream.Collectors;
 public class ProyectoGradoService {
 
     private final ProyectoGradoRepository proyectoRepository;
+    private final RabbitMQPublisher rabbitMQPublisher;
+    private static final Logger logger = LoggerFactory.getLogger(ProyectoGradoService.class);
 
+    /**
+     * ✅ CREAR PROYECTO DESDE API (PUBLICA EVENTO)
+     */
     @Transactional
     public ProyectoGradoResponse crearProyecto(ProyectoGradoRequest request) {
+        logger.info("🎓 Creando proyecto desde API: {}", request.nombre());
+
         ProyectoGrado proyecto = new ProyectoGrado();
         proyecto.setNombre(request.nombre());
         proyecto.setFechaCreacion(request.fecha().atStartOfDay());
@@ -28,34 +38,55 @@ public class ProyectoGradoService {
         proyecto.setIdFormatoA(request.idFormatoA());
 
         ProyectoGrado guardado = proyectoRepository.save(proyecto);
+        ProyectoGradoResponse response = convertirAResponse(guardado);
+
+        // ✅ PUBLICAR EVENTO a RabbitMQ (solo cuando se crea desde API)
+        rabbitMQPublisher.publishProyectoGradoCreado(response);
+        logger.info("✅ Proyecto creado y evento publicado: {}", response.id());
+
+        return response;
+    }
+
+    /**
+     * ✅ CREAR PROYECTO INTERNO (SIN PUBLICAR EVENTO - PARA LISTENER)
+     */
+    @Transactional
+    public ProyectoGradoResponse crearProyectoInterno(ProyectoGradoRequest request) {
+        logger.info("🔄 Creando proyecto interno (desde listener): {}", request.nombre());
+
+        ProyectoGrado proyecto = new ProyectoGrado();
+        proyecto.setNombre(request.nombre());
+        proyecto.setFechaCreacion(request.fecha().atStartOfDay());
+        proyecto.setEstudiantesEmail(request.estudiantesEmail());
+        proyecto.setEstado("ENTREGADO");
+        proyecto.setIdFormatoA(request.idFormatoA());
+
+        ProyectoGrado guardado = proyectoRepository.save(proyecto);
+        logger.info("✅ Proyecto interno creado (sin evento): {}", guardado.getId());
+
         return convertirAResponse(guardado);
     }
 
+    /**
+     * ✅ PROCESAR PROYECTO RECIBIDO DE RABBITMQ (LISTENER)
+     */
     @Transactional
-    public ProyectoGradoResponse agregarVersionFormato(Long proyectoId, FormatoAVersionRequest versionRequest) {
-        ProyectoGrado proyecto = proyectoRepository.findById(proyectoId)
-                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + proyectoId));
+    public void procesarProyectoRecibido(ProyectoGradoResponse proyectoRecibido) {
+        logger.info("📥 [LISTENER] Procesando proyecto recibido: {}", proyectoRecibido.nombre());
 
-        // ✅ VALIDAR que el formatoAExternoId del proyecto coincida con el idFormatoA de la versión
-        if (proyecto.getIdFormatoA() == null) {
-            throw new RuntimeException("El proyecto no tiene FormatoA asociado");
+        try {
+            // Convertir Response a Request
+            ProyectoGradoRequest request = convertirResponseARequest(proyectoRecibido);
+
+            // ✅ USAR MÉTODO INTERNO que NO publica evento
+            crearProyectoInterno(request);
+
+            logger.info("✅ [LISTENER] Proyecto procesado exitosamente (sin bucle): {}", proyectoRecibido.nombre());
+
+        } catch (Exception e) {
+            logger.error("❌ [LISTENER] Error procesando proyecto: {}", e.getMessage(), e);
+            throw new RuntimeException("Error procesando proyecto recibido", e);
         }
-
-        if (!proyecto.getIdFormatoA().equals(versionRequest.IdFormatoA())) {
-            throw new RuntimeException(
-                    "El FormatoA de la versión (" + versionRequest.IdFormatoA() +
-                            ") no coincide con el FormatoA del proyecto (" + proyecto.getIdFormatoA() + ")"
-            );
-        }
-
-        // ✅ La versión se guarda INDEPENDIENTEMENTE en FormatoAVersionService
-        // Este método solo valida la relación y consistencia de datos
-
-        System.out.println("✅ Versión " + versionRequest.numVersion() +
-                " validada para el proyecto " + proyectoId +
-                " via FormatoA: " + versionRequest.IdFormatoA());
-
-        return convertirAResponse(proyecto);
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +105,8 @@ public class ProyectoGradoService {
 
     @Transactional
     public ProyectoGradoResponse actualizarProyecto(Long id, ProyectoGradoRequest request) {
+        logger.info("✏️ Actualizando proyecto: {}", id);
+
         ProyectoGrado proyecto = proyectoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + id));
 
@@ -82,30 +115,36 @@ public class ProyectoGradoService {
         proyecto.setIdFormatoA(request.idFormatoA());
 
         ProyectoGrado actualizado = proyectoRepository.save(proyecto);
-        return convertirAResponse(actualizado);
+        ProyectoGradoResponse response = convertirAResponse(actualizado);
+
+        // ✅ PUBLICAR EVENTO DE ACTUALIZACIÓN
+        rabbitMQPublisher.publishProyectoGradoCreado(response);
+        logger.info("✅ Proyecto actualizado y evento publicado: {}", id);
+
+        return response;
     }
 
     @Transactional
     public void sincronizarFormatoA(Long proyectoId, Long idFormatoAExterno) {
+        logger.info("🔄 Sincronizando FormatoA para proyecto: {}", proyectoId);
+
         ProyectoGrado proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + proyectoId));
         proyecto.setIdFormatoA(idFormatoAExterno);
         proyectoRepository.save(proyecto);
 
-        System.out.println("✅ FormatoA sincronizado: Proyecto " + proyectoId + " → FormatoA " + idFormatoAExterno);
+        // ✅ PUBLICAR EVENTO DE SINCRONIZACIÓN
+        ProyectoGradoResponse response = convertirAResponse(proyecto);
+        rabbitMQPublisher.publishProyectoGradoCreado(response);
+
+        logger.info("✅ FormatoA sincronizado: Proyecto {} → FormatoA {}", proyectoId, idFormatoAExterno);
     }
 
-    /**
-     * Buscar proyecto por formatoAExternoId (para el Listener)
-     */
     @Transactional(readOnly = true)
     public Optional<ProyectoGrado> buscarPorFormatoAExternoId(Long idFormatoA) {
         return proyectoRepository.findByIdFormatoA(idFormatoA);
     }
 
-    /**
-     * Buscar versiones relacionadas a un proyecto (via formatoAExternoId)
-     */
     @Transactional(readOnly = true)
     public List<FormatoAVersionResponse> buscarVersionesPorProyecto(Long proyectoId) {
         ProyectoGrado proyecto = proyectoRepository.findById(proyectoId)
@@ -115,30 +154,13 @@ public class ProyectoGradoService {
             throw new RuntimeException("El proyecto no tiene FormatoA asociado");
         }
 
-        // Este método necesita ser implementado en FormatoAVersionService
-        // return formatoAVersionService.buscarPorFormatoAExternoId(proyecto.getFormatoAExternoId());
-
-        System.out.println("⚠️ buscarVersionesPorProyecto necesita implementación en FormatoAVersionService");
-        return List.of();
+        logger.info("🔍 Buscando versiones para proyecto {} via FormatoA: {}", proyectoId, proyecto.getIdFormatoA());
+        return List.of(); // Implementar según tu lógica
     }
 
-    // Método interno para uso de otros servicios
     public ProyectoGrado buscarEntidadPorId(Long id) {
         return proyectoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + id));
-    }
-
-    private ProyectoGradoResponse convertirAResponse(ProyectoGrado proyecto) {
-        Long idAnteproyecto = proyecto.getAnteproyecto() != null ? proyecto.getAnteproyecto().getId() : null;
-
-        return new ProyectoGradoResponse(
-                proyecto.getId(),
-                proyecto.getNombre(),
-                proyecto.getFechaCreacion().toLocalDate(),
-                proyecto.getEstudiantesEmail(),
-                proyecto.getIdFormatoA(),
-                idAnteproyecto
-        );
     }
 
     public List<ProyectoGradoResponse> obtenerTodosConRelaciones() {
@@ -146,5 +168,28 @@ public class ProyectoGradoService {
         return proyectos.stream()
                 .map(this::convertirAResponse)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * ✅ CONVERTIR RESPONSE RECIBIDO A REQUEST INTERNO
+     */
+    private ProyectoGradoRequest convertirResponseARequest(ProyectoGradoResponse response) {
+        return new ProyectoGradoRequest(
+                response.id(),
+                response.nombre(),
+                response.fecha(),
+                response.estudiantesEmail(),
+                response.idFormatoA()
+        );
+    }
+
+    private ProyectoGradoResponse convertirAResponse(ProyectoGrado proyecto) {
+        return new ProyectoGradoResponse(
+                proyecto.getId(),
+                proyecto.getNombre(),
+                proyecto.getFechaCreacion().toLocalDate(),
+                proyecto.getEstudiantesEmail(),
+                proyecto.getIdFormatoA()
+        );
     }
 }
