@@ -32,7 +32,7 @@ public class RabbitMQPublisher {
     // 📤 Publicar evento cuando se evalúa un Formato A (se envía a dos colas)
     public void publishFormatoAEvaluado(Object formatoAResponse) {
         // Enviar a microservicio Submission
-        publish(RabbitMQConfig.FORMATOA_EVALUADO_SUBMISSION_QUEUE, formatoAResponse);
+        publish(RabbitMQConfig.FORMATOA_EVALUADO_QUEUE, formatoAResponse);
     }
 
     // 📤 Publicar evento cuando se evalúa un Formato A (se envía a dos colas)

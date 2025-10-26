@@ -20,7 +20,7 @@ public class RabbitMQConfig {
     // 📨 Colas donde Evaluación RECIBE mensajes
     public static final String FORMATOA_EVALUACION_QUEUE = "formatoa.evaluacion.queue";
     // 📨 Colas donde Evaluación ENVÍA mensajes al ser evaluado
-    public static final String FORMATOA_EVALUADO_SUBMISSION_QUEUE = "formatoa.evaluado.submission.queue";
+    public static final String FORMATOA_EVALUADO_QUEUE = "formatoa.evaluado.queue";
     public static final String FORMATOA_EVALUADO_NOTIFICATION_QUEUE = "formatoa.evaluado.notification.queue"; // nueva cola
     public static final String ANTEPROYECTO_CREADO_QUEUE = "anteproyecto.creado.queue";
     public static final String USUARIO_QUEUE = "usuario.queue";
@@ -37,7 +37,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue formatoAEvaluadoSubmissionQueue() {
-        return new Queue(FORMATOA_EVALUADO_SUBMISSION_QUEUE, true);
+        return new Queue(FORMATOA_EVALUADO_QUEUE, true);
     }
 
     @Bean
