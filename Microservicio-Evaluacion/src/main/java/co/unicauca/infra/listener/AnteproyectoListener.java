@@ -21,7 +21,7 @@ public class AnteproyectoListener {
      * Escucha los mensajes de la cola "anteproyecto.queue" definidos en RabbitMQConfig.
      * Cuando se recibe un mensaje con los datos de un AnteproyectoRequest, se guarda en la base de datos.
      */
-    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_CREADO_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
     public void recibirAnteproyecto(AnteproyectoRequest request) {
         System.out.println("📩 Mensaje recibido en anteproyecto.queue: " + request);
         Anteproyecto anteproyecto = anteproyectoService.guardarAnteproyecto(request);

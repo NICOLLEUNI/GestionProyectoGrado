@@ -42,7 +42,7 @@ public class RabbitMQPublisher {
     }
 
     public void publishAnteproyecto(Object anteproyectoResponse) {
-        publish(RabbitMQConfig.ANTEPROYECTO_CREADO_QUEUE, anteproyectoResponse);
+        publish(RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE, anteproyectoResponse);
     }
 
     public void publishUsuario(Object usuarioResponse) {
