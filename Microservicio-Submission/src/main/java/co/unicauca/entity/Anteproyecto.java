@@ -1,5 +1,6 @@
 package co.unicauca.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ public class Anteproyecto {
 
 
     // Relación con ProyectoGrado
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "proyecto_grado_id")
     private ProyectoGrado proyectoGrado;
