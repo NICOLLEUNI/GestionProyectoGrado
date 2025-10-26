@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 @Component
 public class RabbitMQPublisher {
-
     private final RabbitTemplate rabbitTemplate;
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQPublisher.class);
 
@@ -16,34 +15,55 @@ public class RabbitMQPublisher {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // Enviar mensaje directamente a una cola
-    private void publish(String queueName, Object message) {
-        try {
-            rabbitTemplate.convertAndSend(queueName, message);
-            logger.info("✅ Mensaje enviado a la cola '{}'.", queueName);
-        } catch (Exception e) {
-            logger.error("❌ Error al enviar mensaje a la cola '{}': {}", queueName, e.getMessage(), e);
-            // Aquí podrías agregar lógica de reintentos si es necesario.
-        }
+    /**
+     * Publica un mensaje cuando se crea un Formato A.
+     */
+    public void publishFormatoACreado(Object formatoAResponse) {
+        logger.debug("📤 Enviando mensaje de Formato A creado: {}", formatoAResponse);
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.FORMATOA_CREADO_EXCHANGE,
+                RabbitMQConfig.FORMATOA_CREADO_ROUTING_KEY,
+                formatoAResponse
+        );
     }
 
-    public void publishFormatoA(Object formatoAResponse) {
-        logger.debug("Enviando mensaje a formatoA: {}", formatoAResponse);
-        publish(RabbitMQConfig.FORMATOA_QUEUE, formatoAResponse);
+    /**
+     * Publica un mensaje cuando se crea un Anteproyecto.
+     */
+    public void publishAnteproyectoCreado(Object anteproyectoResponse) {
+        logger.debug("📤 Enviando mensaje de Anteproyecto creado: {}", anteproyectoResponse);
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.ANTEPROYECTO_CREADO_EXCHANGE,
+                RabbitMQConfig.ANTEPROYECTO_CREADO_ROUTING_KEY,
+                anteproyectoResponse
+        );
     }
 
-    public void publishFormatoAEvaluado(Object formatoAResponse) {
-        logger.debug("Enviando mensaje a formatoA evaluado: {}", formatoAResponse);
-        publish(RabbitMQConfig.FORMATOA_EVALUADO_QUEUE, formatoAResponse);
+    /**
+     * Publica un mensaje cuando se crea una FormatoAVersion.
+     */
+    public void publishFormatoAVersionCreada(Object formatoVersionResponse) {
+        logger.debug("📤 Enviando mensaje de FormatoAVersion creada: {}", formatoVersionResponse);
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.FORMATOAVERSION_CREADA_EXCHANGE,
+                RabbitMQConfig.FORMATOAVERSION_CREADA_ROUTING_KEY,
+                formatoVersionResponse
+        );
     }
 
-    public void publishAnteproyecto(Object anteproyectoResponse) {
-        logger.debug("Enviando mensaje a anteproyecto: {}", anteproyectoResponse);
-        publish(RabbitMQConfig.ANTEPROYECTO_QUEUE, anteproyectoResponse);
+    /**
+     * Publica un mensaje cuando se crea un Proyecto de Grado.
+     */
+    public void publishProyectoGradoCreado(Object proyectoResponse) {
+        logger.debug("📤 Enviando mensaje de Proyecto de Grado creado: {}", proyectoResponse);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PROYECTO_GRADO_CREADO_QUEUE, proyectoResponse);
     }
 
-    public void publishUsuario(Object usuarioResponse) {
-        logger.debug("Enviando mensaje a usuario: {}", usuarioResponse);
-        publish(RabbitMQConfig.USUARIO_QUEUE, usuarioResponse);
+    /**
+     * Publica un mensaje cuando se crea un Usuario.
+     */
+    public void publishUsuarioCreado(Object usuarioResponse) {
+        logger.debug("📤 Enviando mensaje de Usuario creado: {}", usuarioResponse);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USUARIO_QUEUE, usuarioResponse);
     }
 }

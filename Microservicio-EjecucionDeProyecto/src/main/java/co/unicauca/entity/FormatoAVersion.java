@@ -5,37 +5,36 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
-public class FormatoAVersionEntity {
-
+@AllArgsConstructor
+@Table(name = "formato_version")
+public class FormatoAVersion {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int numeroVersion;// 1, 2, 3
-
+    private int numeroVersion;
     private LocalDate fecha;
-
-    // Copia de campos versionables
     private String title;
+
+    @Enumerated(EnumType.STRING)
     private EnumModalidad mode;
+
     private String generalObjetive;
     private String specificObjetives;
     private String archivoPDF;
-    private String cartaLaboral; //opcional
+    private String cartaLaboral;
 
-    // Estado de la versión
-    private EnumEstado state;        // entregado, aprobado, rechazado
-    private String observations;     // comentarios del coordinador - inicia en null
+    @Enumerated(EnumType.STRING)
+    private EnumEstado state;
+
+    private String observations;
     private int counter;
+    private Long idFormatoA;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "formato_a_id")
-    private FormatoAEntity formatoA;
 }

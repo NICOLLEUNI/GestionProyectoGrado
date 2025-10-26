@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ProyectoGradoResponse(
         Long id,
-        String title,
+        String nombre,
         LocalDate fecha,
         List<String> estudiantesEmail,
         Long idFormatoA,

@@ -1,10 +1,12 @@
 package co.unicauca.repository;
 
+import co.unicauca.entity.FormatoAVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
-import co.unicauca.entity.FormatoAVersionEntity;
 import java.util.List;
 
-public interface FormatoAVersionRepository extends JpaRepository<FormatoAVersionEntity,Long> {
-    List<FormatoAVersionEntity> findByFormatoA_Id(Long formatoAId);
+public interface FormatoAVersionRepository extends JpaRepository<FormatoAVersion, Long> {
 
+    // Método para obtener todas las versiones de un FormatoA por su id
+
+    List<FormatoAVersion> findByIdFormatoA(Long idFormatoA);
 }

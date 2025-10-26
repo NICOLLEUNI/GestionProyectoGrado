@@ -1,39 +1,56 @@
 package co.unicauca.controller;
 
+import co.unicauca.infra.dto.AnteproyectoRequest;
 import co.unicauca.infra.dto.AnteproyectoResponse;
-import co.unicauca.service.AnteproyectoService;
+import co.unicauca.service.facade.AnteproyectoFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
- * Controlador para manejar las solicitudes relacionadas con Anteproyectos.
+ * Controlador REST para manejar las operaciones sobre los Anteproyectos.
  */
 @RestController
-@RequestMapping("/api/anteproyecto")
+@RequestMapping("/api/anteproyectos")
 public class AnteproyectoController {
 
-    private final AnteproyectoService anteproyectoService;
+    private final AnteproyectoFacade anteproyectoFacade;
 
     @Autowired
-    public AnteproyectoController(AnteproyectoService anteproyectoService) {
-        this.anteproyectoService = anteproyectoService;
+    public AnteproyectoController(AnteproyectoFacade anteproyectoFacade) {
+        this.anteproyectoFacade = anteproyectoFacade;
     }
 
     /**
-     * Endpoint para guardar un Anteproyecto.
-     * Recibe un objeto AnteproyectoResponse con los datos del anteproyecto.
+     * Crear un nuevo Anteproyecto.
      *
-     * @param response Objeto que contiene la información para crear el Anteproyecto
-     * @return ResponseEntity con el estado de la operación
+     * @param request Datos del anteproyecto (en formato AnteproyectoRequest)
+     * @return Anteproyecto creado
      */
-    @PostMapping("/guardar")
-    public ResponseEntity<String> guardarAnteproyecto(@RequestBody AnteproyectoResponse response) {
-        try {
-            anteproyectoService.saveInterno(response);
-            return ResponseEntity.ok("Anteproyecto guardado exitosamente");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body("Error al guardar el anteproyecto: " + e.getMessage());
-        }
+    @PostMapping("/crear")
+    public ResponseEntity<AnteproyectoResponse> crearAnteproyecto(@RequestBody AnteproyectoRequest request) {
+        AnteproyectoResponse response = anteproyectoFacade.crearAnteproyecto(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Obtener todos los anteproyectos registrados.
+     *
+     * @return Lista de anteproyectos
+     */
+
+
+    /**
+     * Obtener un anteproyecto por su ID.
+     *
+     * @param id Identificador del anteproyecto
+     * @return Anteproyecto encontrado
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AnteproyectoResponse> obtenerPorId(@PathVariable Long id) {
+        AnteproyectoResponse anteproyecto = anteproyectoFacade.obtenerPorId(id);
+        return ResponseEntity.ok(anteproyecto);
     }
 }

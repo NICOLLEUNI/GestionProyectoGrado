@@ -1,30 +1,34 @@
 package co.unicauca.controller;
 
 import co.unicauca.infra.dto.PersonaRequest;
-import co.unicauca.entity.PersonaEntity;
-import co.unicauca.service.PersonaService;
+import co.unicauca.infra.dto.PersonaResponse;
+import co.unicauca.service.facade.PersonaFacade;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/personas")
+@RequestMapping("/personas")
 public class PersonaController {
 
-    @Autowired
-    private PersonaService personaService;
+    private final PersonaFacade personaFacade;
 
-    // Endpoint para crear una nueva persona
-    @PostMapping
-    public ResponseEntity<PersonaEntity> crearPersona(@RequestBody PersonaRequest request) {
-        try {
-            // Llamamos al servicio para mapear y guardar la persona
-            PersonaEntity persona = personaService.mapAndSavePersona(request);
-            return new ResponseEntity<>(persona, HttpStatus.CREATED); // Retorna 201 Created
-        } catch (Exception e) {
-            // Si ocurre un error, retornamos un error 500 (Internal Server Error)
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @Autowired
+    public PersonaController(PersonaFacade personaFacade) {
+        this.personaFacade = personaFacade;
     }
+
+    // ✅ Crear persona
+    @PostMapping
+    public PersonaResponse crearPersona(@RequestBody PersonaRequest request) {
+        return personaFacade.crearPersona(request);
+    }
+
+    // ✅ Listar todas las personas
+    @GetMapping
+    public List<PersonaResponse> listarPersonas() {
+        return personaFacade.listarTodas();
+    }
+
 }

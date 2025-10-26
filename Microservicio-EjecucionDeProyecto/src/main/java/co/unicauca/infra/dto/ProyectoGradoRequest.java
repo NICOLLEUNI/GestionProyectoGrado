@@ -11,11 +11,11 @@ import java.util.Set;
 public record ProyectoGradoRequest(
 
    Long id,
-   String title,
+   String nombre,
    LocalDate fecha,
    List<String> estudiantesEmail,
-   String IdFormatoA,
-   String IdAnteproyecto
+   Long idFormatoA,
+   Long idAnteproyecto
 )
 {}
 

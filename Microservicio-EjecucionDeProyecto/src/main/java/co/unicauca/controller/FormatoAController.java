@@ -1,41 +1,61 @@
 package co.unicauca.controller;
 
-import co.unicauca.infra.dto.FormatoARequest;
-import co.unicauca.infra.dto.FormatoAResponse;
-import co.unicauca.service.FormatoAService;
-import co.unicauca.service.facade.FormatoAFacade;
+import co.unicauca.infra.dto.FormatoAVersionRequest;
+import co.unicauca.infra.dto.FormatoAVersionResponse;
+import co.unicauca.service.facade.FormatoAVersionFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controlador para manejar las solicitudes relacionadas con FormatoA.
- */
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/formatoA")
+@RequestMapping("/api/formatos-version")
 public class FormatoAController {
 
-    private final FormatoAFacade formatoAFacade;
+    private final FormatoAVersionFacade formatoAVersionFacade;
 
     @Autowired
-    public FormatoAController(FormatoAFacade formatoAFacade) {
-        this.formatoAFacade = formatoAFacade;
+    public FormatoAController(FormatoAVersionFacade formatoAVersionFacade) {
+        this.formatoAVersionFacade = formatoAVersionFacade;
+    }
+
+    /**
+     * Crear una nueva versión de FormatoA
+     */
+    @PostMapping
+    public ResponseEntity<FormatoAVersionResponse> crearVersion(@RequestBody FormatoAVersionRequest request) {
+        FormatoAVersionResponse response = formatoAVersionFacade.crearVersion(request);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Obtener una versión de FormatoA por su ID.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<FormatoAVersionResponse> obtenerPorId(@PathVariable Long id) {
+        FormatoAVersionResponse formato = formatoAVersionFacade.obtenerPorId(id);
+        return ResponseEntity.ok(formato);
+    }
+
+    /**
+     * Listar todas las versiones de FormatoA.
+     */
+    @GetMapping
+    public ResponseEntity<List<FormatoAVersionResponse>> listarTodos() {
+        List<FormatoAVersionResponse> formatos = formatoAVersionFacade.listarTodas();
+        return ResponseEntity.ok(formatos);
     }
 
 
     /**
-     * Endpoint para guardar un nuevo FormatoA.
-     * Recibe un objeto FormatoAResponse con los datos para crear el FormatoA.
-     *
-     * @param request Objeto que contiene la información del FormatoA
-     * @return ResponseEntity con el estado de la operación
+     * Actualizar una versión existente.
      */
-    @PostMapping("/guardar")
-    public ResponseEntity<FormatoAResponse> crearFormatoA(@RequestBody FormatoARequest request) {
-        FormatoAResponse response = formatoAFacade.crearFormatoA(request);
+    @PutMapping("/{id}")
+    public ResponseEntity<FormatoAVersionResponse> actualizarVersion(
+            @PathVariable Long id,
+            @RequestBody FormatoAVersionRequest request) {
+        FormatoAVersionResponse response = formatoAVersionFacade.actualizarVersion(id, request);
         return ResponseEntity.ok(response);
     }
-    }
-
-
-
+}

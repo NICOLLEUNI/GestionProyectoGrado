@@ -1,20 +1,20 @@
-package co.unicauca.infra.dto;
+    package co.unicauca.infra.dto;
+
+    import java.time.LocalDate;
 
 
+    public record FormatoAVersionRequest(
 
-import java.time.LocalDate;
+            Long id,
+            int numVersion,
+            LocalDate fecha,
+            String title,
+            String mode,
+            String state,
+            String observations,
+            int counter,
+            Long IdFormatoA
 
 
-public record FormatoAVersionRequest (
-
-     Long id,
-     int numVersion,
-     LocalDate fecha,
-     String title,
-     String modalidad,
-     String state,
-     String observations,
-     int counter,
-     int IdformatoA
-     )
-{}
+    )
+    {}

@@ -1,66 +1,50 @@
 package co.unicauca.service;
 
-import co.unicauca.entity.EnumRol;
-import co.unicauca.entity.PersonaEntity;
+import co.unicauca.entity.*;
 import co.unicauca.infra.dto.PersonaRequest;
-import co.unicauca.infra.dto.PersonaResponse;
 import co.unicauca.repository.PersonaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class PersonaService {
+    private final PersonaRepository personaRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(PersonaService.class);
-
-    @Autowired
-    private PersonaRepository personaRepository;
-
-    // Método para mapear y guardar una persona desde un Request
-    public PersonaEntity mapAndSavePersona(PersonaRequest request) {
-        PersonaEntity personaEntity = new PersonaEntity();
-        personaEntity.setId(Long.parseLong(request.id()));
-        personaEntity.setName(request.name());
-        personaEntity.setLastname(request.lastname());
-        personaEntity.setEmail(request.email());
-        personaEntity.setDepartment(request.department());
-        personaEntity.setRoles(convertirRoles(request.roles()));
-
-        return personaRepository.save(personaEntity);
+    public PersonaService(PersonaRepository personaRepository) {
+        this.personaRepository = personaRepository;
     }
 
-    // Nuevo método para guardar desde PersonaResponse (usado por el listener)
-    public PersonaEntity saveInterno(PersonaResponse request) {
-        try {
-            logger.info("Guardando persona internamente con ID: {}", request.id());
 
-            PersonaEntity personaEntity = new PersonaEntity();
-            personaEntity.setId(Long.parseLong(request.id()));
-            personaEntity.setName(request.name());
-            personaEntity.setLastname(request.lastname());
-            personaEntity.setEmail(request.email());
-            personaEntity.setDepartment(request.department());
-            personaEntity.setRoles(convertirRoles(request.roles()));
+    /**
+     * Guarda o actualiza la información de una Persona en la base de datos.
+     * Si la persona ya existe, se actualizan sus datos.
+     */
+    public Persona guardarPersona(PersonaRequest request) {
+        Optional<Persona> existente = personaRepository.findById((long) request.id());
 
-            PersonaEntity savedPersona = personaRepository.save(personaEntity);
-            logger.info("Persona guardada exitosamente con ID: {}", savedPersona.getId());
+        Persona persona = existente.orElseGet(Persona::new);
 
-            return savedPersona;
+        persona.setIdUsuario((long) request.id());
+        persona.setName(request.name());
+        persona.setLastname(request.lastname());
+        persona.setEmail(request.email());
+        persona.setDepartment(request.department());
+        persona.setPrograma(request.programa());
 
-        } catch (NumberFormatException e) {
-            logger.error("Error al parsear el ID: {}", request.id(), e);
-            throw new IllegalArgumentException("ID inválido: " + request.id(), e);
-        } catch (Exception e) {
-            logger.error("Error al guardar persona internamente", e);
-            throw new RuntimeException("Error al procesar persona desde mensaje", e);
-        }
+        // Convertir los roles del request (Set<String>) a EnumSet<EnumRol>
+        persona.setRoles(convertirRoles(request.roles()));
+
+        return personaRepository.save(persona);
     }
 
+
+    /**
+     * Convierte una lista de strings en un EnumSet<EnumRol>.
+     */
     private EnumSet<EnumRol> convertirRoles(Set<String> rolesString) {
         if (rolesString == null || rolesString.isEmpty()) {
             return EnumSet.noneOf(EnumRol.class);
@@ -71,9 +55,16 @@ public class PersonaService {
             try {
                 roles.add(EnumRol.valueOf(rolStr.toUpperCase()));
             } catch (IllegalArgumentException e) {
-                logger.warn("⚠️ Rol no reconocido: {}", rolStr);
+                System.err.println("⚠ Rol no reconocido: " + rolStr);
             }
         }
         return roles;
     }
+
+    /**
+     * Obtiene todos las personas  registradas.
+     */
+    public List<Persona> findAll() {
+        return personaRepository.findAll();
+}
 }

@@ -1,34 +1,33 @@
 package co.unicauca.infra.listener;
 
-import co.unicauca.entity.ProyectoGradoEntity;
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.infra.dto.ProyectoGradoResponse;
-import co.unicauca.service.PersonaService;
+import co.unicauca.infra.dto.ProyectoGradoRequest;
 import co.unicauca.service.ProyectoGradoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class ProyectoGradoListener {
 
-
-    private ProyectoGradoService proyectoGradoService;
+    private static final Logger logger = LoggerFactory.getLogger(ProyectoGradoListener.class);
+    private final ProyectoGradoService proyectoGradoService;
 
     public ProyectoGradoListener(ProyectoGradoService proyectoGradoService) {
         this.proyectoGradoService = proyectoGradoService;
     }
 
-    /**
-     * Método que maneja la creación de ProyectoGrado.
-     * @param request Respuesta de ProyectoGradoResponse
-     */
-    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_QUEUE)  // Cola donde llega el mensaje
-    public void handleProyectoGradoResponse(ProyectoGradoResponse request) {
+    @RabbitListener(queues = RabbitMQConfig.PROYECTO_GRADO_CREADO_QUEUE)
+    public void receiveProyectoGrado(ProyectoGradoRequest proyectoGradoRequest) {
+        logger.info("📥 [PROYECTO_GRADO] Mensaje recibido: {}", proyectoGradoRequest);
 
-        System.out.println("📩 Mensaje recibido en por definir: " + request);
-        ProyectoGradoEntity proyecto = proyectoGradoService.saveInterno(request);
-        System.out.println("✅ Formato A guardado con ID: " + proyecto.getId());
-        proyectoGradoService.saveInterno(request);
+        try {
+            // Crear o actualizar el proyecto de grado
+            proyectoGradoService.crearProyecto(proyectoGradoRequest);
+            logger.info("✅ [PROYECTO_GRADO] Proyecto procesado exitosamente: {}", proyectoGradoRequest.id());
+        } catch (Exception e) {
+            logger.error("❌ [PROYECTO_GRADO] Error procesando proyecto: {}", e.getMessage(), e);
+        }
     }
 }

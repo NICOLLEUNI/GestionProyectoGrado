@@ -1,42 +1,95 @@
 package co.unicauca.service;
 
-import co.unicauca.entity.AnteproyectoEntity;
-import co.unicauca.entity.ProyectoGradoEntity;
+import co.unicauca.entity.Anteproyecto;
+import co.unicauca.entity.EnumEstadoAnteproyecto;
+import co.unicauca.entity.ProyectoGrado;
+import co.unicauca.infra.dto.AnteproyectoRequest;
+import co.unicauca.infra.dto.AnteproyectoResponse;
 import co.unicauca.repository.AnteproyectoRepository;
 import co.unicauca.repository.ProyectoGradoRepository;
-import co.unicauca.infra.dto.AnteproyectoResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class AnteproyectoService {
 
-    @Autowired
-    private AnteproyectoRepository anteproyectoRepository;
+    private final AnteproyectoRepository anteproyectoRepository;
+    private final ProyectoGradoRepository proyectoGradoRepository; // ✅ Usar Repository directamente
 
-    @Autowired
-    private ProyectoGradoRepository proyectoGradoRepository;
+    @Transactional
+    public AnteproyectoResponse crearAnteproyecto(AnteproyectoRequest request) {
+        // Validar que el proyecto exista
+        ProyectoGrado proyecto = proyectoGradoRepository.findById(request.idProyectoGrado())
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + request.idProyectoGrado()));
 
-    /**
-     * Método que mapea el AnteproyectoResponse y lo guarda internamente en la base de datos
-     */
-    public AnteproyectoEntity saveInterno(AnteproyectoResponse request) {
-      /*  // Obtener ProyectoGrado de la base de datos usando el idProyectoGrado
-        ProyectoGradoEntity proyectoGrado = proyectoGradoRepository.findById(request.idProyectoGrado())
-                .orElseThrow(() -> new RuntimeException("Proyecto Grado no encontrado"));
-*/
-        // Crear una nueva entidad AnteproyectoEntity con la información recibida
-        AnteproyectoEntity anteproyecto = new AnteproyectoEntity();
-        anteproyecto.setId(request.id());
+        Anteproyecto anteproyecto = new Anteproyecto();
+        // ✅ JPA generará automáticamente el ID si es null
+        // if (request.id() != null) {
+        //     anteproyecto.setId(request.id());
+        // }
         anteproyecto.setTitulo(request.titulo());
-        anteproyecto.setEstado(request.estado());
-        anteproyecto.setObservaciones(request.observaciones());
         anteproyecto.setFechaCreacion(request.fecha());
+        anteproyecto.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
+        anteproyecto.setObservaciones(request.observaciones());
 
-        // Asociar el Anteproyecto con el ProyectoGrado
-       // anteproyecto.setProyectoGrado(proyectoGrado);
+        proyecto.establecerAnteproyecto(anteproyecto);
 
-        // Guardar el Anteproyecto en la base de datos
-        return anteproyectoRepository.save(anteproyecto);
+        Anteproyecto guardado = anteproyectoRepository.save(anteproyecto);
+        return convertirAResponse(guardado);
     }
+
+    @Transactional(readOnly = true)
+    public AnteproyectoResponse buscarPorId(Long id) {
+        Anteproyecto anteproyecto = anteproyectoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Anteproyecto no encontrado"));
+        return convertirAResponse(anteproyecto);
+    }
+
+    @Transactional
+    public AnteproyectoResponse actualizarAnteproyecto(Long id, AnteproyectoRequest request) {
+        Anteproyecto anteproyecto = anteproyectoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Anteproyecto no encontrado"));
+
+        anteproyecto.setTitulo(request.titulo());
+        anteproyecto.setFechaCreacion(request.fecha());
+        anteproyecto.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
+        anteproyecto.setObservaciones(request.observaciones());
+
+        Anteproyecto actualizado = anteproyectoRepository.save(anteproyecto);
+        return convertirAResponse(actualizado);
+    }
+
+
+    private AnteproyectoResponse convertirAResponse(Anteproyecto anteproyecto) {
+        return new AnteproyectoResponse(
+                anteproyecto.getId(),
+                anteproyecto.getTitulo(),
+                anteproyecto.getFechaCreacion(),
+                anteproyecto.getEstado().name(),
+                anteproyecto.getObservaciones(),
+                anteproyecto.getProyectoGrado() != null ? anteproyecto.getProyectoGrado().getId() : null
+        );
+    }
+    public List<AnteproyectoResponse> obtenerTodos() {
+        List<Anteproyecto> anteproyectos = anteproyectoRepository.findAll();
+        return anteproyectos.stream()
+                .map(this::convertirAResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<AnteproyectoResponse> buscarPorProyecto(Long proyectoId) {
+        List<Anteproyecto> anteproyectos = anteproyectoRepository.findByProyectoGradoId(proyectoId);
+        return anteproyectos.stream()
+                .map(this::convertirAResponse)
+                .collect(Collectors.toList());
+    }
+
+
+
+
 }

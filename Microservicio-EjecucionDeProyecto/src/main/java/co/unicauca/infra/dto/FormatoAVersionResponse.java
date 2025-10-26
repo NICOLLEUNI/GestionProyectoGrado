@@ -11,5 +11,8 @@ public record FormatoAVersionResponse(
         String state,
         String observations,
         int counter,
-        String idFormatoA
+        Long IdFormatoA
+
+
+
 ) {}

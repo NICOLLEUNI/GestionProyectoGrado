@@ -4,10 +4,11 @@ import java.util.Set;
 
 public record PersonaRequest (
 
-        String id,
+        Long id,
         String name,
         String lastname,
         String email,
         Set<String> roles,
-        String department
+        String department,
+        String programa
 ){ }
