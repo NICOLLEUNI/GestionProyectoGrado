@@ -1,34 +1,37 @@
 package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
+import co.unicauca.infra.dto.AnteproyectoResponse;
 import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.service.FormatoAVersionService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class FormatoAVersionListener {
 
+    private final FormatoAVersionService versionService;
     private static final Logger logger = LoggerFactory.getLogger(FormatoAVersionListener.class);
-    private final FormatoAVersionService formatoAVersionService;
 
-    public FormatoAVersionListener(FormatoAVersionService formatoAVersionService) {
-        this.formatoAVersionService = formatoAVersionService;
-    }
-
-    @RabbitListener(queues = RabbitMQConfig.COLA_FORMATO_A)
-    public void receiveFormatoA(FormatoAVersionResponse formatoResponse) {
-        logger.info("📥 [FORMATO_A] Mensaje recibido: {} - v{}",
-                formatoResponse.title(), formatoResponse.numVersion());
+    /**
+     * ✅ LISTENER PARA VERSIONES CREADAS DESDE OTROS MICROSERVICIOS
+     */
+    @RabbitListener(queues = RabbitMQConfig.FORMATOAVERSION_HISTORICO_QUEUE)
+    public void recibirVersionCreada(FormatoAVersionResponse versionResponse) {
+        logger.info("📥 [RABBITMQ] Versión recibida: {} - v{} para FormatoA: {}",
+                versionResponse.titulo(), versionResponse.numVersion(), versionResponse.idFormatoA());
 
         try {
-            // ✅ Usar el Service directamente
-            formatoAVersionService.procesarVersionRecibida(formatoResponse);
-            logger.info("✅ [FORMATO_A] Versión procesada exitosamente: v{}", formatoResponse.numVersion());
+            versionService.procesarVersionRecibida(versionResponse);
+            logger.info("✅ [RABBITMQ] Versión procesada exitosamente: v{}", versionResponse.numVersion());
         } catch (Exception e) {
-            logger.error("❌ [FORMATO_A] Error procesando versión: {}", e.getMessage(), e);
+            logger.error("❌ [RABBITMQ] Error procesando versión: {}", e.getMessage(), e);
+            // Puedes implementar dead letter queue aquí si es necesario
         }
     }
+
 }

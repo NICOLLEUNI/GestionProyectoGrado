@@ -23,7 +23,7 @@ public class ProyectoGradoController {
         try {
             System.out.println("📨 Recibiendo petición para crear proyecto:");
             System.out.println("   Nombre: " + request.nombre());
-            System.out.println("   FormatoA ID: " + request.idFormatoA());
+            System.out.println("   FormatoA ID: " + request.IdFormatoA());
 
             ProyectoGradoResponse response = proyectoGradoService.crearProyecto(request);
 

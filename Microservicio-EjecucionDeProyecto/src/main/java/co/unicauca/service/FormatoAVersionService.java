@@ -5,7 +5,6 @@ import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.EnumModalidad;
 import co.unicauca.infra.dto.FormatoAVersionRequest;
 import co.unicauca.infra.dto.FormatoAVersionResponse;
-import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.FormatoAVersionRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -22,103 +21,80 @@ import java.util.stream.Collectors;
 public class FormatoAVersionService {
 
     private final FormatoAVersionRepository versionRepository;
-    private final RabbitMQPublisher rabbitMQPublisher;
     private static final Logger logger = LoggerFactory.getLogger(FormatoAVersionService.class);
 
     /**
-     * ✅ CREAR VERSIÓN DESDE API (PUBLICA EVENTO)
+     * ✅ CREAR VERSIÓN DESDE API
      */
     @Transactional
     public FormatoAVersionResponse crearVersion(FormatoAVersionRequest request) {
-        logger.info("📑 Creando versión desde API: {} - v{}", request.title(), request.numVersion());
+        logger.info("📑 Creando versión desde API: {} - v{}", request.titulo(), request.numVersion());
 
         FormatoAVersion version = new FormatoAVersion();
         version.setNumeroVersion(request.numVersion());
         version.setFecha(request.fecha());
-        version.setTitle(request.title());
-        version.setMode(EnumModalidad.valueOf(request.mode()));
-        version.setState(EnumEstado.valueOf(request.state()));
-        version.setObservations(request.observations());
+        version.setTitle(request.titulo());
+        version.setMode(EnumModalidad.valueOf(request.modalidad()));
+        version.setState(EnumEstado.valueOf(request.estado()));
+        version.setObservations(request.observaciones());
         version.setCounter(request.counter());
-        version.setIdFormatoA(request.IdFormatoA());
+        version.setIdFormatoA(request.idFormatoA());
 
         FormatoAVersion guardada = versionRepository.save(version);
         FormatoAVersionResponse response = convertirAResponse(guardada);
 
-        // ✅ PUBLICAR EVENTO a RabbitMQ
-        rabbitMQPublisher.publishFormatoACreado(response);
-        logger.info("✅ Versión creada y evento publicado: {} - FormatoA: {}", response.id(), response.IdFormatoA());
+        logger.info("✅ Versión creada: {} - FormatoA: {}", response.id(), response.idFormatoA());
 
         return response;
     }
 
     /**
-     * ✅ CREAR VERSIÓN INTERNA (SIN PUBLICAR EVENTO - PARA LISTENER)
+     * ✅ CREAR VERSIÓN INTERNA
      */
     @Transactional
     public FormatoAVersionResponse crearVersionInterna(FormatoAVersionRequest request) {
-        logger.info("🔄 Creando versión interna (desde listener): {} - v{}", request.title(), request.numVersion());
+        logger.info("🔄 Creando versión interna: {} - v{}", request.titulo(), request.numVersion());
 
         FormatoAVersion version = new FormatoAVersion();
         version.setNumeroVersion(request.numVersion());
         version.setFecha(request.fecha());
-        version.setTitle(request.title());
-        version.setMode(EnumModalidad.valueOf(request.mode()));
-        version.setState(EnumEstado.valueOf(request.state()));
-        version.setObservations(request.observations());
+        version.setTitle(request.titulo());
+        version.setMode(EnumModalidad.valueOf(request.modalidad()));
+        version.setState(EnumEstado.valueOf(request.estado()));
+        version.setObservations(request.observaciones());
         version.setCounter(request.counter());
-        version.setIdFormatoA(request.IdFormatoA());
+        version.setIdFormatoA(request.idFormatoA());
 
         FormatoAVersion guardada = versionRepository.save(version);
-        logger.info("✅ Versión interna creada (sin evento): {} - FormatoA: {}", guardada.getId(), guardada.getIdFormatoA());
+        logger.info("✅ Versión interna creada: {} - FormatoA: {}", guardada.getId(), guardada.getIdFormatoA());
 
         return convertirAResponse(guardada);
     }
 
     /**
-     * ✅ PROCESAR VERSIÓN RECIBIDA DE RABBITMQ (LISTENER)
+     * ✅ PROCESAR VERSIÓN RECIBIDA
      * - Busca por idFormatoA y numVersion específicos
      * - Si existe: actualiza solo los campos del response
      * - Si no existe: crea nueva versión
      */
     @Transactional
     public void procesarVersionRecibida(FormatoAVersionResponse versionRecibida) {
-        logger.info("📥 [LISTENER] Procesando versión recibida: {} - v{} para FormatoA: {}",
-                versionRecibida.title(), versionRecibida.numVersion(), versionRecibida.IdFormatoA());
+        logger.info("📥 Procesando versión recibida: {} - v{} para FormatoA: {}",
+                versionRecibida.titulo(), versionRecibida.numVersion(), versionRecibida.idFormatoA());
 
         try {
             // ✅ BUSCAR SI YA EXISTE ESTA VERSIÓN ESPECÍFICA
             Optional<FormatoAVersion> versionExistente = versionRepository
-                    .findByIdFormatoAAndNumeroVersion(versionRecibida.IdFormatoA(), versionRecibida.numVersion());
+                    .findByIdFormatoAAndNumeroVersion(versionRecibida.idFormatoA(), versionRecibida.numVersion());
 
             if (versionExistente.isPresent()) {
                 // ✅ ACTUALIZAR VERSIÓN EXISTENTE
                 FormatoAVersion version = versionExistente.get();
                 logger.info("🔄 Versión existente encontrada, actualizando: ID {}", version.getId());
 
-                // 📝 CAMPOS QUE SE ACTUALIZAN (vienen en FormatoAResponse):
-                logger.info("   📤 Estado anterior: {} → Nuevo: {}", version.getState(), versionRecibida.state());
-                logger.info("   📤 Observaciones anteriores: {} → Nuevas: {}",
-                        version.getObservations(), versionRecibida.observations());
-
-                version.setState(EnumEstado.valueOf(versionRecibida.state()));
-                version.setObservations(versionRecibida.observations());
-
-                // 🔒 CAMPOS QUE SE MANTIENEN (NO se actualizan):
-                logger.info("   🔒 Título se mantiene: {}", version.getTitle());
-                logger.info("   🔒 Modalidad se mantiene: {}", version.getMode());
-                logger.info("   🔒 Fecha se mantiene: {}", version.getFecha());
-                logger.info("   🔒 Counter se mantiene: {}", version.getCounter());
-                logger.info("   🔒 idFormatoA se mantiene: {}", version.getIdFormatoA());
-                logger.info("   🔒 numVersion se mantiene: {}", version.getNumeroVersion());
-
-                // Los campos que NO se tocan (preservan valores originales):
-                // - version.setTitle() → NO SE ACTUALIZA
-                // - version.setMode() → NO SE ACTUALIZA
-                // - version.setFecha() → NO SE ACTUALIZA
-                // - version.setCounter() → NO SE ACTUALIZA
-                // - version.setIdFormatoA() → NO SE ACTUALIZA
-                // - version.setNumeroVersion() → NO SE ACTUALIZA
+                // 📝 ACTUALIZAR CAMPOS CORRECTAMENTE
+                version.setState(EnumEstado.valueOf(versionRecibida.estado()));
+                version.setObservations(versionRecibida.observaciones());
 
                 versionRepository.save(version);
                 logger.info("✅ Versión actualizada exitosamente: v{}", versionRecibida.numVersion());
@@ -126,16 +102,24 @@ public class FormatoAVersionService {
             } else {
                 // ✅ CREAR NUEVA VERSIÓN
                 logger.info("🆕 Creando nueva versión: v{} para FormatoA: {}",
-                        versionRecibida.numVersion(), versionRecibida.IdFormatoA());
+                        versionRecibida.numVersion(), versionRecibida.idFormatoA());
 
-                FormatoAVersionRequest request = convertirResponseARequest(versionRecibida);
-                crearVersionInterna(request);
+                FormatoAVersion nuevaVersion = new FormatoAVersion();
+                nuevaVersion.setTitle(versionRecibida.titulo());  // ← CORREGIDO
+                nuevaVersion.setNumeroVersion(versionRecibida.numVersion());  // ← CORREGIDO
+                nuevaVersion.setIdFormatoA(versionRecibida.idFormatoA());
+                nuevaVersion.setMode(EnumModalidad.valueOf(versionRecibida.modalidad()));  // ← CORREGIDO
+                nuevaVersion.setState(EnumEstado.valueOf(versionRecibida.estado()));  // ← CORREGIDO
+                nuevaVersion.setObservations(versionRecibida.observaciones());  // ← CORREGIDO
+                nuevaVersion.setCounter(versionRecibida.counter());
+                nuevaVersion.setFecha(versionRecibida.fecha());
 
+                versionRepository.save(nuevaVersion);
                 logger.info("✅ Nueva versión creada exitosamente: v{}", versionRecibida.numVersion());
             }
 
         } catch (Exception e) {
-            logger.error("❌ [LISTENER] Error procesando versión: {}", e.getMessage(), e);
+            logger.error("❌ Error procesando versión: {}", e.getMessage(), e);
             throw new RuntimeException("Error procesando versión recibida", e);
         }
     }
@@ -169,22 +153,20 @@ public class FormatoAVersionService {
         FormatoAVersion version = versionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Versión no encontrada"));
 
-        version.setTitle(request.title());
-        version.setMode(EnumModalidad.valueOf(request.mode()));
-        version.setState(EnumEstado.valueOf(request.state()));
-        version.setObservations(request.observations());
+        version.setTitle(request.titulo());
+        version.setMode(EnumModalidad.valueOf(request.modalidad()));
+        version.setState(EnumEstado.valueOf(request.estado()));
+        version.setObservations(request.observaciones());
         version.setCounter(request.counter());
 
-        if (request.IdFormatoA() != null) {
-            version.setIdFormatoA(request.IdFormatoA());
+        if (request.idFormatoA() != null) {
+            version.setIdFormatoA(request.idFormatoA());
         }
 
         FormatoAVersion actualizada = versionRepository.save(version);
         FormatoAVersionResponse response = convertirAResponse(actualizada);
 
-        // ✅ PUBLICAR EVENTO DE ACTUALIZACIÓN
-        rabbitMQPublisher.publishFormatoACreado(response);
-        logger.info("✅ Versión actualizada y evento publicado: {}", id);
+        logger.info("✅ Versión actualizada: {}", id);
 
         return response;
     }
@@ -197,12 +179,12 @@ public class FormatoAVersionService {
                 response.id(),
                 response.numVersion(),
                 response.fecha(),
-                response.title(),
-                response.mode(),
-                response.state(),
-                response.observations(),
+                response.titulo(),
+                response.modalidad(),
+                response.estado(),
+                response.observaciones(),
                 response.counter(),
-                response.IdFormatoA()
+                response.idFormatoA()
         );
     }
 

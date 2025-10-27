@@ -27,8 +27,8 @@ public class FormatoAController {
     public ResponseEntity<?> crearVersion(@RequestBody FormatoAVersionRequest request) {
         try {
             System.out.println("📨 Recibiendo petición para crear versión:");
-            System.out.println("   Título: " + request.title());
-            System.out.println("   FormatoA ID: " + request.IdFormatoA());
+            System.out.println("   Título: " + request.titulo());
+            System.out.println("   FormatoA ID: " + request.idFormatoA());
             System.out.println("   Versión: " + request.numVersion());
 
             FormatoAVersionResponse response = formatoAVersionService.crearVersion(request);

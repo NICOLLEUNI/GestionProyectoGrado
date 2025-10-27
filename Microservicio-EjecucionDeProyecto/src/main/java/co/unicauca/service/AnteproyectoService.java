@@ -5,7 +5,6 @@ import co.unicauca.entity.EnumEstadoAnteproyecto;
 import co.unicauca.entity.ProyectoGrado;
 import co.unicauca.infra.dto.AnteproyectoRequest;
 import co.unicauca.infra.dto.AnteproyectoResponse;
-import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.AnteproyectoRepository;
 import co.unicauca.repository.ProyectoGradoRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,11 +22,10 @@ public class AnteproyectoService {
 
     private final AnteproyectoRepository anteproyectoRepository;
     private final ProyectoGradoRepository proyectoGradoRepository;
-    private final RabbitMQPublisher rabbitMQPublisher;
     private static final Logger logger = LoggerFactory.getLogger(AnteproyectoService.class);
 
     /**
-     * ✅ CREAR ANTEPROYECTO DESDE API (PUBLICA EVENTO)
+     * ✅ CREAR ANTEPROYECTO DESDE API
      */
     @Transactional
     public AnteproyectoResponse crearAnteproyecto(AnteproyectoRequest request) {
@@ -48,19 +45,17 @@ public class AnteproyectoService {
         Anteproyecto guardado = anteproyectoRepository.save(anteproyecto);
         AnteproyectoResponse response = convertirAResponse(guardado);
 
-        // ✅ PUBLICAR EVENTO a RabbitMQ
-        rabbitMQPublisher.publishAnteproyectoCreado(response);
-        logger.info("✅ Anteproyecto creado y evento publicado: {}", response.id());
+        logger.info("✅ Anteproyecto creado: {}", response.id());
 
         return response;
     }
 
     /**
-     * ✅ CREAR ANTEPROYECTO INTERNO (SIN PUBLICAR EVENTO - PARA LISTENER)
+     * ✅ CREAR ANTEPROYECTO INTERNO
      */
     @Transactional
     public AnteproyectoResponse crearAnteproyectoInterno(AnteproyectoRequest request) {
-        logger.info("🔄 Creando anteproyecto interno (desde listener): {}", request.titulo());
+        logger.info("🔄 Creando anteproyecto interno: {}", request.titulo());
 
         ProyectoGrado proyecto = proyectoGradoRepository.findById(request.idProyectoGrado())
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + request.idProyectoGrado()));
@@ -73,7 +68,7 @@ public class AnteproyectoService {
         anteproyecto.setProyectoGrado(proyecto);
 
         Anteproyecto guardado = anteproyectoRepository.save(anteproyecto);
-        logger.info("✅ Anteproyecto interno creado (sin evento): {}", guardado.getId());
+        logger.info("✅ Anteproyecto interno creado: {}", guardado.getId());
 
         return convertirAResponse(guardado);
     }
@@ -102,7 +97,7 @@ public class AnteproyectoService {
             logger.info("✅ Anteproyecto actualizado: {}", actualizado.getId());
             return convertirAResponse(actualizado);
         } else {
-            // ✅ CREAR nuevo usando método INTERNO (sin publicar evento)
+            // ✅ CREAR nuevo usando método INTERNO
             logger.info("🆕 No existe anteproyecto, creando nuevo");
             return crearAnteproyectoInterno(request);
         }
@@ -152,9 +147,7 @@ public class AnteproyectoService {
         Anteproyecto actualizado = anteproyectoRepository.save(anteproyecto);
         AnteproyectoResponse response = convertirAResponse(actualizado);
 
-        // ✅ PUBLICAR EVENTO DE ACTUALIZACIÓN
-        rabbitMQPublisher.publishAnteproyectoCreado(response);
-        logger.info("✅ Anteproyecto actualizado y evento publicado: {}", id);
+        logger.info("✅ Anteproyecto actualizado: {}", id);
 
         return response;
     }

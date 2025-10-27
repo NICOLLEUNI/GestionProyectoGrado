@@ -1,7 +1,6 @@
 package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.infra.dto.ProyectoGradoRequest;
 import co.unicauca.infra.dto.ProyectoGradoResponse;
 import co.unicauca.service.ProyectoGradoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,7 +18,7 @@ public class ProyectoGradoListener {
         this.proyectoGradoService = proyectoGradoService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.COLA_PROYECTO_GRADO)
+    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
     public void receiveProyectoGrado(ProyectoGradoResponse proyectoResponse) {
         logger.info("📥 [PROYECTO_GRADO] Mensaje recibido: {}", proyectoResponse.nombre());
 

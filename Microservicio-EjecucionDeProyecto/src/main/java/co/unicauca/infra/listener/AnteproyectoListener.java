@@ -1,7 +1,7 @@
 package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.infra.dto.AnteproyectoRequest;
+import co.unicauca.infra.dto.AnteproyectoResponse;
 import co.unicauca.service.AnteproyectoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -18,14 +18,14 @@ public class AnteproyectoListener {
         this.anteproyectoService = anteproyectoService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.COLA_ANTEPROYECTO)
-    public void receiveAnteproyecto(AnteproyectoRequest anteproyectoRequest) {
-        logger.info("📥 [ANTEPROYECTO] Mensaje recibido: {}", anteproyectoRequest);
+    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
+    public void receiveAnteproyecto(AnteproyectoResponse anteproyectoResponse) {
+        logger.info("📥 [ANTEPROYECTO] Mensaje recibido: {}", anteproyectoResponse.titulo());
 
         try {
-            // ✅ CAMBIADO: Usar crearOActualizar en lugar de crear
-            anteproyectoService.crearOActualizarAnteproyecto(anteproyectoRequest);
-            logger.info("✅ [ANTEPROYECTO] Anteproyecto procesado exitosamente (creado o actualizado)");
+            // ✅ Procesar el AnteproyectoResponse recibido
+            anteproyectoService.procesarAnteproyectoRecibido(anteproyectoResponse);
+            logger.info("✅ [ANTEPROYECTO] Anteproyecto procesado exitosamente: {}", anteproyectoResponse.titulo());
         } catch (Exception e) {
             logger.error("❌ [ANTEPROYECTO] Error procesando anteproyecto: {}", e.getMessage(), e);
         }

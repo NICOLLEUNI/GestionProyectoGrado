@@ -1,8 +1,8 @@
 package co.unicauca.service;
 
-import co.unicauca.entity.*;
-import co.unicauca.infra.dto.*;
-import co.unicauca.infra.messaging.RabbitMQPublisher;
+import co.unicauca.entity.ProyectoGrado;
+import co.unicauca.infra.dto.ProyectoGradoRequest;
+import co.unicauca.infra.dto.ProyectoGradoResponse;
 import co.unicauca.repository.ProyectoGradoRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,11 +19,10 @@ import java.util.stream.Collectors;
 public class ProyectoGradoService {
 
     private final ProyectoGradoRepository proyectoRepository;
-    private final RabbitMQPublisher rabbitMQPublisher;
     private static final Logger logger = LoggerFactory.getLogger(ProyectoGradoService.class);
 
     /**
-     * ✅ CREAR PROYECTO DESDE API (PUBLICA EVENTO)
+     * ✅ CREAR PROYECTO DESDE API
      */
     @Transactional
     public ProyectoGradoResponse crearProyecto(ProyectoGradoRequest request) {
@@ -35,34 +33,32 @@ public class ProyectoGradoService {
         proyecto.setFechaCreacion(request.fecha().atStartOfDay());
         proyecto.setEstudiantesEmail(request.estudiantesEmail());
         proyecto.setEstado("ENTREGADO");
-        proyecto.setIdFormatoA(request.idFormatoA());
+        proyecto.setIdFormatoA(request.IdFormatoA());
 
         ProyectoGrado guardado = proyectoRepository.save(proyecto);
         ProyectoGradoResponse response = convertirAResponse(guardado);
 
-        // ✅ PUBLICAR EVENTO a RabbitMQ (solo cuando se crea desde API)
-        rabbitMQPublisher.publishProyectoGradoCreado(response);
-        logger.info("✅ Proyecto creado y evento publicado: {}", response.id());
+        logger.info("✅ Proyecto creado: {}", response.id());
 
         return response;
     }
 
     /**
-     * ✅ CREAR PROYECTO INTERNO (SIN PUBLICAR EVENTO - PARA LISTENER)
+     * ✅ CREAR PROYECTO INTERNO
      */
     @Transactional
     public ProyectoGradoResponse crearProyectoInterno(ProyectoGradoRequest request) {
-        logger.info("🔄 Creando proyecto interno (desde listener): {}", request.nombre());
+        logger.info("🔄 Creando proyecto interno: {}", request.nombre());
 
         ProyectoGrado proyecto = new ProyectoGrado();
         proyecto.setNombre(request.nombre());
         proyecto.setFechaCreacion(request.fecha().atStartOfDay());
         proyecto.setEstudiantesEmail(request.estudiantesEmail());
         proyecto.setEstado("ENTREGADO");
-        proyecto.setIdFormatoA(request.idFormatoA());
+        proyecto.setIdFormatoA(request.IdFormatoA());
 
         ProyectoGrado guardado = proyectoRepository.save(proyecto);
-        logger.info("✅ Proyecto interno creado (sin evento): {}", guardado.getId());
+        logger.info("✅ Proyecto interno creado: {}", guardado.getId());
 
         return convertirAResponse(guardado);
     }
@@ -81,7 +77,7 @@ public class ProyectoGradoService {
             // ✅ USAR MÉTODO INTERNO que NO publica evento
             crearProyectoInterno(request);
 
-            logger.info("✅ [LISTENER] Proyecto procesado exitosamente (sin bucle): {}", proyectoRecibido.nombre());
+            logger.info("✅ [LISTENER] Proyecto procesado exitosamente: {}", proyectoRecibido.nombre());
 
         } catch (Exception e) {
             logger.error("❌ [LISTENER] Error procesando proyecto: {}", e.getMessage(), e);
@@ -112,14 +108,12 @@ public class ProyectoGradoService {
 
         proyecto.setNombre(request.nombre());
         proyecto.setEstudiantesEmail(request.estudiantesEmail());
-        proyecto.setIdFormatoA(request.idFormatoA());
+        proyecto.setIdFormatoA(request.IdFormatoA());
 
         ProyectoGrado actualizado = proyectoRepository.save(proyecto);
         ProyectoGradoResponse response = convertirAResponse(actualizado);
 
-        // ✅ PUBLICAR EVENTO DE ACTUALIZACIÓN
-        rabbitMQPublisher.publishProyectoGradoCreado(response);
-        logger.info("✅ Proyecto actualizado y evento publicado: {}", id);
+        logger.info("✅ Proyecto actualizado: {}", id);
 
         return response;
     }
@@ -133,10 +127,6 @@ public class ProyectoGradoService {
         proyecto.setIdFormatoA(idFormatoAExterno);
         proyectoRepository.save(proyecto);
 
-        // ✅ PUBLICAR EVENTO DE SINCRONIZACIÓN
-        ProyectoGradoResponse response = convertirAResponse(proyecto);
-        rabbitMQPublisher.publishProyectoGradoCreado(response);
-
         logger.info("✅ FormatoA sincronizado: Proyecto {} → FormatoA {}", proyectoId, idFormatoAExterno);
     }
 
@@ -146,7 +136,7 @@ public class ProyectoGradoService {
     }
 
     @Transactional(readOnly = true)
-    public List<FormatoAVersionResponse> buscarVersionesPorProyecto(Long proyectoId) {
+    public List<ProyectoGradoResponse> buscarVersionesPorProyecto(Long proyectoId) {
         ProyectoGrado proyecto = proyectoRepository.findById(proyectoId)
                 .orElseThrow(() -> new RuntimeException("Proyecto no encontrado con ID: " + proyectoId));
 
@@ -179,7 +169,7 @@ public class ProyectoGradoService {
                 response.nombre(),
                 response.fecha(),
                 response.estudiantesEmail(),
-                response.idFormatoA()
+                response.IdFormatoA()
         );
     }
 
