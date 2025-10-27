@@ -32,6 +32,7 @@ public class FormatoAVersionListener {
             logger.error("❌ [RABBITMQ] Error procesando versión: {}", e.getMessage(), e);
             // Puedes implementar dead letter queue aquí si es necesario
         }
+
     }
 
 }
