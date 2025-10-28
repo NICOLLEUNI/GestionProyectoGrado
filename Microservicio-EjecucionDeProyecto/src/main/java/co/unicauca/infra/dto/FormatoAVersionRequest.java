@@ -9,15 +9,25 @@
 
             Long id,
             int numVersion,
-            LocalDate fecha,
-            String titulo,
-            String modalidad,
-            String estado,
-            String observaciones,
-            int counter,
-            @JsonAlias({"IdFormatoA"})
-            Long idFormatoA
 
+            @JsonAlias({"date", "fecha"})
+            LocalDate fecha,
+
+            @JsonAlias({"title", "titulo"})
+            String titulo,
+
+            @JsonAlias({"mode", "modalidad"})
+            String modalidad,
+
+            @JsonAlias({"state", "estado"})
+            String estado,
+
+            String observaciones,
+            @JsonAlias({"counter"})
+            Integer counter,
+
+            @JsonAlias({"IdFormatoA", "idFormatoA"})
+            Long idFormatoA
 
     )
     {}

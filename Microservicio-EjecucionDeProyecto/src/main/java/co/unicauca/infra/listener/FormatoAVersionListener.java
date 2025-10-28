@@ -1,12 +1,9 @@
 package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.infra.dto.AnteproyectoResponse;
-import co.unicauca.infra.dto.FormatoAVersionResponse;
+import co.unicauca.infra.dto.FormatoAVersionRequest;
 import co.unicauca.service.FormatoAVersionService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -15,24 +12,23 @@ import org.springframework.stereotype.Component;
 public class FormatoAVersionListener {
 
     private final FormatoAVersionService versionService;
-    private static final Logger logger = LoggerFactory.getLogger(FormatoAVersionListener.class);
 
     /**
-     * ✅ LISTENER PARA VERSIONES CREADAS DESDE OTROS MICROSERVICIOS
+     * ✅ LISTENER CORREGIDO - AHORA RECIBE FormatoAVersionRequest
      */
     @RabbitListener(queues = RabbitMQConfig.FORMATOAVERSION_HISTORICO_QUEUE)
-    public void recibirVersionCreada(FormatoAVersionResponse versionResponse) {
-        logger.info("📥 [RABBITMQ] Versión recibida: {} - v{} para FormatoA: {}",
-                versionResponse.titulo(), versionResponse.numVersion(), versionResponse.idFormatoA());
+    public void recibirVersionCreada(FormatoAVersionRequest versionRequest) {
+        System.out.println("📥 [RABBITMQ] Versión Request recibida: " + versionRequest.titulo() +
+                " - v" + versionRequest.numVersion() +
+                " para FormatoA: " + versionRequest.idFormatoA());
 
         try {
-            versionService.procesarVersionRecibida(versionResponse);
-            logger.info("✅ [RABBITMQ] Versión procesada exitosamente: v{}", versionResponse.numVersion());
+            versionService.procesarVersionRecibida(versionRequest);
+            System.out.println("✅ [RABBITMQ] Versión Request procesada exitosamente: v" + versionRequest.numVersion());
         } catch (Exception e) {
-            logger.error("❌ [RABBITMQ] Error procesando versión: {}", e.getMessage(), e);
+            System.out.println("❌ [RABBITMQ] Error procesando versión Request: " + e.getMessage());
+            e.printStackTrace();
             // Puedes implementar dead letter queue aquí si es necesario
         }
-
     }
-
 }

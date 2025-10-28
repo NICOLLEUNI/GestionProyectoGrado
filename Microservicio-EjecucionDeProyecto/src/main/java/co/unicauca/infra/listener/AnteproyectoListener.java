@@ -1,33 +1,38 @@
 package co.unicauca.infra.listener;
 
 import co.unicauca.infra.config.RabbitMQConfig;
-import co.unicauca.infra.dto.AnteproyectoResponse;
+import co.unicauca.infra.dto.AnteproyectoRequest;
 import co.unicauca.service.AnteproyectoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class AnteproyectoListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnteproyectoListener.class);
     private final AnteproyectoService anteproyectoService;
 
     public AnteproyectoListener(AnteproyectoService anteproyectoService) {
         this.anteproyectoService = anteproyectoService;
     }
 
+    /**
+     * ✅ LISTENER SIMPLIFICADO - Solo recibe y delega al Service
+     */
     @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
-    public void receiveAnteproyecto(AnteproyectoResponse anteproyectoResponse) {
-        logger.info("📥 [ANTEPROYECTO] Mensaje recibido: {}", anteproyectoResponse.titulo());
+    public void receiveAnteproyecto(AnteproyectoRequest anteproyectoRequest) {
+        System.out.println("📥 [LISTENER] Anteproyecto Request recibido: " + anteproyectoRequest.titulo() +
+                " | ID: " + anteproyectoRequest.id() +
+                " | Proyecto: " + anteproyectoRequest.idProyectoGrado());
 
         try {
-            // ✅ Procesar el AnteproyectoResponse recibido
-            anteproyectoService.procesarAnteproyectoRecibido(anteproyectoResponse);
-            logger.info("✅ [ANTEPROYECTO] Anteproyecto procesado exitosamente: {}", anteproyectoResponse.titulo());
+            // ✅ DELEGAR TODA LA LÓGICA AL SERVICE
+            anteproyectoService.procesarAnteproyectoRequest(anteproyectoRequest);
+
+            System.out.println("✅ [LISTENER] Anteproyecto Request delegado al Service: " + anteproyectoRequest.titulo());
+
         } catch (Exception e) {
-            logger.error("❌ [ANTEPROYECTO] Error procesando anteproyecto: {}", e.getMessage(), e);
+            System.out.println("❌ [LISTENER] Error delegando Request al Service: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

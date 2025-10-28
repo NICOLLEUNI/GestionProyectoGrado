@@ -1,59 +1,51 @@
 package co.unicauca.controller;
 
+import co.unicauca.entity.FormatoAVersion;
 import co.unicauca.infra.dto.FormatoAVersionRequest;
 import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.service.FormatoAVersionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/formatos-a")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class FormatoAController {
 
-    @Autowired
-    private FormatoAVersionService formatoAVersionService;
+    private final FormatoAVersionService formatoAVersionService;
 
     /**
      * ✅ CREAR NUEVA VERSIÓN DE FORMATO A
-     * - Crea la versión en la base de datos
-     * - Publica evento a RabbitMQ
      */
-    @PostMapping("/versiones/crear")
+    @PostMapping("/versiones")
     public ResponseEntity<?> crearVersion(@RequestBody FormatoAVersionRequest request) {
         try {
-            System.out.println("📨 Recibiendo petición para crear versión:");
+            System.out.println("📨 [CONTROLLER] Creando versión de Formato A:");
             System.out.println("   Título: " + request.titulo());
             System.out.println("   FormatoA ID: " + request.idFormatoA());
             System.out.println("   Versión: " + request.numVersion());
+            System.out.println("   Estado: " + request.estado());
+            System.out.println("   Modalidad: " + request.modalidad());
 
-            FormatoAVersionResponse response = formatoAVersionService.crearVersion(request);
+            // ✅ CORREGIDO: El service retorna FormatoAVersion, no FormatoAVersionRequest
+            FormatoAVersion versionCreada = formatoAVersionService.crearVersion(request);
 
-            System.out.println("✅ Versión creada exitosamente: " + response.id());
-            return ResponseEntity.ok(response);
+            System.out.println("✅ [CONTROLLER] Versión creada exitosamente - ID: " + versionCreada.getId());
+            return ResponseEntity.ok(versionCreada);
 
         } catch (Exception e) {
-            System.err.println("❌ ERROR creando versión: " + e.getMessage());
+            System.err.println("❌ [CONTROLLER] ERROR creando versión: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(
-                    Map.of("error", "Error al crear versión: " + e.getMessage())
+                    Map.of(
+                            "error", "Error al crear versión",
+                            "detalle", e.getMessage()
+                    )
             );
-        }
-    }
-
-    /**
-     * ✅ LISTAR TODAS LAS VERSIONES
-     */
-    @GetMapping("/versiones")
-    public ResponseEntity<List<FormatoAVersionResponse>> listarTodas() {
-        try {
-            List<FormatoAVersionResponse> versiones = formatoAVersionService.listarTodas();
-            return ResponseEntity.ok(versiones);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -61,31 +53,23 @@ public class FormatoAController {
      * ✅ OBTENER VERSIÓN POR ID
      */
     @GetMapping("/versiones/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerVersion(@PathVariable Long id) {
         try {
-            FormatoAVersionResponse version = formatoAVersionService.buscarPorId(id);
-            return ResponseEntity.ok(version);
+            System.out.println("🔍 [CONTROLLER] Buscando versión por ID: " + id);
+
+            // ✅ CORREGIDO: El service retorna FormatoAVersionResponse
+            FormatoAVersionResponse response = formatoAVersionService.buscarPorId(id);
+
+            System.out.println("✅ [CONTROLLER] Versión encontrada - ID: " + response.id());
+            return ResponseEntity.ok(response);
+
         } catch (RuntimeException e) {
+            System.err.println("❌ [CONTROLLER] Versión no encontrada - ID: " + id);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR buscando versión: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
-                    Map.of("error", "Error al buscar versión: " + e.getMessage())
-            );
-        }
-    }
-
-    /**
-     * ✅ BUSCAR VERSIONES POR FORMATO A (ID externo)
-     * Útil para encontrar versiones relacionadas a un proyecto específico
-     */
-    @GetMapping("/versiones/formato/{formatoAId}")
-    public ResponseEntity<?> buscarPorFormatoA(@PathVariable Long formatoAId) {
-        try {
-            List<FormatoAVersionResponse> versiones = formatoAVersionService.buscarPorFormatoA(formatoAId);
-            return ResponseEntity.ok(versiones);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    Map.of("error", "Error al buscar versiones: " + e.getMessage())
+                    Map.of("error", "Error interno del servidor")
             );
         }
     }
@@ -96,13 +80,122 @@ public class FormatoAController {
     @PutMapping("/versiones/{id}")
     public ResponseEntity<?> actualizarVersion(@PathVariable Long id, @RequestBody FormatoAVersionRequest request) {
         try {
-            FormatoAVersionResponse response = formatoAVersionService.actualizarVersion(id, request);
-            return ResponseEntity.ok(response);
+            System.out.println("✏️ [CONTROLLER] Actualizando versión - ID: " + id);
+            System.out.println("   Nuevo título: " + request.titulo());
+            System.out.println("   Nuevo estado: " + request.estado());
+            System.out.println("   Nuevo counter: " + request.counter());
+
+            // ✅ Usar procesarVersionRecibida para actualizar
+            formatoAVersionService.procesarVersionRecibida(request);
+
+            System.out.println("✅ [CONTROLLER] Versión actualizada - ID: " + id);
+            return ResponseEntity.ok().body(
+                    Map.of("mensaje", "Versión actualizada exitosamente", "id", id)
+            );
+
         } catch (RuntimeException e) {
+            System.err.println("❌ [CONTROLLER] ERROR actualizando versión: " + e.getMessage());
+            return ResponseEntity.badRequest().body(
+                    Map.of(
+                            "error", "Error al actualizar versión",
+                            "detalle", e.getMessage()
+                    )
+            );
+        } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR inesperado actualizando: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error interno del servidor")
+            );
+        }
+    }
+
+    /**
+     * ✅ ENDPOINTS PARA HISTORIAL MEMENTO
+     */
+    @GetMapping("/versiones/{id}/historial")
+    public ResponseEntity<?> obtenerHistorial(@PathVariable Long id) {
+        try {
+            System.out.println("📊 [CONTROLLER] Obteniendo historial de versión: " + id);
+
+            var historial = formatoAVersionService.obtenerHistorialVersiones(id);
+
+            System.out.println("✅ [CONTROLLER] Historial obtenido - Versiones: " + historial.size());
+            return ResponseEntity.ok(historial);
+
+        } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR obteniendo historial: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error al obtener historial")
+            );
+        }
+    }
+
+    @GetMapping("/versiones/{id}/historial/{version}")
+    public ResponseEntity<?> obtenerVersionHistorial(@PathVariable Long id, @PathVariable int version) {
+        try {
+            System.out.println("🔍 [CONTROLLER] Obteniendo versión " + version + " del historial: " + id);
+
+            var memento = formatoAVersionService.obtenerEstadoVersion(id, version);
+
+            System.out.println("✅ [CONTROLLER] Versión del historial obtenida - Estado: " + memento.getEstado());
+            return ResponseEntity.ok(memento);
+
+        } catch (RuntimeException e) {
+            System.err.println("❌ [CONTROLLER] Versión no encontrada en historial: " + e.getMessage());
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR obteniendo versión del historial: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error interno del servidor")
+            );
+        }
+    }
+
+    @PostMapping("/versiones/{id}/restaurar/{version}")
+    public ResponseEntity<?> restaurarVersion(@PathVariable Long id, @PathVariable int version) {
+        try {
+            System.out.println("⏪ [CONTROLLER] Restaurando versión " + id + " a versión: " + version);
+
+            var versionRestaurada = formatoAVersionService.restaurarAVersion(id, version);
+
+            System.out.println("✅ [CONTROLLER] Versión restaurada - Nueva ID: " + versionRestaurada.getId());
+            return ResponseEntity.ok(versionRestaurada);
+
+        } catch (RuntimeException e) {
+            System.err.println("❌ [CONTROLLER] ERROR restaurando versión: " + e.getMessage());
             return ResponseEntity.badRequest().body(
-                    Map.of("error", "Error al actualizar versión: " + e.getMessage())
+                    Map.of("error", e.getMessage())
+            );
+        } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR inesperado restaurando: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error interno del servidor")
+            );
+        }
+    }
+
+    /**
+     * ✅ OBTENER ÚLTIMO ESTADO
+     */
+    @GetMapping("/versiones/{id}/ultimo-estado")
+    public ResponseEntity<?> obtenerUltimoEstado(@PathVariable Long id) {
+        try {
+            System.out.println("📈 [CONTROLLER] Obteniendo último estado de versión: " + id);
+
+            var ultimoEstado = formatoAVersionService.obtenerUltimoEstado(id);
+
+            if (ultimoEstado != null) {
+                System.out.println("✅ [CONTROLLER] Último estado obtenido - Versión: " + ultimoEstado.getVersion());
+                return ResponseEntity.ok(ultimoEstado);
+            } else {
+                System.out.println("ℹ️ [CONTROLLER] No hay historial para versión: " + id);
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR obteniendo último estado: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error interno del servidor")
             );
         }
     }

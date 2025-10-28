@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Table(name = "formato_version")
 public class FormatoAVersion {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int numeroVersion;

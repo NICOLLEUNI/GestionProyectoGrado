@@ -3,10 +3,7 @@ package co.unicauca.infra.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -15,26 +12,52 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfig{
+public class RabbitMQConfig {
 
-    // ================== COLAS ==================
-
-    // Colas para FormatoA
+    // ================== COLAS (LAS MISMAS) ==================
     public static final String FORMATOA_EVALUACION_QUEUE = "formatoa.evaluacion.queue";
     public static final String FORMATOA_NOTIFICACIONES_QUEUE = "formatoa.notificaciones.queue";
-
-    // Colas para Anteproyecto
     public static final String ANTEPROYECTO_EVALUACION_QUEUE = "anteproyecto.evaluacion.queue";
     public static final String ANTEPROYECTO_NOTIFICACIONES_QUEUE = "anteproyecto.notificaciones.queue";
-
-    // Colas para FormatoAVersion
     public static final String FORMATOAVERSION_HISTORICO_QUEUE = "formatoaversion.historico.queue";
     public static final String FORMATOAVERSION_NOTIFICACIONES_QUEUE = "formatoaversion.notificaciones.queue";
-
-    // Colas directas
     public static final String PROYECTO_GRADO_CREADO_QUEUE = "proyectogrado.creado.queue";
     public static final String FORMATOA_EVALUADO_QUEUE = "formatoa.evaluado.queue";
     public static final String USUARIO_QUEUE = "usuario.queue";
+
+    // ================== EXCHANGES (DEBEN COINCIDIR CON QUIEN ENVÍA) ==================
+    public static final String ANTEPROYECTO_EXCHANGE = "anteproyecto.exchange";
+    public static final String PROYECTO_GRADO_EXCHANGE = "proyectogrado.exchange";
+    public static final String FORMATOA_EXCHANGE = "formatoa.exchange";
+    public static final String USUARIO_EXCHANGE = "usuario.exchange";
+
+    // ================== ROUTING KEYS (DEBEN COINCIDIR CON QUIEN ENVÍA) ==================
+    public static final String ANTEPROYECTO_CREADO_ROUTING_KEY = "anteproyecto.creado";
+    public static final String PROYECTO_GRADO_CREADO_ROUTING_KEY = "proyectogrado.creado";
+    public static final String FORMATOA_CREADO_ROUTING_KEY = "formatoa.creado";
+    public static final String USUARIO_ACTUALIZADO_ROUTING_KEY = "usuario.actualizado";
+
+    // ================== BEANS DE EXCHANGES ==================
+
+    @Bean
+    public DirectExchange anteproyectoExchange() {
+        return new DirectExchange(ANTEPROYECTO_EXCHANGE);
+    }
+
+    @Bean
+    public DirectExchange proyectoGradoExchange() {
+        return new DirectExchange(PROYECTO_GRADO_EXCHANGE);
+    }
+
+    @Bean
+    public DirectExchange formatoAExchange() {
+        return new DirectExchange(FORMATOA_EXCHANGE);
+    }
+
+    @Bean
+    public DirectExchange usuarioExchange() {
+        return new DirectExchange(USUARIO_EXCHANGE);
+    }
 
     // ================== BEANS DE COLAS ==================
 
@@ -83,9 +106,38 @@ public class RabbitMQConfig{
         return new Queue(USUARIO_QUEUE, true);
     }
 
-    /**
-     * Configuración para convertir mensajes JSON a objetos Java
-     */
+    // ================== BINDINGS (LO MÁS IMPORTANTE) ==================
+
+    @Bean
+    public Binding bindingAnteproyectoEvaluacion() {
+        return BindingBuilder.bind(anteproyectoEvaluacionQueue())
+                .to(anteproyectoExchange())
+                .with(ANTEPROYECTO_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingProyectoGradoCreado() {
+        return BindingBuilder.bind(proyectoGradoCreadoQueue())
+                .to(proyectoGradoExchange())
+                .with(PROYECTO_GRADO_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingFormatoAEvaluacion() {
+        return BindingBuilder.bind(formatoAEvaluacionQueue())
+                .to(formatoAExchange())
+                .with(FORMATOA_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingUsuarioActualizado() {
+        return BindingBuilder.bind(usuarioActualizadoQueue())
+                .to(usuarioExchange())
+                .with(USUARIO_ACTUALIZADO_ROUTING_KEY);
+    }
+
+    // ================== CONFIGURACIÓN JSON ==================
+
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -101,9 +153,6 @@ public class RabbitMQConfig{
         return rabbitTemplate;
     }
 
-    /**
-     * Configura el MessageConverter para los listeners
-     */
     @Bean
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
