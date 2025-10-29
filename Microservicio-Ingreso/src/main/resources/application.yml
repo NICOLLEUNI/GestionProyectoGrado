@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: login-signin-service
+
+  datasource:
+    url: jdbc:h2:mem:login_signin_db;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+server:
+  port: 8080
+
+# ✅ Configuración JWT CORREGIDA
+jwt:
+  secret: "dev-super-secret-jwt-key-2024-with-at-least-32-characters"  # Mínimo 32 caracteres
+  expiration: 86400000  # 24 horas en milisegundos
+
+logging:
+  level:
+    root: INFO
+    # ✅ SINTAXIS CORREGIDA - usar dos puntos y espacio
+    co.unicauca.identity: DEBUG  # Para ver logs detallados de nuestra app
+    org.hibernate: DEBUG
