@@ -1,6 +1,7 @@
 package co.unicauca.controller;
 
 import co.unicauca.entity.FormatoA;
+import co.unicauca.infra.dto.FormatoAEditRequest;
 import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.service.FormatoAService;
 import jakarta.validation.Valid;
@@ -40,6 +41,17 @@ public class FormatoAController {
         FormatoA formatoActualizado = formatoAService.actualizarFormatoAEvaluado(request);
         return ResponseEntity.ok(formatoActualizado);
     }
+
+    /**
+     * Endpoint para actualizar un Formato A cuando es editado
+     * (viene desde el frontend con la evaluación del coordinador)
+     */
+    @PutMapping("/reenviar-rechazado")
+    public ResponseEntity<FormatoA> reenviarFormatoA(@RequestBody FormatoAEditRequest request) {
+        FormatoA formatoActualizado = formatoAService.reenviarFormatoARechazado(request);
+        return ResponseEntity.ok(formatoActualizado);
+    }
+
 
     /**
      * Endpoint para listar todos los Formatos A asociados a un docente
