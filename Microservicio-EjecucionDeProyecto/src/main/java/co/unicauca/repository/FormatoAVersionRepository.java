@@ -12,6 +12,9 @@ public interface FormatoAVersionRepository extends JpaRepository<FormatoAVersion
     // Método para obtener todas las versiones de un FormatoA por su id
 
     List<FormatoAVersion> findByIdFormatoA(Long idFormatoA);
+    // En FormatoAVersionRepository
+    List<FormatoAVersion> findByIdFormatoAOrderByNumeroVersionDesc(Long idFormatoA);
+    List<FormatoAVersion> findByIdFormatoAOrderByNumeroVersionAsc(Long idFormatoA);
     Optional<FormatoAVersion> findByIdFormatoAAndNumeroVersion(Long idFormatoA, Integer numeroVersion);
     @Query("SELECT MAX(f.id) FROM FormatoAVersion f")
     Long findMaxId();

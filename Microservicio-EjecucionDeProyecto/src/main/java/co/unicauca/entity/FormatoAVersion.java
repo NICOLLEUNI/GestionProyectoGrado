@@ -12,10 +12,11 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "formato_version")
+@Table(name = "formato_a_versiones")
 public class FormatoAVersion {
 
     @Id
+    @Column(nullable = false)
     private Long id;
 
     private int numeroVersion;

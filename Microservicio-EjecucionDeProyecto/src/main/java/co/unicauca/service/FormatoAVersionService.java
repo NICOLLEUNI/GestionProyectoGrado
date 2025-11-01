@@ -25,101 +25,121 @@ public class FormatoAVersionService {
     private final FormatoAVersionRepository versionRepository;
     private final RequestHistoryManager historyManager;
 
-    /**
-     * ✅ CREAR VERSIÓN DESDE REQUEST CON MEMENTO
-     */
     @Transactional
     public FormatoAVersion crearVersion(FormatoAVersionRequest request) {
-        System.out.println("📑 RECIBIENDO VERSIÓN desde Request: " + request.titulo() + " - v" + request.numVersion() + "Counter "+ request.counter());
+        System.out.println(" VERSION DE FORMATOA RECIBIDA ");
 
-        FormatoAVersion version = convertirRequestAEntity(request);
-        System.out.println("🔍 DEBUG COMPLETO DEL REQUEST:");
-        System.out.println("   - ID: " + version.getId());
-        System.out.println("   - numVersion: " + version.getNumeroVersion());
-        System.out.println("   - counter: " + version.getCounter());
-        System.out.println("   - estado: " + version.getState());
-        System.out.println("   - fecha: " + version.getFecha());
-        System.out.println("   - titulo: " + version.getTitle());
-        System.out.println("   - modalidad: " + version.getMode());
-        System.out.println("   - idFormatoA: " + version.getIdFormatoA());
+        // VERIFICACIÓN DEL ID - Si viene en el request, usarlo directamente
+        FormatoAVersion version;
+        if (request.id() != null) {
+            // Buscar si ya existe una versión con ese ID
+            Optional<FormatoAVersion> versionExistente = versionRepository.findById(request.id());
+            if (versionExistente.isPresent()) {
+                // ACTUALIZAR versión existente
+                version = versionExistente.get();
+                actualizarVersionDesdeRequest(version, request);
+                System.out.println(" ACTUALIZANDO versión existente - ID: " + version.getId());
+            } else {
+                // CREAR nueva versión con el ID proporcionado
+                version = convertirRequestAEntity(request);
+                // 🔹 El ID ya viene asignado desde el DTO
+                System.out.println(" CREANDO nueva versión con ID proporcionado: " + request.id());
+            }
+        } else {
+            throw new IllegalArgumentException("El ID es requerido para crear/actualizar una versión");
+        }
+
+        System.out.println("   - id: " + request.id());
+        System.out.println("   - numVersion: " + request.numVersion());
+        System.out.println("   - counter: " + request.counter());
+        System.out.println("   - estado: " + request.estado());
+        System.out.println("   - fecha: " + request.fecha());
+        System.out.println("   - titulo: " + request.titulo());
+        System.out.println("   - modalidad: " + request.modalidad());
+        System.out.println("   - idFormatoA: " + request.idFormatoA());
 
         FormatoAVersion guardada = versionRepository.save(version);
 
-        // ✅ GUARDAR REQUEST ORIGINAL EN MEMENTO
+        // GUARDAR REQUEST ORIGINAL EN MEMENTO
         Map<String, Object> requestData = convertirRequestAMap(request);
         RequestMemento memento = historyManager.saveRequestState("FORMATO_A", guardada.getId(), request.estado(), requestData);
 
-        System.out.println("✅ VERSIÓN CREADA con Memento - ID: " + guardada.getId() +
+        System.out.println(" VERSIÓN CREADA con Memento - ID: " + guardada.getId() +
                 " | Versión Memento: " + memento.getVersion());
 
         return guardada;
     }
 
     /**
-     * ✅ PROCESAR VERSIÓN RECIBIDA (REQUEST) CON MEMENTO
+     * PROCESAR VERSIÓN RECIBIDA (REQUEST) CON MEMENTO - CREA NUEVA VERSIÓN EN LUGAR DE ACTUALIZAR
      */
     @Transactional
     public void procesarVersionRecibida(FormatoAVersionRequest request) {
         try {
-            FormatoAVersion versionAActualizar = null;
-            String estrategia = "";
+            FormatoAVersion ultimaVersion = null;
 
-            // 🔍 ESTRATEGIA 2: Buscar por FormatoA si no se encontró por ID
-            if (versionAActualizar == null && request.idFormatoA() != null) {
-                List<FormatoAVersion> versiones = versionRepository.findByIdFormatoA(request.idFormatoA());
+            // BUSCAR VERSIONES EXISTENTES POR FormatoA ID
+            if (request.idFormatoA() != null) {
+                List<FormatoAVersion> versiones = versionRepository.findByIdFormatoAOrderByNumeroVersionDesc(request.idFormatoA());
                 if (!versiones.isEmpty()) {
-                    versionAActualizar = versiones.get(0);
-                    estrategia = "FormatoA";
-                    System.out.println("🔍 Encontrada por FormatoA ID: " + request.idFormatoA() +
-                            " - Counter actual: " + versionAActualizar.getCounter());
+                    ultimaVersion = versiones.get(0);
+                    System.out.println(" Encontrada última versión por FormatoA ID: " + request.idFormatoA() +
+                            " - Versión actual: v" + ultimaVersion.getNumeroVersion() +
+                            " - Counter actual: " + ultimaVersion.getCounter());
                 }
             }
 
-            if (versionAActualizar != null) {
-                System.out.println("🔄 ACTUALIZAR versión existente - ID: " + versionAActualizar.getId() +
-                        " | Counter antes: " + versionAActualizar.getCounter());
+            if (ultimaVersion != null) {
+                System.out.println("🔄 CREANDO NUEVA VERSIÓN basada en versión existente - FormatoA ID: " + ultimaVersion.getIdFormatoA() +
+                        " | Versión anterior: v" + ultimaVersion.getNumeroVersion() +
+                        " | Counter anterior: " + ultimaVersion.getCounter());
 
-                // ✅ GUARDAR ESTADO ACTUAL ANTES DE ACTUALIZAR
-                Map<String, Object> estadoAnterior = crearSnapshotEntity(versionAActualizar);
-                RequestMemento mementoAnterior = historyManager.saveRequestState("FORMATO_A",
-                        versionAActualizar.getId(), versionAActualizar.getState().name(), estadoAnterior);
-
-                System.out.println("💾 Estado anterior guardado - Versión: " + mementoAnterior.getVersion() +
-                        " | Counter: " + versionAActualizar.getCounter());
-
-                // ACTUALIZAR ENTIDAD DESDE REQUEST
-                actualizarEntityDesdeRequest(versionAActualizar, request);
-                FormatoAVersion actualizada = versionRepository.save(versionAActualizar);
-
-                // ✅ GUARDAR NUEVO REQUEST EN MEMENTO
-                Map<String, Object> requestData = convertirRequestAMap(request);
-                RequestMemento mementoNuevo = historyManager.saveRequestState("FORMATO_A",
-                        actualizada.getId(), request.estado(), requestData);
-
-                System.out.println("✅ VERSIÓN ACTUALIZADA - ID: " + actualizada.getId() +
-                        " | Versión Memento: " + mementoNuevo.getVersion() +
-                        " | Counter después: " + actualizada.getCounter());
-
-            } else {
-                System.out.println("🆕 NUEVA VERSIÓN - FormatoA: " + request.idFormatoA() +
-                        " | Counter inicial: " + request.counter());
-
-                // ✅ CREAR NUEVA VERSIÓN DESDE REQUEST
-                FormatoAVersion nuevaVersion = convertirRequestAEntity(request);
+                // CREAR NUEVA VERSIÓN INCREMENTANDO EL NÚMERO DE VERSIÓN
+                FormatoAVersion nuevaVersion = crearNuevaVersionDesdeAnterior(ultimaVersion, request);
                 FormatoAVersion guardada = versionRepository.save(nuevaVersion);
 
-                // ✅ GUARDAR REQUEST EN MEMENTO
-                Map<String, Object> requestData = convertirRequestAMap(request);
-                RequestMemento memento = historyManager.saveRequestState("FORMATO_A",
-                        guardada.getId(), request.estado(), requestData);
+                // GUARDAR NUEVO REQUEST EN MEMENTO
+                Map<String, Object> requestData = convertirEntityAMap(guardada);
+                RequestMemento mementoNuevo = historyManager.saveRequestState("FORMATO_A",
+                        guardada.getId(), guardada.getState().name(), requestData);
 
-                System.out.println("✅ VERSIÓN CREADA - ID: " + guardada.getId() +
+                System.out.println(" NUEVA VERSIÓN CREADA - ID: " + guardada.getId() +
+                        " | Nueva versión: v" + guardada.getNumeroVersion() +
+                        " | Versión Memento: " + mementoNuevo.getVersion() +
+                        " | Counter nuevo: " + guardada.getCounter());
+
+            } else {
+                System.out.println(" NUEVA VERSIÓN INICIAL - FormatoA: " + request.idFormatoA() +
+                        " | Counter inicial: " + request.counter());
+
+                // CREAR VERSIÓN INICIAL (v1)
+                FormatoAVersion nuevaVersion = convertirRequestAEntity(request);
+
+                // 🔹 Asegurar que sea versión 1 si no viene especificada
+                if (nuevaVersion.getNumeroVersion() == 0) {
+                    nuevaVersion.setNumeroVersion(1);
+                }
+
+                // 🔹 Asegurar que tenga un ID válido
+                if (nuevaVersion.getId() == null) {
+                    nuevaVersion.setId(generarNuevoId());
+                }
+
+                FormatoAVersion guardada = versionRepository.save(nuevaVersion);
+
+                // GUARDAR EN MEMENTO
+                Map<String, Object> requestData = convertirEntityAMap(guardada);
+                RequestMemento memento = historyManager.saveRequestState("FORMATO_A",
+                        guardada.getId(), guardada.getState().name(), requestData);
+
+                System.out.println(" VERSIÓN INICIAL CREADA - ID: " + guardada.getId() +
+                        " | Versión: v" + guardada.getNumeroVersion() +
                         " | Versión Memento: " + memento.getVersion() +
                         " | Counter final: " + guardada.getCounter());
             }
 
         } catch (Exception e) {
-            System.out.println("❌ ERROR procesando versión: " + e.getMessage());
+            System.out.println(" ERROR procesando versión: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Error procesando versión recibida", e);
         }
@@ -140,45 +160,33 @@ public class FormatoAVersionService {
     }
 
     /**
-     * ✅ ACTUALIZAR VERSIÓN ESPECÍFICA
+     * ✅ ACTUALIZAR VERSIÓN ESPECÍFICA CREANDO NUEVA VERSIÓN
      */
     @Transactional
     public FormatoAVersionResponse actualizarVersion(Long id, FormatoAVersionRequest request) {
-        System.out.println("✏️ ACTUALIZANDO VERSIÓN específica: " + id);
+        System.out.println(" ACTUALIZANDO VERSIÓN específica: " + id + " - CREANDO NUEVA VERSIÓN");
 
-        FormatoAVersion version = versionRepository.findById(id)
+        FormatoAVersion versionExistente = versionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Versión no encontrada con ID: " + id));
 
-        // 💾 GUARDAR ESTADO ACTUAL EN MEMENTO
-        Map<String, Object> estadoAnterior = crearSnapshotEntity(version);
-        historyManager.saveRequestState("FORMATO_A", version.getId(),
-                version.getState().name(), estadoAnterior);
+        // CREAR NUEVA VERSIÓN INCREMENTANDO EL NÚMERO
+        FormatoAVersion nuevaVersion = crearNuevaVersionDesdeAnterior(versionExistente, request);
+        FormatoAVersion guardada = versionRepository.save(nuevaVersion);
 
-        // ✏️ ACTUALIZAR CAMPOS
-        version.setTitle(request.titulo());
-        version.setNumeroVersion(request.numVersion());
-        version.setFecha(request.fecha());
-        version.setMode(EnumModalidad.valueOf(request.modalidad()));
-        version.setState(EnumEstado.valueOf(request.estado()));
-        version.setObservations(request.observaciones());
-        version.setCounter(request.counter());
-        version.setIdFormatoA(request.idFormatoA());
-
-        FormatoAVersion actualizada = versionRepository.save(version);
-
-        // 💾 GUARDAR NUEVO ESTADO EN MEMENTO
-        Map<String, Object> requestData = convertirRequestAMap(request);
+        // GUARDAR NUEVO ESTADO EN MEMENTO
+        Map<String, Object> requestData = convertirEntityAMap(guardada);
         RequestMemento memento = historyManager.saveRequestState("FORMATO_A",
-                actualizada.getId(), actualizada.getState().name(), requestData);
+                guardada.getId(), guardada.getState().name(), requestData);
 
-        FormatoAVersionResponse response = convertirAResponse(actualizada);
+        FormatoAVersionResponse response = convertirAResponse(guardada);
 
-        System.out.println("✅ VERSIÓN ACTUALIZADA - ID: " + id +
+        System.out.println(" NUEVA VERSIÓN CREADA - ID anterior: " + id +
+                " | Nueva ID: " + guardada.getId() +
+                " | Nueva versión: v" + guardada.getNumeroVersion() +
                 " | Versión Memento: " + memento.getVersion());
 
         return response;
     }
-
 
     // ========== MÉTODOS DE CONSULTA HISTORIAL MEMENTO ==========
 
@@ -208,20 +216,28 @@ public class FormatoAVersionService {
     }
 
     /**
-     * ✅ RESTAURAR A VERSIÓN ANTERIOR
+     * ✅ RESTAURAR A VERSIÓN ANTERIOR CREANDO NUEVA VERSIÓN
      */
     @Transactional
     public FormatoAVersion restaurarAVersion(Long formatoAId, int version) {
-        System.out.println("⏪ RESTAURANDO a versión " + version + " para FormatoA: " + formatoAId);
+        System.out.println("⏪ RESTAURANDO a versión " + version + " para FormatoA: " + formatoAId + " - CREANDO NUEVA VERSIÓN");
 
         RequestMemento memento = historyManager.restoreToRequestVersion("FORMATO_A", formatoAId, version);
 
+        // Obtener la versión actual para determinar el siguiente número de versión
+        List<FormatoAVersion> versionesActuales = versionRepository.findByIdFormatoAOrderByNumeroVersionDesc(formatoAId);
+        Integer siguienteVersion = 1;
+
+        if (!versionesActuales.isEmpty()) {
+            siguienteVersion = versionesActuales.get(0).getNumeroVersion() + 1;
+        }
+
         // Crear nueva versión basada en el memento
         Map<String, Object> requestData = memento.getRequestData();
-        FormatoAVersionRequest request = convertirMapARequest(requestData);
 
-        FormatoAVersion versionRestaurada = convertirRequestAEntity(request);
-        versionRestaurada.setId(null); // Para que sea nueva entidad
+        FormatoAVersion versionRestaurada = convertirMapAEntity(requestData);
+        versionRestaurada.setNumeroVersion(siguienteVersion); // Incrementar versión
+        // NO establecer ID - dejar que JPA lo genere automáticamente
 
         FormatoAVersion guardada = versionRepository.save(versionRestaurada);
 
@@ -229,7 +245,8 @@ public class FormatoAVersionService {
         RequestMemento nuevoMemento = historyManager.saveRequestState("FORMATO_A",
                 guardada.getId(), guardada.getState().name(), requestData);
 
-        System.out.println("✅ VERSIÓN RESTAURADA - Nueva ID: " + guardada.getId() +
+        System.out.println("✅ NUEVA VERSIÓN RESTAURADA - Nueva ID: " + guardada.getId() +
+                " | Nueva versión: v" + guardada.getNumeroVersion() +
                 " | Nueva versión Memento: " + nuevoMemento.getVersion());
 
         return guardada;
@@ -242,6 +259,8 @@ public class FormatoAVersionService {
      */
     private FormatoAVersion convertirRequestAEntity(FormatoAVersionRequest request) {
         FormatoAVersion entity = new FormatoAVersion();
+        // NO establecer el ID - dejar que JPA lo genere
+        entity.setId(request.id());
         entity.setNumeroVersion(request.numVersion());
         entity.setFecha(request.fecha());
         entity.setTitle(request.titulo());
@@ -251,28 +270,37 @@ public class FormatoAVersionService {
         entity.setCounter(request.counter());
         entity.setIdFormatoA(request.idFormatoA());
 
-        if (request.id() != null) {
-            entity.setId(request.id());
-        }
-
         return entity;
     }
 
     /**
-     * ✅ ACTUALIZAR ENTIDAD DESDE REQUEST
+     * ✅ CREAR NUEVA VERSIÓN DESDE VERSIÓN ANTERIOR
      */
-    private void actualizarEntityDesdeRequest(FormatoAVersion entity, FormatoAVersionRequest request) {
-        System.out.println("🔄 ACTUALIZANDO entidad desde Request");
-        System.out.println("   Estado: " + entity.getState() + " → " + request.estado());
-        System.out.println("   Counter: " + entity.getCounter() + " → " + request.counter());
-        System.out.println("   Observaciones: " + entity.getObservations() + " → " + request.observaciones());
+    private FormatoAVersion crearNuevaVersionDesdeAnterior(FormatoAVersion versionAnterior, FormatoAVersionRequest request) {
+        FormatoAVersion nuevaVersion = new FormatoAVersion();
 
-        entity.setState(EnumEstado.valueOf(request.estado()));
-        entity.setObservations(request.observaciones());
-        entity.setCounter(request.counter());
-        entity.setTitle(request.titulo());
-        entity.setMode(EnumModalidad.valueOf(request.modalidad()));
-        entity.setNumeroVersion(request.numVersion());
+        Long nuevoId = generarNuevoId();
+        nuevaVersion.setId(nuevoId);
+
+        // Incrementar número de versión
+        Integer nuevaVersionNum = versionAnterior.getNumeroVersion() + 1;
+
+        // Copiar datos de la versión anterior y aplicar cambios del request
+        // NO establecer ID - dejar que JPA lo genere
+        nuevaVersion.setNumeroVersion(nuevaVersionNum);
+        nuevaVersion.setFecha(request.fecha() != null ? request.fecha() : versionAnterior.getFecha());
+        nuevaVersion.setTitle(request.titulo() != null ? request.titulo() : versionAnterior.getTitle());
+        nuevaVersion.setMode(request.modalidad() != null ? EnumModalidad.valueOf(request.modalidad()) : versionAnterior.getMode());
+        nuevaVersion.setState(request.estado() != null ? EnumEstado.valueOf(request.estado()) : versionAnterior.getState());
+        nuevaVersion.setObservations(request.observaciones() != null ? request.observaciones() : versionAnterior.getObservations());
+        nuevaVersion.setCounter(request.counter() != null ? request.counter() : versionAnterior.getCounter());
+        nuevaVersion.setIdFormatoA(versionAnterior.getIdFormatoA()); // Mantener mismo FormatoA ID
+
+        System.out.println("🔄 CREANDO NUEVA VERSIÓN - De v" + versionAnterior.getNumeroVersion() + " a v" + nuevaVersionNum);
+        System.out.println("   Counter: " + versionAnterior.getCounter() + " → " + nuevaVersion.getCounter());
+        System.out.println("   Estado: " + versionAnterior.getState() + " → " + nuevaVersion.getState());
+
+        return nuevaVersion;
     }
 
     /**
@@ -295,22 +323,40 @@ public class FormatoAVersionService {
     }
 
     /**
-     * ✅ CREAR SNAPSHOT DE ENTIDAD (para guardar estado anterior)
+     * ✅ CONVERTIR ENTITY A MAP (para Memento)
      */
-    private Map<String, Object> crearSnapshotEntity(FormatoAVersion entity) {
-        Map<String, Object> snapshot = new HashMap<>();
-        snapshot.put("id", entity.getId());
-        snapshot.put("numeroVersion", entity.getNumeroVersion());
-        snapshot.put("fecha", entity.getFecha());
-        snapshot.put("titulo", entity.getTitle());
-        snapshot.put("modalidad", entity.getMode().name());
-        snapshot.put("estado", entity.getState().name());
-        snapshot.put("observaciones", entity.getObservations());
-        snapshot.put("counter", entity.getCounter());
-        snapshot.put("idFormatoA", entity.getIdFormatoA());
+    private Map<String, Object> convertirEntityAMap(FormatoAVersion entity) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", entity.getId());
+        map.put("numVersion", entity.getNumeroVersion());
+        map.put("fecha", entity.getFecha());
+        map.put("titulo", entity.getTitle());
+        map.put("modalidad", entity.getMode().name());
+        map.put("estado", entity.getState().name());
+        map.put("observaciones", entity.getObservations());
+        map.put("counter", entity.getCounter());
+        map.put("idFormatoA", entity.getIdFormatoA());
 
-        System.out.println("📸 Snapshot creado de entidad - ID: " + entity.getId());
-        return snapshot;
+        System.out.println("🗂️ Entity convertido a Map - ID: " + entity.getId());
+        return map;
+    }
+
+    /**
+     * ✅ CONVERTIR MAP A ENTITY (para restauración)
+     */
+    private FormatoAVersion convertirMapAEntity(Map<String, Object> map) {
+        FormatoAVersion entity = new FormatoAVersion();
+        // NO establecer ID - dejar que JPA lo genere
+        entity.setNumeroVersion((Integer) map.get("numVersion"));
+        entity.setFecha((LocalDate) map.get("fecha"));
+        entity.setTitle((String) map.get("titulo"));
+        entity.setMode(EnumModalidad.valueOf((String) map.get("modalidad")));
+        entity.setState(EnumEstado.valueOf((String) map.get("estado")));
+        entity.setObservations((String) map.get("observaciones"));
+        entity.setCounter((Integer) map.get("counter"));
+        entity.setIdFormatoA((Long) map.get("idFormatoA"));
+
+        return entity;
     }
 
     /**
@@ -352,7 +398,7 @@ public class FormatoAVersionService {
     @Transactional(readOnly = true)
     public List<FormatoAVersion> buscarPorFormatoA(Long idFormatoA) {
         System.out.println("🔍 BUSCANDO versiones por FormatoA: " + idFormatoA);
-        List<FormatoAVersion> versiones = versionRepository.findByIdFormatoA(idFormatoA);
+        List<FormatoAVersion> versiones = versionRepository.findByIdFormatoAOrderByNumeroVersionDesc(idFormatoA);
         System.out.println("✅ Versiones encontradas: " + versiones.size());
         return versiones;
     }
@@ -360,7 +406,7 @@ public class FormatoAVersionService {
     @Transactional(readOnly = true)
     public Optional<FormatoAVersion> buscarUltimaVersionPorFormatoA(Long idFormatoA) {
         System.out.println("🔍 BUSCANDO última versión por FormatoA: " + idFormatoA);
-        List<FormatoAVersion> versiones = versionRepository.findByIdFormatoA(idFormatoA);
+        List<FormatoAVersion> versiones = versionRepository.findByIdFormatoAOrderByNumeroVersionDesc(idFormatoA);
         Optional<FormatoAVersion> ultimaVersion = versiones.stream().findFirst();
 
         if (ultimaVersion.isPresent()) {
@@ -373,19 +419,41 @@ public class FormatoAVersionService {
     }
 
     /**
-     * ✅ GENERAR NUEVO ID MANUALMENTE
+     * ✅ OBTENER HISTORIAL DE VERSIONES POR FormatoA
      */
+    @Transactional(readOnly = true)
+    public List<FormatoAVersion> obtenerHistorialCompletoPorFormatoA(Long idFormatoA) {
+        System.out.println("📊 CONSULTANDO HISTORIAL COMPLETO para FormatoA: " + idFormatoA);
+        List<FormatoAVersion> historial = versionRepository.findByIdFormatoAOrderByNumeroVersionAsc(idFormatoA);
+        System.out.println("📈 Historial completo encontrado: " + historial.size() + " versiones");
+        return historial;
+    }
+
+    // Método auxiliar para actualizar una versión existente desde el request
+    private void actualizarVersionDesdeRequest(FormatoAVersion version, FormatoAVersionRequest request) {
+        // No actualizar el ID ya que es el mismo
+        version.setNumeroVersion(request.numVersion());
+        version.setCounter(request.counter());
+        version.setState(EnumEstado.valueOf(request.estado()));
+        version.setFecha(request.fecha());
+        version.setTitle(request.titulo());
+        version.setMode(EnumModalidad.valueOf(request.modalidad()));
+        version.setIdFormatoA(request.idFormatoA());
+        // Actualizar otros campos según sea necesario
+
+
+    }
+
     private Long generarNuevoId() {
         try {
-            // Estrategia 1: Buscar el máximo ID existente y sumar 1
             Long maxId = versionRepository.findMaxId();
             Long nuevoId = (maxId != null) ? maxId + 1 : 1L;
-            System.out.println("🔧 ID generado: " + nuevoId + " (maxId encontrado: " + maxId + ")");
+            System.out.println("🆔 GENERADO nuevo ID: " + nuevoId);
             return nuevoId;
         } catch (Exception e) {
-            // Estrategia 2: Usar timestamp si hay error
+            // Si hay error al obtener el máximo ID, usar timestamp
             Long timestampId = System.currentTimeMillis();
-            System.out.println("⚠️ Usando ID por timestamp: " + timestampId);
+            System.out.println("🆔 GENERADO ID por timestamp: " + timestampId);
             return timestampId;
         }
     }
