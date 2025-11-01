@@ -53,8 +53,25 @@ public class DataLoader implements CommandLineRunner {
         estudiante2.setEmail("juan.perez@unicauca.edu.co");
         estudiante2.setDepartment("Ingeniería de Sistemas");
         estudiante2.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
+        // ✅ Jefe de Departamento Ingeniería Electrónica
+        Persona jefeElectronica = new Persona();
+        jefeElectronica.setIdUsuario(5L);
+        jefeElectronica.setName("Ricardo");
+        jefeElectronica.setLastname("Valencia");
+        jefeElectronica.setEmail("ricardo.valencia@unicauca.edu.co");
+        jefeElectronica.setDepartment("Ingeniería Electrónica");
+        jefeElectronica.setRoles(EnumSet.of(EnumRol.JEFE_DEPARTAMENTO, EnumRol.DOCENTE));
 
-        personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2));
+// ✅ Jefe de Departamento Ingeniería de Sistemas
+        Persona jefeSistemas = new Persona();
+        jefeSistemas.setIdUsuario(6L);
+        jefeSistemas.setName("Paola");
+        jefeSistemas.setLastname("Ramos");
+        jefeSistemas.setEmail("paola.ramos@unicauca.edu.co");
+        jefeSistemas.setDepartment("Ingeniería de Sistemas");
+        jefeSistemas.setRoles(EnumSet.of(EnumRol.JEFE_DEPARTAMENTO, EnumRol.DOCENTE));
+
+        personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2 , jefeElectronica, jefeSistemas));
         // ✅ Logs
         System.out.println("📘 Datos iniciales cargados correctamente:");
         System.out.println("- Personas: " + personaRepository.count());

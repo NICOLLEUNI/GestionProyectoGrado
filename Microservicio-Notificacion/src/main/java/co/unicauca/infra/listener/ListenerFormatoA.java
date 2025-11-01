@@ -25,6 +25,7 @@ public class ListenerFormatoA {
      */
     @RabbitListener(queues = "formatoa.notificaciones.queue")
     public void recibirMensajeCreado(FormatoACreado formatoCreado) {
+
         notificationService.procesarNotificacionCreado(formatoCreado);
     }
 }

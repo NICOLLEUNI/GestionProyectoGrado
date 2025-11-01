@@ -49,6 +49,10 @@ public class FormatoAService {
     }
 
     public void procesarNotificacionCreado(FormatoACreado evento) {
+
+        if (evento == null || evento.titulo() == null) {
+            return;
+        }
         log.info("🆕 Procesando notificación de creación para el Formato A: {}", evento.titulo());
 
         // === Notificar al director ===

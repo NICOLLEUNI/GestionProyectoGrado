@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface PersonaRepository extends JpaRepository<Persona, Long> {
     Optional<Persona> findByEmail(String email);
     List<Persona> findByDepartmentAndRolesContaining(String department, EnumRol rol);
+    Optional<Persona> findByProgramaAndRolesContaining(String programa, EnumRol rol);
 }

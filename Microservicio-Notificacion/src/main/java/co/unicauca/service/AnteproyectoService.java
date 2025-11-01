@@ -29,6 +29,9 @@ public class AnteproyectoService {
      * 4. Envía notificación solo al jefe.
      */
     public void procesarNotificacionCreado(AnteproyectoCreado evento) {
+        if (evento == null || evento.directorEmail() == null) {
+            return;
+        }
         log.info("📬 Procesando notificación de creación de anteproyecto: {}", evento.titulo());
 
         // 1️⃣ Buscar docente director por su correo

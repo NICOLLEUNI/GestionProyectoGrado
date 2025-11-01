@@ -12,7 +12,9 @@ public class RabbitMQConfig {
     // El nombre de la cola debe coincidir con el del microservicio Submission
     public static final String FORMATOA_EVALUADO_NOTIFICATION_QUEUE = "formatoa.evaluado.notification.queue";
     public static final String FORMATOA_NOTIFICACIONES_QUEUE = "formatoa.notificaciones.queue";
+    public static final String ANTEPROYECTO_NOTIFICACIONES_QUEUE = "anteproyecto.notificaciones.queue";
     public static final String USUARIO_QUEUE = "usuario.queue";
+    public static final String FORMATOAVERSION_NOTIFICACIONES_QUEUE = "formatoaversion.notificaciones.queue";
 
     // Declara la cola para que Spring pueda escucharla
     @Bean
@@ -22,6 +24,14 @@ public class RabbitMQConfig {
     @Bean
     public Queue FormatoCreadoQueue() {
         return new Queue(FORMATOA_NOTIFICACIONES_QUEUE, true);
+    }
+    @Bean
+    public Queue AnteproyectoCreadoQueue() {
+        return new Queue( ANTEPROYECTO_NOTIFICACIONES_QUEUE, true);
+    }
+    @Bean
+    public Queue FormatoAVersionQueue() {
+        return new Queue( FORMATOAVERSION_NOTIFICACIONES_QUEUE, true);
     }
     @Bean
     public Queue usuarioQueue() {
