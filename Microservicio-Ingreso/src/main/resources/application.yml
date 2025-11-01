@@ -22,17 +22,32 @@ spring:
       enabled: true
       path: /h2-console
 
+  # ✅ CONFIGURACIÓN RABBITMQ QUE FALTABA
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    # Configuración para tolerancia a fallos
+    connection-timeout: 5000
+    template:
+      retry:
+        enabled: true
+        initial-interval: 1000ms
+        max-attempts: 3
+        multiplier: 2.0
+
 server:
   port: 8080
 
-# ✅ Configuración JWT CORREGIDA
+# ✅ Configuración JWT
 jwt:
-  secret: "dev-super-secret-jwt-key-2024-with-at-least-32-characters"  # Mínimo 32 caracteres
-  expiration: 86400000  # 24 horas en milisegundos
+  secret: "dev-super-secret-jwt-key-2024-with-at-least-32-characters"
+  expiration: 86400000  # 24 horas
 
 logging:
   level:
     root: INFO
-    # ✅ SINTAXIS CORREGIDA - usar dos puntos y espacio
-    co.unicauca.identity: DEBUG  # Para ver logs detallados de nuestra app
+    co.unicauca.identity: DEBUG
     org.hibernate: DEBUG
+    org.springframework.amqp: DEBUG  # ✅ PARA VER LOGS DE RABBITMQ
