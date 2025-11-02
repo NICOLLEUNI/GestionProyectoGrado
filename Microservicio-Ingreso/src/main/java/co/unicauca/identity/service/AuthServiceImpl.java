@@ -114,7 +114,7 @@ public class AuthServiceImpl implements AuthService {
         PersonaResponse response = mapPersonaToResponse(savedPersona);
         log.info("=== RESPUESTA FINAL ===");
         log.info("Response.programa: {}", response.programa());
-        log.info("Response.departament: {}", response.departament());
+        log.info("Response.departament: {}", response.department());
         log.info("=== REGISTRO COMPLETADO ===");
 
         return response;
@@ -154,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
             log.info("Mapeando Persona a PersonaResponse...");
             PersonaResponse personaResponse = mapPersonaToResponse(persona);
             log.info("Mapeo completado - Programa: {}, Departamento: {}",
-                    personaResponse.programa(), personaResponse.departament());
+                    personaResponse.programa(), personaResponse.department());
 
             log.info("Login exitoso para: {}", persona.getEmail());
             eventPublisherService.publishLoginSuccessEvent(persona);
@@ -230,17 +230,17 @@ public class AuthServiceImpl implements AuthService {
                 .collect(Collectors.toSet());
 
         // Convertir enums a strings
-        String departamentStr = persona.getDepartamento() != null ? persona.getDepartamento().name() : null;
+        String departmentStr = persona.getDepartamento() != null ? persona.getDepartamento().name() : null;
         String programaStr = persona.getPrograma() != null ? persona.getPrograma().name() : null;
 
         // Usar el factory method create con lógica condicional
-        return PersonaResponse.create(
+        return PersonaResponse.createForRabbitMQ(
                 persona.getIdUsuario(),
                 persona.getName(),
                 persona.getLastname(),
                 persona.getEmail(),
                 rolesAsStrings,
-                departamentStr,
+                departmentStr,  // ✅ department (NO departament)
                 programaStr
         );
     }

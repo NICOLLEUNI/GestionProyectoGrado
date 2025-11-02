@@ -34,7 +34,7 @@ public interface PersonaMapper {
     @Mapping(target = "lastname", source = "lastname")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "roles", source = "roles", qualifiedByName = "rolesToStringSet")
-    @Mapping(target = "departament", source = "departamento", qualifiedByName = "enumToString")
+    @Mapping(target = "department", source = "departamento", qualifiedByName = "enumToString")
     @Mapping(target = "programa", source = "programa", qualifiedByName = "enumToString")
     PersonaResponse toResponse(Persona persona);
 

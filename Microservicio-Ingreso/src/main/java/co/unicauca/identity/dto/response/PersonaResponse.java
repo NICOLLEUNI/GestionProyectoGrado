@@ -12,7 +12,7 @@ public record PersonaResponse(
         String lastname,
         String email,
         Set<String> roles,
-        String departament,
+        String department,
         String programa
 ) {
     // Builder para construcción fluida
@@ -26,7 +26,7 @@ public record PersonaResponse(
         private String lastname;
         private String email;
         private Set<String> roles;
-        private String departament;
+        private String department;
         private String programa;
 
         public Builder id(Long id) {
@@ -54,8 +54,8 @@ public record PersonaResponse(
             return this;
         }
 
-        public Builder departament(String departament) {
-            this.departament = departament;
+        public Builder department(String departament) {
+            this.department = departament;
             return this;
         }
 
@@ -65,9 +65,27 @@ public record PersonaResponse(
         }
 
         public PersonaResponse build() {
-            return new PersonaResponse(id, name, lastname, email, roles, departament, programa);
+            return new PersonaResponse(id, name, lastname, email, roles, department, programa);
         }
     }
+
+    /**
+     * ✅ NUEVO: Factory method SIMPLIFICADO para RabbitMQ
+     * Envía TODOS los datos sin lógica condicional
+     */
+    public static PersonaResponse createForRabbitMQ(
+            Long id,
+            String name,
+            String lastname,
+            String email,
+            Set<String> roles,
+            String department,
+            String programa
+    ) {
+        // ✅ Para RabbitMQ, enviar TODOS los datos sin filtros
+        return new PersonaResponse(id, name, lastname, email, roles, department, programa);
+    }
+
 
     /**
      * ✅ LÓGICA CORREGIDA: Factory method con lógica condicional mejorada
@@ -81,7 +99,7 @@ public record PersonaResponse(
             String lastname,
             String email,
             Set<String> roles,
-            String departament,
+            String department,
             String programa
     ) {
         // ✅ LÓGICA MEJORADA: Determinar qué campos mostrar basado en los roles
@@ -106,15 +124,15 @@ public record PersonaResponse(
             programaFinal = programa;
         } else if (esSoloRolConDepartamento) {
             // ✅ Solo DOCENTE/COORDINADOR/JEFE: muestra departamento, oculta programa
-            departamentFinal = departament;
+            departamentFinal = department;
             programaFinal = null;
         } else if (esCombinacion) {
             // ✅ COMBINACIÓN: muestra ambos campos
-            departamentFinal = departament;
+            departamentFinal = department;
             programaFinal = programa;
         } else {
             // ✅ Caso por defecto: mostrar ambos (para seguridad)
-            departamentFinal = departament;
+            departamentFinal = department;
             programaFinal = programa;
         }
 
