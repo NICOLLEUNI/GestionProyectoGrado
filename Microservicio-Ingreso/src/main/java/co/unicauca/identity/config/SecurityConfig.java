@@ -45,6 +45,8 @@ public class SecurityConfig {
                                 "/api/auth/roles",
                                 "/api/auth/verify-token"
                         ).permitAll()
+                        // H2 console - permitir en desarrollo
+                        .requestMatchers("/h2-console/**").permitAll()
                         // Documentación API
                         .requestMatchers(
                                 "/swagger-ui/**",
@@ -60,12 +62,14 @@ public class SecurityConfig {
                         // Todos los demás endpoints requieren autenticación
                         .anyRequest().authenticated()
                 )
-                // Agregar rate limiting antes del filtro JWT
                 .addFilterBefore(rateLimitingConfig.rateLimitingFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // permitir que H2 se renderice en iframe (same origin)
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
