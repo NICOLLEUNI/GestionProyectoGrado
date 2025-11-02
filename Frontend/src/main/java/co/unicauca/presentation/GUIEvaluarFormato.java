@@ -7,16 +7,10 @@ package co.unicauca.presentation;
 //agregar la funcionalidad en los 3 puntos de "volver a la pestaña anterior"
 //añadir logica observer que se va a manejar con una capa de estadisticas 
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.entities.enumEstado;
-import co.unicauca.workflow.domain.exceptions.ValidationException;
-import co.unicauca.workflow.domain.service.FormatoAService;
-import co.unicauca.workflow.presentation.views.GraficoBarras;
-import co.unicauca.workflow.presentation.views.GraficoPastel;
-import co.unicauca.workflow.presentation.views.Observaciones;
+import co.unicauca.entity.Persona;
+import co.unicauca.presentation.views.GraficoBarras;
+import co.unicauca.presentation.views.GraficoPastel;
+import co.unicauca.presentation.views.Observaciones;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 
@@ -32,19 +26,17 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author User
  */
-public class GUIEvaluarAnteproyecto extends javax.swing.JFrame {
+public class GUIEvaluarFormato extends javax.swing.JFrame {
 
-    private FormatoAService formatoAService;
     private static Persona personaLogueado;
-    private IFormatoARepository repoFormatoA = Factory.getInstance().getFormatoARepository("default");
     
     private JFrame frameBarras;
     private JFrame framePastel;
     
     //private List<FormatoA> listaFormateada = new ArrayList<>();
     
-   public GUIEvaluarAnteproyecto(Persona logueado) throws ValidationException {
-       this.formatoAService = new FormatoAService(repoFormatoA);
+   public GUIEvaluarFormato(Persona logueado)  {
+
         this.personaLogueado=logueado;
         initComponents();
         initContent();
@@ -86,7 +78,7 @@ private void cargarDatos() {
 
     for (FormatoA f : lista) {
         // Si getState() devuelve enumEstado
-        if (f.getState() == enumEstado.ENTREGADO) {
+        if (f.getState() == EnumEstado.ENTREGADO) {
             Object[] fila = {
                 f.getId(),
                 f.getTitle(),
@@ -268,11 +260,9 @@ private void cargarDatos() {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    new GUIEvaluarAnteproyecto(personaLogueado).setVisible(true);
-                } catch (ValidationException ex) {
-                    Logger.getLogger(GUIEvaluarAnteproyecto.class.getName()).log(Level.SEVERE, null, ex);
-                }
+              
+                    new GUIEvaluarFormato(personaLogueado).setVisible(true);
+                
             }
         });
     }

@@ -9,9 +9,10 @@ package co.unicauca.presentation;
 //implementar la ligica que impida acceder a la interfaz 
 //de un rol que no corresponda
 
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.entities.enumRol;
-import co.unicauca.workflow.presentation.views.Principal;
+
+import co.unicauca.entity.EnumRol;
+import co.unicauca.entity.Persona;
+import co.unicauca.presentation.views.Principal;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -258,7 +259,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btDocMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btDocMouseClicked
-        if(personaLogueado.tieneRol(enumRol.DOCENTE)){
+        if(personaLogueado.tieneRol(EnumRol.DOCENTE)){
         GUIMenuDocente ventanaDocente = new GUIMenuDocente(personaLogueado); // crear la nueva ventana
         ventanaDocente.setVisible(true);            // mostrarla
         this.dispose(); 
@@ -271,7 +272,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btDocMouseClicked
 
     private void btEstMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEstMouseClicked
-        if (personaLogueado.tieneRol(enumRol.ESTUDIANTE)) {
+        if (personaLogueado.tieneRol(EnumRol.ESTUDIANTE)) {
         GUIMenuEstudiante ventanaEstudiante = new GUIMenuEstudiante(personaLogueado);
         ventanaEstudiante.setVisible(true);
         this.dispose();
@@ -284,7 +285,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btEstMouseClicked
 
     private void btCoordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btCoordMouseClicked
-        if(personaLogueado.tieneRol(enumRol.COORDINADOR))
+        if(personaLogueado.tieneRol(EnumRol.COORDINADOR))
         {
         GUIMenuCoord ventanaCoord = new GUIMenuCoord(personaLogueado); // crear la nueva ventana
         ventanaCoord.setVisible(true);            // mostrarla
