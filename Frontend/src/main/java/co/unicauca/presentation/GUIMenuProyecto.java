@@ -9,13 +9,10 @@ package co.unicauca.presentation;
 //Implementar la logica del panel para que muestre el formato A regiatrado 
 //con el correo del estudiante 
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.FormatoARepository;
-import co.unicauca.workflow.access.IFormatoAVersionRepository;
-import co.unicauca.workflow.presentation.views.Principal;
+
+
+import co.unicauca.workflow.presentation.GUIMenuJefe;
 import co.unicauca.workflow.presentation.views.ConsultarFormatoA;
-import co.unicauca.workflow.domain.entities.Persona;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
@@ -27,34 +24,8 @@ import co.unicauca.workflow.presentation.views.ListaFormatosAestudiantes;
  */
 public class GUIMenuProyecto extends javax.swing.JFrame {
 
-    
-
-     IFormatoAVersionRepository repo = Factory.getFormatoAVersionRepository("default");
-    private static Persona personaLogueado;
-
-    public GUIMenuProyecto(Persona logueado) {
-        this.personaLogueado = logueado;
-        FlatMTMaterialLighterIJTheme.setup(); // aplicar tema
-        initComponents();
-        initContent(); // cargar panel principal
-        setLocationRelativeTo(null); // centrar ventana
-    }
-
-    // Método genérico para mostrar un JPanel en el panel central
-    private void showJPanel(JPanel pl) {
-        pl.setSize(641, 498);
-        pl.setLocation(0, 0);
-
-        Contenido.removeAll();
-        Contenido.setLayout(new BorderLayout());
-        Contenido.add(pl, BorderLayout.CENTER);
-        Contenido.revalidate();
-        Contenido.repaint();
-    }
-
-    // Inicializa el contenido central con la vista principal
-    private void initContent() {
-        showJPanel(new Principal(personaLogueado));
+    public GUIMenuProyecto() {
+      
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -73,6 +44,7 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btConsultarFormatoA = new javax.swing.JButton();
         JButtonCloseSesion = new javax.swing.JButton();
+        btConsultarAnteproyecto = new javax.swing.JButton();
         Contenido = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
 
@@ -103,14 +75,14 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
                 btRegresarMouseClicked(evt);
             }
         });
-        Menu.add(btRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 277, 258, 64));
+        Menu.add(btRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 350, 258, 64));
 
         Titulo.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel1.setFont(new java.awt.Font("Roboto ExtraBold", 0, 28)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(26, 55, 171));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("ESTUDIANTE");
+        jLabel1.setText("PROYECTOS");
 
         javax.swing.GroupLayout TituloLayout = new javax.swing.GroupLayout(Titulo);
         Titulo.setLayout(TituloLayout);
@@ -129,7 +101,7 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
         btConsultarFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btConsultarFormatoA.setForeground(new java.awt.Color(255, 255, 255));
         btConsultarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
-        btConsultarFormatoA.setText("Consultar Proyecto");
+        btConsultarFormatoA.setText("Consular FormatoA");
         btConsultarFormatoA.setToolTipText("");
         btConsultarFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
         btConsultarFormatoA.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -144,7 +116,7 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
                 btConsultarFormatoAActionPerformed(evt);
             }
         });
-        Menu.add(btConsultarFormatoA, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 213, 258, 64));
+        Menu.add(btConsultarFormatoA, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 258, 64));
 
         JButtonCloseSesion.setBackground(new java.awt.Color(65, 55, 171));
         JButtonCloseSesion.setForeground(new java.awt.Color(255, 255, 255));
@@ -155,6 +127,27 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
             }
         });
         Menu.add(JButtonCloseSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 450, -1, -1));
+
+        btConsultarAnteproyecto.setBackground(new java.awt.Color(65, 55, 171));
+        btConsultarAnteproyecto.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        btConsultarAnteproyecto.setForeground(new java.awt.Color(255, 255, 255));
+        btConsultarAnteproyecto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
+        btConsultarAnteproyecto.setText("Consultar Anteproyecto");
+        btConsultarAnteproyecto.setToolTipText("");
+        btConsultarAnteproyecto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        btConsultarAnteproyecto.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btConsultarAnteproyecto.setIconTextGap(7);
+        btConsultarAnteproyecto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btConsultarAnteproyectoMouseClicked(evt);
+            }
+        });
+        btConsultarAnteproyecto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btConsultarAnteproyectoActionPerformed(evt);
+            }
+        });
+        Menu.add(btConsultarAnteproyecto, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 258, 64));
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(641, 498));
@@ -213,47 +206,65 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btRegresarMouseClicked
-     GUIMenuPrincipal ventanaPrincipal = new GUIMenuPrincipal(personaLogueado);
-    ventanaPrincipal.setVisible(true);
-    this.dispose(); 
+    
     }//GEN-LAST:event_btRegresarMouseClicked
 
     private void btConsultarFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btConsultarFormatoAMouseClicked
-         FormatoARepository repo = new FormatoARepository(); 
-        showJPanel(new ConsultarFormatoA(personaLogueado));
+       
     }//GEN-LAST:event_btConsultarFormatoAMouseClicked
 
     private void JButtonCloseSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButtonCloseSesionActionPerformed
-        GUILogin login = new GUILogin();
-        login.setVisible(true);
-        this.setVisible(false);
+       
     }//GEN-LAST:event_JButtonCloseSesionActionPerformed
 
     private void btConsultarFormatoAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarFormatoAActionPerformed
         
-      ListaFormatosAestudiantes vistaEstudiante = new ListaFormatosAestudiantes(personaLogueado);
-        showJPanel(vistaEstudiante);
-
+      
     }//GEN-LAST:event_btConsultarFormatoAActionPerformed
+
+    private void btConsultarAnteproyectoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btConsultarAnteproyectoMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btConsultarAnteproyectoMouseClicked
+
+    private void btConsultarAnteproyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarAnteproyectoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btConsultarAnteproyectoActionPerformed
 
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-       FlatMTMaterialLighterIJTheme.setup();
-       
-      
+          /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(GUIMenuJefe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(GUIMenuJefe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(GUIMenuJefe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(GUIMenuJefe.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
-                new GUIMenuProyecto(personaLogueado).setVisible(true);
-
+                new GUIMenuJefe().setVisible(true);
             }
         });
+      
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -262,6 +273,7 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
     private javax.swing.JButton JButtonCloseSesion;
     private javax.swing.JPanel Menu;
     private javax.swing.JPanel Titulo;
+    private javax.swing.JButton btConsultarAnteproyecto;
     private javax.swing.JButton btConsultarFormatoA;
     private javax.swing.JButton btRegresar;
     private javax.swing.JLabel jLabel1;
