@@ -3,12 +3,16 @@ package co.unicauca.service;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.FormatoAVersion;
+import co.unicauca.infra.dto.FormatoAEditRequest;
 import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.infra.dto.notification.VersionNotification;
 import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.FormatoVersionRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class VersionService {
@@ -24,7 +28,7 @@ public class VersionService {
     public FormatoAVersion crearVersionInicial(FormatoA formatoA) {
         FormatoAVersion version1 = new FormatoAVersion();
         version1.setNumeroVersion(1);
-        version1.setFecha(java.time.LocalDate.now());
+        version1.setFecha(LocalDate.now());
         version1.setTitle(formatoA.getTitle());
         version1.setMode(formatoA.getMode());
         version1.setGeneralObjetive(formatoA.getGeneralObjetive());
@@ -77,6 +81,34 @@ public class VersionService {
 
         return versionGuardada;
     }
+
+    public FormatoAVersion crearVersionReenviada(FormatoA formatoA, FormatoAEditRequest request) {
+        FormatoAVersion version = new FormatoAVersion();
+        version.setNumeroVersion(obtenerProximaVersion(formatoA));
+        version.setFecha(LocalDate.now());
+        version.setFormatoA(formatoA);
+        version.setArchivoPDF(request.archivoPDF());
+        version.setCartaLaboral(request.cartaLaboral());
+        version.setGeneralObjetive(request.generalObjetive());
+        version.setSpecificObjetives(request.specificObjetives());
+        // ✅ Copiamos la modalidad (evita el NullPointer)
+        version.setMode(formatoA.getMode());
+        version.setState(EnumEstado.ENTREGADO);
+        version.setObservations("Versión reenviada tras correcciones por el docente.");
+        version.setCounter(formatoA.getCounter()); // mantener coherencia de contador
+
+        FormatoAVersion versionGuardada = formatoVersionRepository.save(version);
+
+        // ⭐⭐ PUBLICAR NUEVA VERSIÓN REENVIADA ⭐⭐
+        FormatoAVersionResponse response = convertirAVersionResponse(versionGuardada);
+        rabbitMQPublisher.publicarVersionCreada(response);
+
+        VersionNotification notificacion = convertirAVersionNotificacionEvent(versionGuardada);
+        rabbitMQPublisher.publicarNotificacionVersionCreada(notificacion);
+
+        return versionGuardada;
+    }
+
 
     /**
      * Convierte FormatoAVersion entity a FormatoAVersionResponse DTO

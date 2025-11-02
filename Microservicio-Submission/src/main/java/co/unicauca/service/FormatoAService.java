@@ -1,6 +1,7 @@
 package co.unicauca.service;
 
 import co.unicauca.entity.*;
+import co.unicauca.infra.dto.FormatoAEditRequest;
 import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.infra.dto.FormatoAResponse;
 import co.unicauca.infra.dto.notification.FormatoAnotification;
@@ -83,6 +84,46 @@ public class FormatoAService {
                 formatoA.getProjectManagerEmail() // Director para buscar departamento
         );
     }
+
+    @Transactional
+    public FormatoA reenviarFormatoARechazado(FormatoAEditRequest request) {
+        // Buscar el FormatoA
+        FormatoA formatoA = formatoARepository.findById(request.id())
+                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + request.id()));
+
+        // Validar que esté RECHAZADO
+        if (formatoA.getState() != EnumEstado.RECHAZADO) {
+            throw new RuntimeException("Solo se pueden reenviar los FormatosA RECHAZADOS");
+        }
+
+        // Validar límite de reenvíos
+        if (formatoA.getCounter() >= 3) {
+            throw new RuntimeException("El FormatoA ha sido rechazado más de 3 veces y no puede reenviarse");
+        }
+
+        // Actualizar los campos editables
+        formatoA.setArchivoPDF(request.archivoPDF());
+        formatoA.setCartaLaboral(request.cartaLaboral());
+        formatoA.setGeneralObjetive(request.generalObjetive());
+        formatoA.setSpecificObjetives(request.specificObjetives());
+        formatoA.setState(EnumEstado.ENTREGADO); // vuelve a ENTREGADO
+
+        FormatoA actualizado = formatoARepository.save(formatoA);
+
+        // Crear la nueva versión reenviada
+        FormatoAVersion nuevaVersion = versionService.crearVersionReenviada(actualizado, request);
+
+        // Publicar los eventos
+        FormatoAResponse response = convertirAFormatoAResponse(actualizado);
+        rabbitMQPublisher.publicarFormatoACreado(response);
+
+        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(actualizado);
+        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
+
+        return actualizado;
+    }
+
+
 
     @Transactional
     public FormatoA actualizarFormatoAEvaluado(FormatoARequest request) {
