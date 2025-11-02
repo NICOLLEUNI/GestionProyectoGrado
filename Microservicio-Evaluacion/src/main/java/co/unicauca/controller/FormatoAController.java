@@ -44,6 +44,17 @@ public class FormatoAController {
         List<FormatoA> formatos = formatoAFacade.listarFormatosA();
         return ResponseEntity.ok(formatos);
     }
+
+    /**
+     * Busca un FormatoA por su ID.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<FormatoA> obtenerFormatoAPorId(@PathVariable Long id) {
+        FormatoA response = formatoAFacade.obtenerFormatoAPorId(id);
+        return ResponseEntity.ok(response);
+    }
+
+
     /**
      * Actualiza el estado (por ejemplo: APROBADO o RECHAZADO) de un FormatoA.
      *

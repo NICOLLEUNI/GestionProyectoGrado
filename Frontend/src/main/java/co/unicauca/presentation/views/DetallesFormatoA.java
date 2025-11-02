@@ -4,15 +4,12 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.access.IFormatoAVersionRepository;
-import co.unicauca.workflow.domain.entities.Docente;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.FormatoAVersion;
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.entities.enumEstado;
-import co.unicauca.workflow.domain.entities.enumModalidad;
+
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.EnumModalidad;
+import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.Persona;
+
 import java.awt.BorderLayout;
 
 import javax.swing.*;
@@ -32,7 +29,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
     private FormatoA formato;
     private Docente docente;
     private Persona persona;
-      IFormatoAVersionRepository repoVersion = Factory.getInstance().getFormatoAVersionRepository("default");
+
     // Constructor "temporal"
     public DetallesFormatoA(FormatoA formato, Docente docente,Persona persona) {
         initComponents();
@@ -91,7 +88,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
 
         if (formato == null) return;
 
-        enumEstado estado = formato.getState();
+        EnumEstado estado = formato.getState();
         int counter = formato.getCounter();
 
         System.out.println("DEBUG - Estado: " + estado + ", Counter: " + counter + ", Modalidad: " + formato.getMode());
@@ -101,7 +98,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         // counter = 1 → Puede editar si es rechazado (segundo rechazo)
         // counter = 2 → Puede editar si es rechazado (tercer rechazo) - ÚLTIMA OPORTUNIDAD
         // counter = 3 → RECHAZADO_DEFINITIVO (no permitir más)
-        if (estado == enumEstado.RECHAZADO && counter < 3) {
+        if (estado == EnumEstado.RECHAZADO && counter < 3) {
             // habilitar edición
             txObjGeneral.setEditable(true);
             jTextArea1.setEditable(true);
@@ -109,7 +106,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             btActualizar.setEnabled(true);
 
             // la carta sólo si modalidad PRACTICA_PROFESIONAL
-            if (formato.getMode() != null && formato.getMode() == enumModalidad.PRACTICA_PROFESIONAL) {
+            if (formato.getMode() != null && formato.getMode() == EnumModalidad.PRACTICA_PROFESIONAL) {
                 btCarta.setEnabled(true);
                 System.out.println("DEBUG - Carta laboral HABILITADA");
             } else {
@@ -130,7 +127,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             btActualizar.setEnabled(false);
             System.out.println("DEBUG - Todos los controles DESHABILITADOS");
 
-            if (estado == enumEstado.RECHAZADO && counter >= 3) {
+            if (estado == EnumEstado.RECHAZADO && counter >= 3) {
                 JOptionPane.showMessageDialog(this, "Este formato ha sido rechazado definitivamente después de 3 rechazos.");
             }
         }

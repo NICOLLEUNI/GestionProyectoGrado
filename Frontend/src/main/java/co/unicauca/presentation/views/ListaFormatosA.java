@@ -4,15 +4,10 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.access.IDocenteRepository;
-import co.unicauca.workflow.domain.entities.Docente;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.FormatoAVersion;
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.entities.enumEstado;
-import co.unicauca.workflow.domain.service.FormatoAService;
+
+import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.Persona;
+
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.ArrayList;
@@ -29,8 +24,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
 
     private Persona personaLogueada;
     private List<FormatoA> formatosDocente; // lista en memoria para mapear filas con objetos
-     IFormatoARepository repoFomratoA = Factory.getInstance().getFormatoARepository("default");
-        FormatoAService serviceFormato = new FormatoAService(repoFomratoA);
+
         
     public ListaFormatosA(Persona personaLogueada) {
         initComponents();
@@ -45,7 +39,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
      * Carga solo los FormatoA subidos por el docente logueado.
      */
     private void cargarDatos() {
-        IFormatoARepository repo = Factory.getFormatoARepository("default");
+
 
         // Traemos todos los formatos desde la BD
         List<FormatoA> todos = repo.list();

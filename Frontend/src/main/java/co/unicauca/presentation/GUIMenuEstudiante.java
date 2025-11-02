@@ -10,17 +10,16 @@ package co.unicauca.presentation;
 //con el correo del estudiante 
 
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.FormatoARepository;
-import co.unicauca.workflow.access.IFormatoAVersionRepository;
-import co.unicauca.workflow.presentation.views.Principal;
-import co.unicauca.workflow.presentation.views.ConsultarFormatoA;
-import co.unicauca.workflow.domain.entities.Persona;
+
+import co.unicauca.entity.Persona;
+import co.unicauca.presentation.views.ConsultarFormatoA;
+import co.unicauca.presentation.views.ListaFormatosAestudiantes;
+import co.unicauca.presentation.views.Principal;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
-import co.unicauca.workflow.presentation.views.ListaFormatosAestudiantes;
+
 
 /**
  *
@@ -30,7 +29,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
 
     
 
-     IFormatoAVersionRepository repo = Factory.getFormatoAVersionRepository("default");
+
     private static Persona personaLogueado;
 
     public GUIMenuEstudiante(Persona logueado) {
@@ -83,11 +82,9 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
 
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setPreferredSize(new java.awt.Dimension(270, 510));
-        Menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         lblLogo.setText("jLabel2");
-        Menu.add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(34, 6, 157, -1));
 
         btRegresar.setBackground(new java.awt.Color(65, 55, 171));
         btRegresar.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -104,7 +101,6 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
                 btRegresarMouseClicked(evt);
             }
         });
-        Menu.add(btRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 277, 258, 64));
 
         Titulo.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -117,14 +113,12 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
         Titulo.setLayout(TituloLayout);
         TituloLayout.setHorizontalGroup(
             TituloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
         );
         TituloLayout.setVerticalGroup(
             TituloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
         );
-
-        Menu.add(Titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 108, 270, -1));
 
         btConsultarFormatoA.setBackground(new java.awt.Color(65, 55, 171));
         btConsultarFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -145,7 +139,6 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
                 btConsultarFormatoAActionPerformed(evt);
             }
         });
-        Menu.add(btConsultarFormatoA, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 213, 258, 64));
 
         JButtonCloseSesion.setBackground(new java.awt.Color(65, 55, 171));
         JButtonCloseSesion.setForeground(new java.awt.Color(255, 255, 255));
@@ -155,7 +148,39 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
                 JButtonCloseSesionActionPerformed(evt);
             }
         });
-        Menu.add(JButtonCloseSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 450, -1, -1));
+
+        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
+        Menu.setLayout(MenuLayout);
+        MenuLayout.setHorizontalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addComponent(JButtonCloseSesion))
+        );
+        MenuLayout.setVerticalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(lblLogo)
+                .addGap(32, 32, 32)
+                .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(56, 56, 56)
+                .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(109, 109, 109)
+                .addComponent(JButtonCloseSesion))
+        );
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(641, 498));
@@ -220,7 +245,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
     }//GEN-LAST:event_btRegresarMouseClicked
 
     private void btConsultarFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btConsultarFormatoAMouseClicked
-         FormatoARepository repo = new FormatoARepository(); 
+
         showJPanel(new ConsultarFormatoA(personaLogueado));
     }//GEN-LAST:event_btConsultarFormatoAMouseClicked
 

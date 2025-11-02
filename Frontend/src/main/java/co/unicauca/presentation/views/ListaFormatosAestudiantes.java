@@ -4,14 +4,11 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.access.IDocenteRepository;
-import co.unicauca.workflow.domain.entities.Docente;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.FormatoAVersion;
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.entities.enumEstado;
+
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.Persona;
+
 import java.awt.BorderLayout;
 import java.util.List;
 import java.util.ArrayList;
@@ -65,7 +62,7 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
 
         // Llenamos la tabla
         for (FormatoA f : formatosUsuario) {
-            enumEstado estado = f.getState() != null ? f.getState() : enumEstado.ENTREGADO;
+            EnumEstado estado = f.getState() != null ? f.getState() : EnumEstado.ENTREGADO;
             String observaciones = f.getObservations() != null ? f.getObservations() : "";
             int version = 1;
 

@@ -56,59 +56,48 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(646, 530));
-        Contenido.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitulo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(0, 0, 0));
         lblTitulo.setText("Titulo");
         lblTitulo.setToolTipText("");
-        Contenido.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 50, -1));
-        Contenido.add(jSeparatorTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 300, 20));
 
         lbModalidad.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lbModalidad.setForeground(new java.awt.Color(0, 0, 0));
         lbModalidad.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbModalidad.setText("Modalidad");
-        Contenido.add(lbModalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, -1, -1));
 
         lblDirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblDirector.setForeground(new java.awt.Color(0, 0, 0));
         lblDirector.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblDirector.setText("Director de proyecto");
-        Contenido.add(lblDirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, -1, -1));
 
         lblCodirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblCodirector.setForeground(new java.awt.Color(0, 0, 0));
         lblCodirector.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCodirector.setText("Codirector de proyecto");
-        Contenido.add(lblCodirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 230, -1, 20));
 
         lblEstudiante1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEstudiante1.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEstudiante1.setText("Estudiante #1");
-        Contenido.add(lblEstudiante1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 300, -1, -1));
 
         lblEstudiante2.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEstudiante2.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEstudiante2.setText("Estudiante #2");
-        Contenido.add(lblEstudiante2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 370, -1, -1));
 
         lbObjGen.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lbObjGen.setForeground(new java.awt.Color(0, 0, 0));
         lbObjGen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbObjGen.setText("Objetivo General");
-        Contenido.add(lbObjGen, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 10, 125, -1));
 
         lblObjetivosEspecificos.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblObjetivosEspecificos.setForeground(new java.awt.Color(0, 0, 0));
         lblObjetivosEspecificos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblObjetivosEspecificos.setText("Objetivos especificos");
-        Contenido.add(lblObjetivosEspecificos, new org.netbeans.lib.awtextra.AbsoluteConstraints(297, 125, -1, -1));
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        Contenido.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(261, 6, 18, 420));
 
         btCrear.setBackground(new java.awt.Color(51, 51, 255));
         btCrear.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
@@ -119,49 +108,170 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
                 btCrearMouseClicked(evt);
             }
         });
-        Contenido.add(btCrear, new org.netbeans.lib.awtextra.AbsoluteConstraints(474, 409, 112, 37));
-        Contenido.add(jSeparatorTitulo1, new org.netbeans.lib.awtextra.AbsoluteConstraints(44, 65, 192, 18));
-        Contenido.add(jSeparatorTitulo2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 140, 192, 18));
-        Contenido.add(jSeparatorTitulo3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 210, 192, 18));
-        Contenido.add(jSeparatorTitulo4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 278, 192, 30));
-        Contenido.add(jSeparatorTitulo5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, 192, 18));
-        Contenido.add(jSeparatorTitulo6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 420, 192, 18));
-        Contenido.add(jSeparatorTitulo7, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, 310, 18));
 
         lblUTitulo.setForeground(new java.awt.Color(51, 51, 51));
         lblUTitulo.setText("Titulo");
-        Contenido.add(lblUTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 200, -1));
 
         lblUModalidad.setForeground(new java.awt.Color(51, 51, 51));
         lblUModalidad.setText("Titulo");
-        Contenido.add(lblUModalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 120, 190, -1));
 
         lblUDirector.setForeground(new java.awt.Color(51, 51, 51));
         lblUDirector.setText("Titulo");
-        Contenido.add(lblUDirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 190, 190, -1));
 
         lblUCodirector.setForeground(new java.awt.Color(51, 51, 51));
         lblUCodirector.setText("Titulo");
-        Contenido.add(lblUCodirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 260, 190, -1));
 
         lblUEstudiante1.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante1.setText("Titulo");
-        Contenido.add(lblUEstudiante1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 320, 190, -1));
 
         lblUEstudiante2.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante2.setText("Titulo");
-        Contenido.add(lblUEstudiante2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 400, 190, -1));
 
         lblUObjGen.setForeground(new java.awt.Color(51, 51, 51));
         lblUObjGen.setText("Titulo");
         lblUObjGen.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        Contenido.add(lblUObjGen, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 30, 310, 70));
 
         lblUObjEspec.setForeground(new java.awt.Color(51, 51, 51));
         lblUObjEspec.setText("Titulo");
         lblUObjEspec.setToolTipText("");
         lblUObjEspec.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        Contenido.add(lblUObjEspec, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 150, 300, 190));
+
+        javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
+        Contenido.setLayout(ContenidoLayout);
+        ContenidoLayout.setHorizontalGroup(
+            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lblUTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jSeparatorTitulo1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbModalidad)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jSeparatorTitulo2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblDirector)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jSeparatorTitulo3, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblCodirector)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblUCodirector, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jSeparatorTitulo4, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblEstudiante1)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblUEstudiante1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jSeparatorTitulo5, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblEstudiante2)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jSeparatorTitulo6, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(19, 19, 19)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbObjGen, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lblUObjGen, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparatorTitulo7, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(ContenidoLayout.createSequentialGroup()
+                                .addGap(7, 7, 7)
+                                .addComponent(lblObjetivosEspecificos))))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblUObjEspec, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jSeparatorTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(194, 194, 194)
+                        .addComponent(btCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))))
+        );
+        ContenidoLayout.setVerticalGroup(
+            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(lblTitulo)
+                .addGap(11, 11, 11)
+                .addComponent(lblUTitulo)
+                .addGap(9, 9, 9)
+                .addComponent(jSeparatorTitulo1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addComponent(lbModalidad)
+                .addGap(13, 13, 13)
+                .addComponent(lblUModalidad)
+                .addGap(4, 4, 4)
+                .addComponent(jSeparatorTitulo2, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(lblDirector)
+                .addGap(13, 13, 13)
+                .addComponent(lblUDirector)
+                .addGap(4, 4, 4)
+                .addComponent(jSeparatorTitulo3, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(lblCodirector, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(lblUCodirector)
+                .addGap(2, 2, 2)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparatorTitulo4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(lblEstudiante1)))
+                .addGap(3, 3, 3)
+                .addComponent(lblUEstudiante1)
+                .addGap(4, 4, 4)
+                .addComponent(jSeparatorTitulo5, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addComponent(lblEstudiante2)
+                .addGap(13, 13, 13)
+                .addComponent(lblUEstudiante2)
+                .addGap(4, 4, 4)
+                .addComponent(jSeparatorTitulo6, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(lbObjGen)
+                .addGap(3, 3, 3)
+                .addComponent(lblUObjGen, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparatorTitulo7, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(lblObjetivosEspecificos)))
+                .addGap(8, 8, 8)
+                .addComponent(lblUObjEspec, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(jSeparatorTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(39, 39, 39)
+                .addComponent(btCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

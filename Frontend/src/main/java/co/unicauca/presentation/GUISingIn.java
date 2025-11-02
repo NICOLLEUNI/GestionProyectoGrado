@@ -18,19 +18,9 @@ package co.unicauca.presentation;
 // IMPORTS NECESARIOS - AGREGAR AL INICIO DE TU ARCHIVO
 
 
-import co.unicauca.workflow.domain.service.PersonaService;
-import co.unicauca.workflow.domain.entities.enumRol;
-import co.unicauca.workflow.domain.entities.Programa;
-import co.unicauca.workflow.domain.entities.Departamento;
-import co.unicauca.workflow.domain.entities.Facultad;
-import co.unicauca.workflow.domain.exceptions.ValidationException;
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IPersonaRepository;
-import co.unicauca.workflow.access.IEstudianteRepository;
-import co.unicauca.workflow.access.IDocenteRepository;
-import co.unicauca.workflow.access.ICoordinadorRepository;
-import co.unicauca.workflow.access.IProgramaRepository;
-import co.unicauca.workflow.access.IDepartamentoRepository;
+
+import co.unicauca.entity.EnumRol;
+
 import java.util.EnumSet;
 import java.util.List;
 import java.util.ArrayList;
@@ -46,9 +36,7 @@ import java.awt.event.ItemListener;
  */
 public class GUISingIn extends javax.swing.JFrame {
     
-private final PersonaService personaService;
-    private final IProgramaRepository programaRepository;
-    private final IDepartamentoRepository departamentoRepository;
+
     
 
     public GUISingIn() {
@@ -56,17 +44,10 @@ private final PersonaService personaService;
        initComponents();
         
         // ← Usar Factory correctamente como se requiere
-        Factory factory = Factory.getInstance();
-        IPersonaRepository personaRepo = Factory.getPersonaRepository("default");
-        IEstudianteRepository estudianteRepo = Factory.getEstudianteRepository("default");
-        IDocenteRepository docenteRepo = Factory.getDocenteRepository("default");
-        ICoordinadorRepository coordinadorRepo = Factory.getCoordinadorRepository("default");
+
         
         // Repositorios para guardar solo Programa y Departamento
-        this.programaRepository = Factory.getProgramaRepository("default");
-        this.departamentoRepository = Factory.getDepartamentoRepository("default");
-        
-        this.personaService = new PersonaService(personaRepo, estudianteRepo, docenteRepo, coordinadorRepo);
+
         
         // Configurar componentes iniciales
         configurarComponentesIniciales();
@@ -621,13 +602,13 @@ ComBoxPrograma1.removeAllItems();
         }
         
         // 2. Validar roles seleccionados
-        EnumSet<enumRol> roles = obtenerRolesSeleccionados();
+        EnumSet<EnumRol> roles = obtenerRolesSeleccionados();
         if (roles.isEmpty()) {
             errores.add("• Debe seleccionar al menos un rol (Estudiante, Docente, Coordinador, Jefe Departamento )");
         }
         
         // 3. Validar programa si es estudiante
-        if (roles.contains(enumRol.ESTUDIANTE)) {
+        if (roles.contains(EnumRol.ESTUDIANTE)) {
             String programaSeleccionado = (String) ComBoxPrograma1.getSelectedItem();
             if (programaSeleccionado == null || programaSeleccionado.equals("Seleccione un programa")) {
                 errores.add("• Debe seleccionar un programa académico (requerido para estudiantes)");
@@ -635,7 +616,7 @@ ComBoxPrograma1.removeAllItems();
         }
         
         // 4. Validar departamento si es docente o coordinador
-        if (roles.contains(enumRol.DOCENTE) || roles.contains(enumRol.COORDINADOR)) {
+        if (roles.contains(EnumRol.DOCENTE) || roles.contains(EnumRol.COORDINADOR)) {
             String deptSeleccionado = (String) ComBoxDepartamento.getSelectedItem();
             if (deptSeleccionado == null || deptSeleccionado.equals("Seleccione un departamento")) {
                 errores.add("• Debe seleccionar un departamento (requerido para docentes/coordinadores/ Jefe Departamento)");
@@ -691,11 +672,11 @@ ComBoxPrograma1.removeAllItems();
         String nombrePrograma = null;
         String nombreDepartamento = null ;
         
-        if (roles.contains(enumRol.ESTUDIANTE)) {
+        if (roles.contains(EnumRol.ESTUDIANTE)) {
             nombrePrograma = (String) ComBoxPrograma1.getSelectedItem();
         }
         
-        if (roles.contains(enumRol.DOCENTE) || roles.contains(enumRol.COORDINADOR)) {
+        if (roles.contains(EnumRol.DOCENTE) || roles.contains(EnumRol.COORDINADOR)) {
             nombreDepartamento = (String) ComBoxDepartamento.getSelectedItem();
         }
         
@@ -746,17 +727,17 @@ try {
     /**
      * Obtener roles seleccionados
      */
-     private EnumSet<enumRol> obtenerRolesSeleccionados() {
-        EnumSet<enumRol> roles = EnumSet.noneOf(enumRol.class);
+     private EnumSet<EnumRol> obtenerRolesSeleccionados() {
+        EnumSet<EnumRol> roles = EnumSet.noneOf(EnumRol.class);
         
         if (CBEstudiante1.isSelected()) {
-            roles.add(enumRol.ESTUDIANTE);
+            roles.add(EnumRol.ESTUDIANTE);
         }
         if (CBDocente1.isSelected()) {
-            roles.add(enumRol.DOCENTE);
+            roles.add(EnumRol.DOCENTE);
         }
         if (CBJefeDepartamento.isSelected()) {
-            roles.add(enumRol.COORDINADOR);
+            roles.add(EnumRol.COORDINADOR);
         }
         
         return roles;
@@ -884,13 +865,7 @@ try {
     }
     
     
-    
-    
-    
-    
-    
-    
-    
+
     private void CBJefeDepartamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBJefeDepartamentoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_CBJefeDepartamentoActionPerformed

@@ -140,6 +140,9 @@ public class FormatoAService {
                 correosDocentes
         );
     }
+    public FormatoA findById(Long id) {
+        return formatoARepository.findById(id).orElse(null);
+    }
 }
 
 

@@ -17,6 +17,9 @@ public class Persona {
     private String programa;
     private Set<EnumRol> roles;
 
+    // ✅ AGREGAR: Constructor vacío para JSON
+    public Persona() {}
+
     public Persona(Long idUsuario, String name, String lastname, String email, String department, String programa, Set<EnumRol> roles) {
         this.idUsuario = idUsuario;
         this.name = name;
@@ -81,5 +84,22 @@ public class Persona {
 
     public void setRoles(Set<EnumRol> roles) {
         this.roles = roles;
+
+    }
+
+
+    public boolean tieneRol(EnumRol rol) {
+        return roles != null && roles.contains(rol);
+    }
+
+    // ✅ AGREGAR: Método para verificar roles por string
+    public boolean hasRole(String roleName) {
+        if (roles == null) return false;
+        try {
+            EnumRol rol = EnumRol.valueOf(roleName);
+            return roles.contains(rol);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

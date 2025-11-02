@@ -7,10 +7,13 @@ package co.unicauca.presentation;
 //agregar la funcionalidad en los 3 puntos de "volver a la pestaña anterior"
 //añadir logica observer que se va a manejar con una capa de estadisticas 
 
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.presentation.views.GraficoBarras;
 import co.unicauca.presentation.views.GraficoPastel;
 import co.unicauca.presentation.views.Observaciones;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 
@@ -29,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 public class GUIEvaluarFormato extends javax.swing.JFrame {
 
     private static Persona personaLogueado;
+    private EvaluacionService evaluacionService;
     
     private JFrame frameBarras;
     private JFrame framePastel;
@@ -43,12 +47,13 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
         cargarDatos();
         inicializarObservadores();
          }
-   private void inicializarObservadores() {
-    GraficoPastel graficoPastel = new GraficoPastel(formatoAService);
-    GraficoBarras graficoBarras = new GraficoBarras(formatoAService);
 
-    formatoAService.addObserver(graficoPastel);
-    formatoAService.addObserver(graficoBarras);
+   private void inicializarObservadores() {
+    GraficoPastel graficoPastel = new GraficoPastel();
+    GraficoBarras graficoBarras = new GraficoBarras();
+
+       evaluacionService.addObserver(graficoPastel);
+       evaluacionService.addObserver(graficoBarras);
 
     // Coordenadas de la ventana principal
     int xPrincipal = this.getX();
@@ -71,7 +76,7 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
     frameBarras.setVisible(true);
 }
 private void cargarDatos() {
-    List<FormatoA> lista = formatoAService.listFormatoA();
+    List<FormatoA> lista = evaluacionService.listFormatoA();
 
     String[] columnas = {"ID", "Título", "Estado"};
     DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
@@ -123,10 +128,10 @@ private void cargarDatos() {
         int id = (int) jTable1.getValueAt(fila, 0); // ID está en la columna 0
 
         // Buscar el FormatoA desde repo
-        FormatoA formato = formatoAService.findById(id); 
+        FormatoA formato = evaluacionService.findById(id);
 
         if (formato != null) {
-            Observaciones panelObs = new Observaciones(formatoAService);
+            Observaciones panelObs = new Observaciones(evaluacionService);
             panelObs.setFormatoA(formato);
             showJPanel(panelObs);
         }}
@@ -154,13 +159,11 @@ private void cargarDatos() {
 
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setPreferredSize(new java.awt.Dimension(226, 510));
-        Menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel2.setFont(new java.awt.Font("Roboto Medium", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("PROYECTOS");
-        Menu.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(73, 14, 206, 28));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -175,8 +178,6 @@ private void cargarDatos() {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        Menu.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 54, 353, 450));
-
         btVolver.setBackground(new java.awt.Color(102, 102, 255));
         btVolver.setFont(new java.awt.Font("Wide Latin", 1, 24)); // NOI18N
         btVolver.setForeground(new java.awt.Color(255, 255, 255));
@@ -188,7 +189,32 @@ private void cargarDatos() {
                 btVolverMouseClicked(evt);
             }
         });
-        Menu.add(btVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 50, -1));
+
+        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
+        Menu.setLayout(MenuLayout);
+        MenuLayout.setHorizontalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(btVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(13, 13, 13)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        MenuLayout.setVerticalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btVolver)
+                    .addGroup(MenuLayout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(12, 12, 12)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
 
         jLabel1.setFont(new java.awt.Font("Roboto Medium", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));

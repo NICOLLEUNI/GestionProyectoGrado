@@ -4,14 +4,9 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.FormatoAVersionRepository;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.access.IFormatoAVersionRepository;
-import co.unicauca.workflow.domain.entities.Estudiante;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.FormatoAVersion;
-import co.unicauca.workflow.domain.entities.Persona;
+
+import co.unicauca.entity.Persona;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
@@ -33,8 +28,7 @@ public class ConsultarFormatoA extends javax.swing.JPanel {
         cargarDatos();;
     }
 private void cargarDatos() {
-     IFormatoARepository repoA = Factory.getFormatoARepository("default");
-    FormatoAVersionRepository repoV = new FormatoAVersionRepository();
+
 
     // 1️⃣ Traer todos los FormatoA donde el usuario logueado sea estudiante
     List<FormatoA> todos = repoA.list();

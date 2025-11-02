@@ -67,4 +67,13 @@ public class PersonaService {
     public List<Persona> findAll() {
         return personaRepository.findAll();
     }
+
+    public Persona findPersonaByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return null;
+        }
+
+        Optional<Persona> personaOpt = personaRepository.findByEmail(email);
+        return personaOpt.orElse(null);
+    }
 }

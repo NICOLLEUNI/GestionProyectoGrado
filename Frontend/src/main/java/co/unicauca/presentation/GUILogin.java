@@ -1,31 +1,35 @@
 
 package co.unicauca.presentation;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
-import java.awt.Color;
+import co.unicauca.service.AuthService;
+import co.unicauca.model.Persona;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import javax.swing.JOptionPane;
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.service.PersonaService;
+import java.util.HashSet;
+import java.util.Set;
 
-//Debemos usar la instancia de factory no crear un nuevo repositorio
-
-//DEBES IMPLEMENTAR TODA ESTA LOGICA CON LA CLASE PERSONA
 
 public class GUILogin extends javax.swing.JFrame {
     
 
 private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
+    private final AuthService authService;
+    private final Gson gson;
+
+
+
 
     /**
      * Creates new form GUILogin
      */
   
     public GUILogin() {
-         
-         initComponents();   // <-- Faltaba
+
+        this.authService = new AuthService();
+        this.gson = new Gson();
+        initComponents(); // ✅ AHORA SÍ ESTÁ PRESENTE
         
     }
     
@@ -62,25 +66,20 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
         setResizable(false);
 
         BackGround.setBackground(new java.awt.Color(255, 255, 255));
-        BackGround.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         Unicauca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/unicauca-02.png"))); // NOI18N
         Unicauca.setText("jLabel1");
-        BackGround.add(Unicauca, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 0, 340, 510));
 
         Logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/Logo.png"))); // NOI18N
         Logo.setText("jLabel1");
-        BackGround.add(Logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 110));
 
         lbTitulo.setFont(new java.awt.Font("Roboto SemiBold", 1, 36)); // NOI18N
         lbTitulo.setForeground(new java.awt.Color(0, 0, 0));
         lbTitulo.setText("INICIAR SESION");
-        BackGround.add(lbTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 130, 320, 60));
 
         lbEmail.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         lbEmail.setForeground(new java.awt.Color(51, 51, 51));
         lbEmail.setText("Email");
-        BackGround.add(lbEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 210, 110, 30));
 
         tfEmail.setBackground(new java.awt.Color(255, 255, 255));
         tfEmail.setFont(new java.awt.Font("Roboto Medium", 0, 14)); // NOI18N
@@ -91,22 +90,18 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
                 tfEmailMousePressed(evt);
             }
         });
-        BackGround.add(tfEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 250, 470, 30));
 
         sepEmail.setBackground(new java.awt.Color(255, 255, 255));
         sepEmail.setForeground(new java.awt.Color(0, 0, 0));
         sepEmail.setOpaque(true);
-        BackGround.add(sepEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 280, 420, 20));
 
         lbContrasenia.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         lbContrasenia.setForeground(new java.awt.Color(51, 51, 51));
         lbContrasenia.setText("Contraseña");
-        BackGround.add(lbContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 310, 170, 30));
 
         sepContrasenia.setBackground(new java.awt.Color(255, 255, 255));
         sepContrasenia.setForeground(new java.awt.Color(0, 0, 0));
         sepContrasenia.setOpaque(true);
-        BackGround.add(sepContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 380, 420, 20));
 
         tfContrasenia.setBackground(new java.awt.Color(255, 255, 255));
         tfContrasenia.setFont(new java.awt.Font("Roboto Medium", 0, 18)); // NOI18N
@@ -118,7 +113,6 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
                 tfContraseniaMousePressed(evt);
             }
         });
-        BackGround.add(tfContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 360, 420, 20));
 
         pnlBttLogin.setBackground(new java.awt.Color(0, 102, 204));
         pnlBttLogin.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -162,18 +156,14 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
                 .addComponent(lblLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        BackGround.add(pnlBttLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 430, 170, 40));
-
         lblMensaje.setFont(new java.awt.Font("Roboto Medium", 0, 14)); // NOI18N
         lblMensaje.setForeground(new java.awt.Color(255, 102, 102));
         lblMensaje.setText(" ");
-        BackGround.add(lblMensaje, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 390, 250, 40));
 
         lblMensaje2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         lblMensaje2.setForeground(new java.awt.Color(0, 102, 204));
         lblMensaje2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblMensaje2.setText("¿No tienes usuario?");
-        BackGround.add(lblMensaje2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 410, 200, -1));
 
         pnlBttRegistrarse.setBackground(new java.awt.Color(0, 102, 204));
         pnlBttRegistrarse.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -206,7 +196,79 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
             .addComponent(lblRegistrarse, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
         );
 
-        BackGround.add(pnlBttRegistrarse, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 430, 200, 40));
+        javax.swing.GroupLayout BackGroundLayout = new javax.swing.GroupLayout(BackGround);
+        BackGround.setLayout(BackGroundLayout);
+        BackGroundLayout.setHorizontalGroup(
+            BackGroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BackGroundLayout.createSequentialGroup()
+                .addGroup(BackGroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Logo, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(lbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(lbEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(tfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(sepEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(lbContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(tfContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addGroup(BackGroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(BackGroundLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(BackGroundLayout.createSequentialGroup()
+                                .addGap(280, 280, 280)
+                                .addComponent(lblMensaje2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(sepContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(pnlBttLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(130, 130, 130)
+                        .addComponent(pnlBttRegistrarse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20)
+                .addComponent(Unicauca, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        BackGroundLayout.setVerticalGroup(
+            BackGroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(BackGroundLayout.createSequentialGroup()
+                .addComponent(Logo, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(lbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(lbEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(tfEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(sepEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addComponent(lbContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(tfContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(BackGroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackGroundLayout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(lblMensaje2))
+                    .addComponent(sepContrasenia, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(BackGroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlBttLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnlBttRegistrarse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addComponent(Unicauca)
+        );
+
         pnlBttRegistrarse.getAccessibleContext().setAccessibleName("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -253,68 +315,47 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
         pnlBttLogin.setBackground(new Color(0,64,128));
     }//GEN-LAST:event_pnlBttLoginMouseEntered
 
-    private void lblLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLoginMouseClicked
-                                             
+
+
+    private void lblLoginMouseClicked(java.awt.event.MouseEvent evt) {
         String email = tfEmail.getText().trim();
         String password = String.valueOf(tfContrasenia.getPassword()).trim();
 
-        // Validar campos vacíos
-        boolean faltaEmail = (email == null || email.isEmpty() || email.equals("Ingrese su email"));
-        boolean faltaPassword = (password == null || password.isEmpty() || password.equals("**********"));
-
-        if (faltaEmail && faltaPassword) {
-            lblMensaje.setText("Por favor completa todos los campos.");
-            return;
-        }
-
-        if (faltaEmail) {
+        // ✅ SOLO validar campos vacíos en el frontend
+        if (email.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this,
-                "Debes ingresar un email.",
-                "Campo vacío",
-                JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (faltaPassword) {
-            JOptionPane.showMessageDialog(this,
-                "Debes ingresar una contraseña.",
-                "Campo vacío",
-                JOptionPane.WARNING_MESSAGE);
+                    "Por favor ingresa email y contraseña",
+                    "Campos incompletos",
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            // CAMBIO PRINCIPAL: Usar PersonaService en lugar de UserService
-            Persona personaLogueada = personaService.authenticatePerson(email, password);
+            // ✅ MICROSERVICIO maneja TODA la lógica de validación
+            Persona personaLogueada = authService.login(email, password);
 
-            if (personaLogueada != null) {
-                JOptionPane.showMessageDialog(this,
+            // ✅ Si llegamos aquí, el microservicio aprobó las credenciales
+            JOptionPane.showMessageDialog(this,
                     "¡Bienvenido, " + personaLogueada.getName() + "!",
                     "Inicio de sesión exitoso",
                     JOptionPane.INFORMATION_MESSAGE);
 
-                // Crear menú principal con la Persona autenticada
-                // NOTA: Necesitarás adaptar GUIMenuPrincipal para recibir Persona en lugar de User
-                GUIMenuPrincipal guiPrincipal = new GUIMenuPrincipal(personaLogueada);
-                guiPrincipal.setVisible(true);
-
-                this.dispose(); // cerrar el login
-            } else {
-                JOptionPane.showMessageDialog(this,
-                    "Email o contraseña incorrectos.",
-                    "Error de autenticación",
-                    JOptionPane.ERROR_MESSAGE);
-            }
+            // Pasar al menú principal
+            GUIMenuPrincipal guiPrincipal = new GUIMenuPrincipal(personaLogueada);
+            guiPrincipal.setVisible(true);
+            this.dispose();
 
         } catch (Exception e) {
+            // ✅ MOSTRAR MENSAJE DE ERROR DEL MICROSERVICIO
             JOptionPane.showMessageDialog(this,
-                "Ocurrió un error al intentar autenticar: " + e.getMessage(),
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+                    e.getMessage(),  // Mensaje del microservicio
+                    "Error de autenticación",
+                    JOptionPane.ERROR_MESSAGE);
         }
-        
-    }//GEN-LAST:event_lblLoginMouseClicked
+    }
+
+
+
 
     
     private void lblLoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLoginMouseEntered
@@ -339,11 +380,6 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -351,18 +387,10 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (Exception ex) {
             java.util.logging.Logger.getLogger(GUILogin.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GUILogin().setVisible(true);

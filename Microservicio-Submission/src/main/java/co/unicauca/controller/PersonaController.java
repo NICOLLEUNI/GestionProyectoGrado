@@ -1,6 +1,7 @@
 package co.unicauca.controller;
 
 
+import co.unicauca.entity.EnumRol;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.infra.dto.PersonaRequest;
@@ -42,6 +43,13 @@ public class PersonaController {
     @GetMapping
     public ResponseEntity<List<Persona>> listarPersona() {
         List<Persona> personas = personaService.findAll();
+        return ResponseEntity.ok(personas);
+    }
+
+    // 🔹 NUEVO: Listar personas según el rol (EnumRol)
+    @GetMapping("/rol/{rol}")
+    public ResponseEntity<List<Persona>> listarPorRol(@PathVariable EnumRol rol) {
+        List<Persona> personas = personaService.findByRol(rol);
         return ResponseEntity.ok(personas);
     }
 }

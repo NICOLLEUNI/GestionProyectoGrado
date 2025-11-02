@@ -4,6 +4,8 @@
  */
 package co.unicauca.workflow.presentation.views;
 
+import co.unicauca.entity.Persona;
+
 /**
  *
  * @author User
@@ -230,8 +232,8 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JLabel Icon;
-    private javax.swing.JComboBox<Docente> boxCodirector;
-    private javax.swing.JComboBox<Docente> boxDirector;
+    private javax.swing.JComboBox<Persona> boxCodirector;
+    private javax.swing.JComboBox<Persona> boxDirector;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator10;
     private javax.swing.JSeparator jSeparator11;

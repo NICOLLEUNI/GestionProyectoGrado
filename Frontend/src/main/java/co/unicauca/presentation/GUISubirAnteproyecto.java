@@ -156,7 +156,7 @@ public class GUISubirAnteproyecto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btVolverMouseClicked
-        cerrarGraficas();
+
         GUIMenuCoord ventanaCoord = new GUIMenuCoord(personaLogueado); // Opcional: mostrar un mensaje al usuario
         ventanaCoord.setVisible(true);
         this.dispose();

@@ -4,10 +4,10 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.enumEstado;
-import co.unicauca.workflow.domain.service.FormatoAService;
-import co.unicauca.workflow.infa.Observer;
+
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.FormatoA;
+import co.unicauca.infra.Observer;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,14 +21,14 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  * @author User
  */
-public class GraficoBarras extends javax.swing.JPanel implements Observer  {
+public class GraficoBarras extends javax.swing.JPanel implements Observer {
 
     private DefaultCategoryDataset dataset;
     private JFreeChart chart;
     private ChartPanel chartPanel;
     private FormatoAService formatoAService;
 
-    public GraficoBarras(FormatoAService formatoAService) {
+    public GraficoBarras() {
         FlatMTMaterialLighterIJTheme.setup();
         this.formatoAService = formatoAService;
         initComponents();
@@ -62,7 +62,7 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer  {
         int rechazados = 0;
 
         for (FormatoA f : lista) {
-            enumEstado estado = f.getState();
+            EnumEstado estado = f.getState();
             if (estado == null) {
                 entregados++;
                 continue;

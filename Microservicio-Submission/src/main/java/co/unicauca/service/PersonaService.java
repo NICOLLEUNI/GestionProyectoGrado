@@ -67,4 +67,9 @@ public class PersonaService {
     public List<Persona> findAll() {
         return personaRepository.findAll();
     }
+
+    public List<Persona> findByRol(EnumRol rol) {
+        return personaRepository.findByRolesContaining(rol);
+    }
+
 }

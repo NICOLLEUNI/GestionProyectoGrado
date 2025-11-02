@@ -4,12 +4,8 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.Persona;
-import co.unicauca.workflow.domain.entities.enumModalidad;
-import co.unicauca.workflow.domain.service.FormatoAService;
+
+import co.unicauca.entity.Persona;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -35,8 +31,7 @@ import javax.swing.UIManager;
  */
 public class AdjuntarDocumentos extends javax.swing.JPanel {
     
-    IFormatoARepository repoFomratoA = Factory.getInstance().getFormatoARepository("default");
-    FormatoAService serviceFormato = new FormatoAService(repoFomratoA);
+
     private Persona persona;
     
     private FormatoA formatoA;

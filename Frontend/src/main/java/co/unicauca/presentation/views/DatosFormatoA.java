@@ -4,16 +4,9 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.domain.entities.Docente;
-import co.unicauca.workflow.domain.entities.enumModalidad;
+
+import co.unicauca.entity.Persona;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.access.IDocenteRepository;
-import co.unicauca.workflow.access.IEstudianteRepository;
-import co.unicauca.workflow.access.IFormatoARepository;
-import co.unicauca.workflow.domain.entities.Estudiante;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.Persona;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
@@ -33,8 +26,7 @@ import javax.swing.text.JTextComponent;
  */
 public class DatosFormatoA extends javax.swing.JPanel {
    
-      private IFormatoARepository repoFormato = Factory.getInstance().getFormatoARepository("default");
-       private IEstudianteRepository repoEstudiantes = Factory.getInstance().getEstudianteRepository("default");
+
        private Persona persona;
     public DatosFormatoA(Persona persona) {
         initComponents();
@@ -53,7 +45,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
         try {
 
             //preguntarle a Nicolle sobre el uso del repo
-            IDocenteRepository repo = Factory.getInstance().getDocenteRepository("default");
+
             List<Docente> docentes = repo.list();
 
             // Limpiar los combos

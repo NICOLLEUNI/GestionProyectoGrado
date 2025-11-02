@@ -4,9 +4,9 @@
  */
 package co.unicauca.presentation.views;
 
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.service.FormatoAService;
-import co.unicauca.workflow.infa.Observer;
+
+import co.unicauca.entity.FormatoA;
+import co.unicauca.infra.Observer;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,7 +28,7 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
 
     private FormatoAService formatoAService;
 
-    public GraficoPastel(FormatoAService formatoAService) {
+    public GraficoPastel() {
         // Inicializamos el theme
         FlatMTMaterialLighterIJTheme.setup();
         this.formatoAService = formatoAService;

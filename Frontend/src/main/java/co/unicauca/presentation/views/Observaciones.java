@@ -6,21 +6,21 @@ package co.unicauca.presentation.views;
 
 //al dar click en ruta pdf debe exportar el formato A en la ruta 
 
-import co.unicauca.workflow.access.Factory;
-import co.unicauca.workflow.domain.entities.FormatoA;
-import co.unicauca.workflow.domain.entities.enumEstado;
-import co.unicauca.workflow.domain.service.FormatoAService;
+
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.Persona;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 
-import co.unicauca.workflow.access.FormatoAVersionRepository;
-import co.unicauca.workflow.access.IFormatoAVersionRepository;
-import co.unicauca.workflow.domain.entities.FormatoAVersion;
-import co.unicauca.workflow.domain.entities.enumEstado;
+
 
 /**
  * 
@@ -29,14 +29,14 @@ import co.unicauca.workflow.domain.entities.enumEstado;
  */
 public class Observaciones extends javax.swing.JPanel {
     
-    IFormatoAVersionRepository versionRepo = Factory.getInstance().getFormatoAVersionRepository("default");
+
 
     private FormatoA formatoActual;
-    private final FormatoAService formatoAService;
+    private final EvaluacionService evaluacionService;
 
     // Constructor recibe la misma instancia del service
-    public Observaciones(FormatoAService formatoAService) {
-        this.formatoAService = formatoAService;
+    public Observaciones(EvaluacionService evaluacionService) {
+        this.evaluacionService = evaluacionService;
         FlatMTMaterialLighterIJTheme.setup();
         initComponents();
         initStyles();
@@ -44,20 +44,22 @@ public class Observaciones extends javax.swing.JPanel {
     }
     
    private void initEvents() {
-    lblPDF.addMouseListener(new java.awt.event.MouseAdapter() {
+     lblPDF.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             abrirPDF();
         }
     });
-}
+    }
+
+
    private void initStyles() {
-    // estilos del lblPDF
-    lblPDF.setForeground(new java.awt.Color(33, 150, 243)); 
-    lblPDF.setFont(new java.awt.Font("Roboto", java.awt.Font.BOLD, 13));
-    lblPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
-    lblPDF.setToolTipText("Abrir PDF"); 
-        }
+        // estilos del lblPDF
+        lblPDF.setForeground(new java.awt.Color(33, 150, 243));
+        lblPDF.setFont(new java.awt.Font("Roboto", java.awt.Font.BOLD, 13));
+        lblPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPDF.setToolTipText("Abrir PDF");
+    }
    
    private void abrirPDF() {
     try {
@@ -77,67 +79,84 @@ public class Observaciones extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + e.getMessage());
     }
 }
+    public void setFormatoA(FormatoA formato) {
+        if (formato == null) return;
+        this.formatoActual = formato;
 
-   public void setFormatoA(FormatoA formato) {
-       
-    if (formato == null) return;
-    this.formatoActual = formato;
 
-    // Asignar datos a los labels
-    lblUTitulo.setText(formato.getTitle() != null ? formato.getTitle() : "Sin título");
-    lblUModalidad.setText(formato.getMode() != null ? formato.getMode().toString() : "N/A");
-    lblUDirector.setText(formato.getProjectManager() != null
-            ? formato.getProjectManager().getName() + " " + formato.getProjectManager().getLastname()
-            : "Sin director");
 
-    // Estudiantes
-    if (formato.getEstudiantes() != null && !formato.getEstudiantes().isEmpty()) {
-        lblUEstudiante.setText(formato.getEstudiantes().get(0).getName() + " " +
-                               formato.getEstudiantes().get(0).getLastname());
+        // 🏷️ Datos generales
+        lblUTitulo.setText(formato.getTitle() != null ? formato.getTitle() : "Sin título");
+        lblUModalidad.setText(formato.getMode() != null ? formato.getMode().toString() : "N/A");
 
-        if (formato.getEstudiantes().size() > 1) {
-            lblUEstudiante2.setText(formato.getEstudiantes().get(1).getName() + " " +
-                                    formato.getEstudiantes().get(1).getLastname());
+        // 🎓 Director y codirector
+        Persona director = evaluacionService.findPersonaByEmail(formato.getProjectManagerEmail());
+        Persona codirector = evaluacionService.findPersonaByEmail(formato.getProjectCoManagerEmail());
+
+        lblUDirector.setText(
+                director != null
+                        ? director.getName() + " " + director.getLastname()
+                        : "Sin director"
+        );
+
+        // 👩‍🎓 Estudiantes
+        List<String> emailsEstudiantes = formato.getEstudianteEmails();
+        if (emailsEstudiantes != null && !emailsEstudiantes.isEmpty()) {
+            Persona est1 = evaluacionService.findPersonaByEmail(emailsEstudiantes.get(0));
+            lblUEstudiante.setText(
+                    est1 != null
+                            ? est1.getName() + " " + est1.getLastname()
+                            : "Estudiante no encontrado"
+            );
+
+            if (emailsEstudiantes.size() > 1) {
+                Persona est2 = evaluacionService.findPersonaByEmail(emailsEstudiantes.get(1));
+                lblUEstudiante2.setText(
+                        est2 != null
+                                ? est2.getName() + " " + est2.getLastname()
+                                : "Sin segundo estudiante"
+                );
+            } else {
+                lblUEstudiante2.setText("Sin segundo estudiante");
+            }
         } else {
+            lblUEstudiante.setText("Sin estudiantes");
             lblUEstudiante2.setText("Sin segundo estudiante");
         }
-    } else {
-        lblUEstudiante.setText("Sin estudiantes");
-        lblUEstudiante2.setText("Sin segundo estudiante");
-    }
 
-    // PDF
-    String rutaPDF = formato.getArchivoPDF();
-    if (rutaPDF != null && !rutaPDF.trim().isEmpty()) {
-        if (!rutaPDF.toLowerCase().endsWith(".pdf")) {
-            rutaPDF += ".pdf";
+        // 📄 PDF
+        String rutaPDF = formato.getArchivoPDF();
+        if (rutaPDF != null && !rutaPDF.trim().isEmpty()) {
+            if (!rutaPDF.toLowerCase().endsWith(".pdf")) {
+                rutaPDF += ".pdf";
+            }
+            lblPDF.setText(rutaPDF);
+        } else {
+            lblPDF.setText("Sin archivo");
         }
-        lblPDF.setText(rutaPDF);
-    } else {
-        lblPDF.setText("Sin archivo");
-    }
 
-    // Observaciones previas (si las tiene en BD)
-    if (formato.getObservations() != null) {
-        txtObservaciones.setText(formato.getObservations());
-    }
-//para cambiar
-    // Estado previo (si ya fue evaluado)
-    if (formato.getState() != null) {
-        if (formato.getState() == enumEstado.APROBADO) {
-            CBXAprobado.setSelected(true);
-            CBXRechazado.setSelected(false);
-        } else if (formato.getState() == enumEstado.RECHAZADO) {
-            CBXRechazado.setSelected(true);
-            CBXAprobado.setSelected(false);
+        // 💬 Observaciones
+        if (formato.getObservations() != null) {
+            txtObservaciones.setText(formato.getObservations());
+        }
+
+        // ⚙️ Estado
+        if (formato.getState() != null) {
+            if (formato.getState() == EnumEstado.APROBADO) {
+                CBXAprobado.setSelected(true);
+                CBXRechazado.setSelected(false);
+            } else if (formato.getState() == EnumEstado.RECHAZADO) {
+                CBXRechazado.setSelected(true);
+                CBXAprobado.setSelected(false);
+            } else {
+                CBXAprobado.setSelected(false);
+                CBXRechazado.setSelected(false);
+            }
         } else {
             CBXAprobado.setSelected(false);
             CBXRechazado.setSelected(false);
         }
-    } else {
-        CBXAprobado.setSelected(false);
-        CBXRechazado.setSelected(false);
-      }     }  
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -174,51 +193,38 @@ public class Observaciones extends javax.swing.JPanel {
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(533, 456));
-        Contenido.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitulo.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(0, 0, 0));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTitulo.setText("Titulo");
-        Contenido.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, 61, -1));
-        Contenido.add(jSeparator9, new org.netbeans.lib.awtextra.AbsoluteConstraints(122, 32, 230, -1));
 
         lblUTitulo.setForeground(new java.awt.Color(51, 51, 51));
         lblUTitulo.setText("Titulo");
-        Contenido.add(lblUTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 12, 233, -1));
 
         lblEstudiante.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEstudiante.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblEstudiante.setText("Estudiante");
-        Contenido.add(lblEstudiante, new org.netbeans.lib.awtextra.AbsoluteConstraints(21, 41, 92, -1));
 
         lblUEstudiante.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante.setText("Estudiante");
-        Contenido.add(lblUEstudiante, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 41, 233, -1));
-        Contenido.add(jSeparator10, new org.netbeans.lib.awtextra.AbsoluteConstraints(122, 61, 230, -1));
 
         lblDirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblDirector.setForeground(new java.awt.Color(0, 0, 0));
         lblDirector.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblDirector.setText("Dir.Proyecto");
-        Contenido.add(lblDirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, -1, -1));
 
         lblUDirector.setForeground(new java.awt.Color(51, 51, 51));
         lblUDirector.setText("Director");
-        Contenido.add(lblUDirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 233, -1));
-        Contenido.add(jSeparator11, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 120, 230, -1));
 
         lblModalidad.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblModalidad.setForeground(new java.awt.Color(0, 0, 0));
         lblModalidad.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblModalidad.setText("Modalidad");
-        Contenido.add(lblModalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, -1));
 
         lblUModalidad.setForeground(new java.awt.Color(51, 51, 51));
         lblUModalidad.setText("Modalidad");
-        Contenido.add(lblUModalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 233, -1));
-        Contenido.add(jSeparator12, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 230, -1));
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -238,13 +244,10 @@ public class Observaciones extends javax.swing.JPanel {
             .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
         );
 
-        Contenido.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 190, -1, -1));
-
         lblObservaciones.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblObservaciones.setForeground(new java.awt.Color(0, 0, 0));
         lblObservaciones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblObservaciones.setText("Observaciones");
-        Contenido.add(lblObservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 230, 125, -1));
 
         CBXAprobado.setText("Aprobado");
         CBXAprobado.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -252,7 +255,6 @@ public class Observaciones extends javax.swing.JPanel {
                 CBXAprobadoMouseClicked(evt);
             }
         });
-        Contenido.add(CBXAprobado, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 330, -1, -1));
 
         CBXRechazado.setText("Rechazado");
         CBXRechazado.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -260,7 +262,6 @@ public class Observaciones extends javax.swing.JPanel {
                 CBXRechazadoMouseClicked(evt);
             }
         });
-        Contenido.add(CBXRechazado, new org.netbeans.lib.awtextra.AbsoluteConstraints(321, 330, -1, -1));
 
         txtObservaciones.setBackground(new java.awt.Color(255, 255, 255));
         txtObservaciones.setColumns(20);
@@ -273,21 +274,15 @@ public class Observaciones extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(txtObservaciones);
 
-        Contenido.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 230, 294, -1));
-
         lblEstudiante2.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEstudiante2.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblEstudiante2.setText("Estudiante");
-        Contenido.add(lblEstudiante2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 92, -1));
 
         lblUEstudiante2.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante2.setText("Estudiante");
-        Contenido.add(lblUEstudiante2, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 70, 233, -1));
-        Contenido.add(jSeparator13, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 90, 230, -1));
 
         Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
-        Contenido.add(Icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 380, -1, -1));
 
         btEvaluar.setBackground(new java.awt.Color(65, 55, 171));
         btEvaluar.setFont(new java.awt.Font("Roboto Medium", 1, 24)); // NOI18N
@@ -300,7 +295,120 @@ public class Observaciones extends javax.swing.JPanel {
                 btEvaluarMouseClicked(evt);
             }
         });
-        Contenido.add(btEvaluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 390, -1, -1));
+
+        javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
+        Contenido.setLayout(ContenidoLayout);
+        ContenidoLayout.setHorizontalGroup(
+            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38)
+                .addComponent(lblUTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(122, 122, 122)
+                .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(lblEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addComponent(lblUEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(122, 122, 122)
+                .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(lblEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8)
+                .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(120, 120, 120)
+                .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(lblDirector)
+                .addGap(18, 18, 18)
+                .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(120, 120, 120)
+                .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(lblModalidad)
+                .addGap(29, 29, 29)
+                .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(120, 120, 120)
+                .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(lblObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(80, 80, 80)
+                .addComponent(CBXAprobado)
+                .addGap(164, 164, 164)
+                .addComponent(CBXRechazado))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(Icon))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(340, 340, 340)
+                .addComponent(btEvaluar))
+        );
+        ContenidoLayout.setVerticalGroup(
+            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(lblTitulo))
+                    .addComponent(lblUTitulo))
+                .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblEstudiante)
+                    .addComponent(lblUEstudiante))
+                .addGap(3, 3, 3)
+                .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblEstudiante2)
+                    .addComponent(lblUEstudiante2))
+                .addGap(3, 3, 3)
+                .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblDirector)
+                    .addComponent(lblUDirector))
+                .addGap(3, 3, 3)
+                .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblModalidad)
+                    .addComponent(lblUModalidad))
+                .addGap(3, 3, 3)
+                .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblObservaciones)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(CBXAprobado)
+                    .addComponent(CBXRechazado))
+                .addGap(30, 30, 30)
+                .addComponent(Icon)
+                .addGap(10, 10, 10)
+                .addComponent(btEvaluar))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -358,18 +466,11 @@ try {
         }
 
         //Obtener el formato actual
-        int idFormato = formatoActual.getId();
+        Long idFormato = formatoActual.getId();
         
-        //PASO 1: Actualizar el FormatoA principal
-        // Solo incrementar contador si es RECHAZADO
-        int nuevoContador = formatoActual.getCounter();
-        if (estado.equals("RECHAZADO")) {
-            nuevoContador = formatoActual.getCounter() + 1;
-            formatoActual.setCounter(nuevoContador);
-        }
 
         // Actualizar estado y observaciones del FormatoA principal
-        formatoActual.setState(enumEstado.valueOf(estado));
+        formatoActual.setState(EnumEstado.valueOf(estado));
         formatoActual.setObservations(observaciones);
 
         // Llamar al servicio para actualizar el FormatoA principal
@@ -380,12 +481,10 @@ try {
         if (actualizado) {
             try {
                 // Obtener el repositorio de versiones
-                co.unicauca.workflow.access.FormatoAVersionRepository versionRepo = 
-                    new co.unicauca.workflow.access.FormatoAVersionRepository();
+
                 
                 // Obtener todas las versiones de este formato
-                java.util.List<co.unicauca.workflow.domain.entities.FormatoAVersion> versiones = 
-                    versionRepo.listByFormatoA(idFormato);
+
                 
                 if (versiones != null && !versiones.isEmpty()) {
                     // Obtener la última versión (la más reciente)
