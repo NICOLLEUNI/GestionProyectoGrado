@@ -76,7 +76,7 @@ public class GUIMenuCoord extends javax.swing.JFrame {
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setPreferredSize(new java.awt.Dimension(267, 510));
 
-        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         Icon.setText("jLabel1");
 
         Titulo.setBackground(new java.awt.Color(204, 204, 204));
@@ -102,7 +102,7 @@ public class GUIMenuCoord extends javax.swing.JFrame {
         btEvaluarFormatoA.setBackground(new java.awt.Color(65, 55, 171));
         btEvaluarFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btEvaluarFormatoA.setForeground(new java.awt.Color(255, 255, 255));
-        btEvaluarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/file-chart.png"))); // NOI18N
+        btEvaluarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
         btEvaluarFormatoA.setText("Evaluar FormatoA");
         btEvaluarFormatoA.setToolTipText("");
         btEvaluarFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
@@ -118,7 +118,7 @@ public class GUIMenuCoord extends javax.swing.JFrame {
         btRegresar.setBackground(new java.awt.Color(65, 55, 171));
         btRegresar.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btRegresar.setForeground(new java.awt.Color(255, 255, 255));
-        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/file-chart.png"))); // NOI18N
+        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
         btRegresar.setText("Volver");
         btRegresar.setToolTipText("");
         btRegresar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));

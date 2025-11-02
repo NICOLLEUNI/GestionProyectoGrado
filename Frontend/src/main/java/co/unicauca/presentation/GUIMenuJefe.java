@@ -43,7 +43,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setPreferredSize(new java.awt.Dimension(270, 512));
 
-        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         Icon.setText("jLabel2");
 
         Titulo.setBackground(new java.awt.Color(204, 204, 204));
@@ -69,7 +69,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
         btSubirFormatoA.setBackground(new java.awt.Color(65, 55, 171));
         btSubirFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btSubirFormatoA.setForeground(new java.awt.Color(255, 255, 255));
-        btSubirFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/file-chart.png"))); // NOI18N
+        btSubirFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
         btSubirFormatoA.setText("Anteproyectos");
         btSubirFormatoA.setToolTipText("");
         btSubirFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));

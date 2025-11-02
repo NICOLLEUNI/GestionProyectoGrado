@@ -84,14 +84,14 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
         Menu.setPreferredSize(new java.awt.Dimension(270, 510));
         Menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         lblLogo.setText("jLabel2");
         Menu.add(lblLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(34, 6, 157, -1));
 
         btRegresar.setBackground(new java.awt.Color(65, 55, 171));
         btRegresar.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btRegresar.setForeground(new java.awt.Color(255, 255, 255));
-        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/file-chart.png"))); // NOI18N
+        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
         btRegresar.setText("Volver");
         btRegresar.setToolTipText("");
         btRegresar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
@@ -128,7 +128,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
         btConsultarFormatoA.setBackground(new java.awt.Color(65, 55, 171));
         btConsultarFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btConsultarFormatoA.setForeground(new java.awt.Color(255, 255, 255));
-        btConsultarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/file-chart.png"))); // NOI18N
+        btConsultarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
         btConsultarFormatoA.setText("Consultar Proyecto");
         btConsultarFormatoA.setToolTipText("");
         btConsultarFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));

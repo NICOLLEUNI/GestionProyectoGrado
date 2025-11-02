@@ -104,7 +104,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         btEst.setBackground(new java.awt.Color(65, 55, 171));
         btEst.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btEst.setForeground(new java.awt.Color(255, 255, 255));
-        btEst.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/account-multiple.png"))); // NOI18N
+        btEst.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/account-multiple_1.png"))); // NOI18N
         btEst.setText("ESTUDIANTE");
         btEst.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
         btEst.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -159,7 +159,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         btDoc.setBackground(new java.awt.Color(65, 55, 171));
         btDoc.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btDoc.setForeground(new java.awt.Color(255, 255, 255));
-        btDoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/account-multiple.png"))); // NOI18N
+        btDoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/account-multiple_1.png"))); // NOI18N
         btDoc.setText("DOCENTE");
         btDoc.setAlignmentY(0.0F);
         btDoc.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));

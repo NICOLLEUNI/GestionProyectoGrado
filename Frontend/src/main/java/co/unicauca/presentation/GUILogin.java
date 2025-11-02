@@ -59,11 +59,11 @@ public class GUILogin extends javax.swing.JFrame {
         BackGround.setBackground(new java.awt.Color(255, 255, 255));
         BackGround.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        Unicauca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/unicauca-02.png"))); // NOI18N
+        Unicauca.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/unicauca-02.png"))); // NOI18N
         Unicauca.setText("jLabel1");
         BackGround.add(Unicauca, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 0, 340, 510));
 
-        Logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/Logo.png"))); // NOI18N
+        Logo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/Logo.png"))); // NOI18N
         Logo.setText("jLabel1");
         BackGround.add(Logo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 110));
 
@@ -79,7 +79,6 @@ public class GUILogin extends javax.swing.JFrame {
 
         tfEmail.setBackground(new java.awt.Color(255, 255, 255));
         tfEmail.setFont(new java.awt.Font("Roboto Medium", 0, 14)); // NOI18N
-        tfEmail.setForeground(new java.awt.Color(204, 204, 204));
         tfEmail.setText("Ingrese su email");
         tfEmail.setBorder(null);
         tfEmail.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -132,7 +131,7 @@ public class GUILogin extends javax.swing.JFrame {
         lblLogin.setForeground(new java.awt.Color(255, 255, 255));
         lblLogin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblLogin.setText("ENTRAR");
-        lblLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblLogin.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblLogin.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lblLogin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -178,7 +177,7 @@ public class GUILogin extends javax.swing.JFrame {
         lblRegistrarse.setForeground(new java.awt.Color(255, 255, 255));
         lblRegistrarse.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblRegistrarse.setText("REGISTRARSE");
-        lblRegistrarse.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblRegistrarse.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         lblRegistrarse.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblRegistrarseMouseClicked(evt);
