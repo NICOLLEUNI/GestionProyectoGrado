@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package co.unicauca.workflow.presentation;
+package co.unicauca.presentation;
 
 /**
  *
@@ -153,10 +153,7 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btVolverMouseClicked
-        cerrarGraficas();
-        GUIMenuCoord ventanaCoord = new GUIMenuCoord(personaLogueado); // Opcional: mostrar un mensaje al usuario
-        ventanaCoord.setVisible(true);
-        this.dispose();
+      
     }//GEN-LAST:event_btVolverMouseClicked
 
     /**

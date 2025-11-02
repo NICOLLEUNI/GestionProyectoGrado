@@ -1,5 +1,10 @@
 
-package co.unicauca.workflow.presentation;
+package co.unicauca.presentation;
+
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import co.unicauca.workflow.domain.entities.Persona;
@@ -12,14 +17,14 @@ import co.unicauca.workflow.domain.service.PersonaService;
 public class GUILogin extends javax.swing.JFrame {
     
 
+private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
 
-  private final PersonaService personaService;
     /**
      * Creates new form GUILogin
      */
   
     public GUILogin() {
-         this.personaService = new PersonaService();  
+         
          initComponents();   // <-- Faltaba
         
     }

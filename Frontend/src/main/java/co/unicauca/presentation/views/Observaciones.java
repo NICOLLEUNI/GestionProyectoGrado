@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package co.unicauca.workflow.presentation.views;
+package co.unicauca.presentation.views;
 
 //al dar click en ruta pdf debe exportar el formato A en la ruta 
 

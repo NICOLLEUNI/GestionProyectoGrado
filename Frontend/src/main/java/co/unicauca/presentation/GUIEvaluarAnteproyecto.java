@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package co.unicauca.workflow.presentation;
+package co.unicauca.presentation;
 
 //agregar la funcionalidad en los 3 puntos de "volver a la pestaña anterior"
 //añadir logica observer que se va a manejar con una capa de estadisticas 
