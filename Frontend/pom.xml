@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>co.unicauca</groupId>
-	<artifactId>Microservicio-FrontEnd</artifactId>
+	<artifactId>Frontend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Microservicio-FrontEnd</name>
 	<description>Demo project for Spring Boot</description>
