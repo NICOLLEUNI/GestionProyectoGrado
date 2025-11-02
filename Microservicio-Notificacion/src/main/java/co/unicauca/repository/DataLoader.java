@@ -45,6 +45,7 @@ public class DataLoader implements CommandLineRunner {
         estudiante1.setEmail("nicolle.montano@unicauca.edu.co");
         estudiante1.setDepartment("Ingeniería de Sistemas");
         estudiante1.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
+        estudiante1.setPrograma("Ingenieria de Sistemas");
 
         Persona estudiante2 = new Persona();
         estudiante2.setIdUsuario(4L);
@@ -53,6 +54,7 @@ public class DataLoader implements CommandLineRunner {
         estudiante2.setEmail("juan.perez@unicauca.edu.co");
         estudiante2.setDepartment("Ingeniería de Sistemas");
         estudiante2.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
+        estudiante2.setPrograma("Ingenieria de Electronica ");
         // ✅ Jefe de Departamento Ingeniería Electrónica
         Persona jefeElectronica = new Persona();
         jefeElectronica.setIdUsuario(5L);
@@ -70,8 +72,27 @@ public class DataLoader implements CommandLineRunner {
         jefeSistemas.setEmail("paola.ramos@unicauca.edu.co");
         jefeSistemas.setDepartment("Ingeniería de Sistemas");
         jefeSistemas.setRoles(EnumSet.of(EnumRol.JEFE_DEPARTAMENTO, EnumRol.DOCENTE));
+        // ✅ Coordinador Ingeniería de Sistemas
+        Persona coordSistemas = new Persona();
+        coordSistemas.setIdUsuario(7L);
+        coordSistemas.setName("Luis");
+        coordSistemas.setLastname("Muñoz");
+        coordSistemas.setEmail("luis.munoz@unicauca.edu.co");
+        coordSistemas.setDepartment("Ingenieria de Sistemas");
+        coordSistemas.setPrograma("Ingenieria de Sistemas");
+        coordSistemas.setRoles(EnumSet.of(EnumRol.COORDINADOR));
 
-        personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2 , jefeElectronica, jefeSistemas));
+// ✅ Coordinador Ingeniería Electrónica
+        Persona coordElectronica = new Persona();
+        coordElectronica.setIdUsuario(8L);
+        coordElectronica.setName("Andrea");
+        coordElectronica.setLastname("Gómez");
+        coordElectronica.setEmail("andrea.gomez@unicauca.edu.co");
+        coordElectronica.setDepartment("Ingeniería Electrónica");
+        coordElectronica.setPrograma("Ingeniería Electrónica");
+        coordElectronica.setRoles(EnumSet.of(EnumRol.COORDINADOR));
+
+        personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2 , jefeElectronica, jefeSistemas ,coordElectronica,coordSistemas));
         // ✅ Logs
         System.out.println("📘 Datos iniciales cargados correctamente:");
         System.out.println("- Personas: " + personaRepository.count());

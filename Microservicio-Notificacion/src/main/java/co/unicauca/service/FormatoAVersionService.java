@@ -27,7 +27,11 @@ public class FormatoAVersionService {
      */
     public void procesarNotificacionVersion(DtoFormatoVersion version) {
 
-
+        // ✅ Si el estado es APROBADO o RECHAZADO, no enviar notificación
+        if (version.estado().equalsIgnoreCase("APROBADO") ||
+                version.estado().equalsIgnoreCase("RECHAZADO")) {
+            return;
+        }
         if (version.estudiantesEmails() == null || version.estudiantesEmails().isEmpty()) {
             return;
         }

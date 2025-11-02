@@ -24,16 +24,22 @@ public class FormatoAVersionListener {
      * El mensaje llega en formato JSON, se convierte en PersonaRequest y se guarda.
      */
     @RabbitListener(queues = RabbitMQConfig.FORMATOAVERSION_NOTIFICACIONES_QUEUE)
-    public void recibirVersion(String message) {
+    public void recibirVersion(DtoFormatoVersion evento) {
         try {
-            // 🟢 Convertir el JSON a objeto DTO
-            DtoFormatoVersion versionRequest = objectMapper.readValue(message, DtoFormatoVersion.class);
+            // Convertimos al DTO que usa tu service
+            DtoFormatoVersion versionRequest = new DtoFormatoVersion(
+                    evento.versionId(),
+                    evento.formatoAId(),
+                    evento.numeroVersion(),
+                    evento.estado(),
+                    evento.estudiantesEmails(),
+                    evento.directorEmail()
+            );
 
-            // 🟢 Llamar al service con la instancia, no con la clase
             formatoAVersionService.procesarNotificacionVersion(versionRequest);
 
         } catch (Exception e) {
-            System.err.println("❌ Error procesando mensaje de versión FormatoA: " + e.getMessage());
+            System.err.println("❌ Error procesando evento FormatoA: " + e.getMessage());
             e.printStackTrace();
         }
     }
