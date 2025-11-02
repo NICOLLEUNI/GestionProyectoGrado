@@ -12,25 +12,59 @@ public record UsuarioMessage(
         String lastname,
         String email,
         Set<String> roles,
-        String department,  // ✅ department (igual que en Evaluación)
-        String programa     // ✅ programa (igual que en Evaluación)
+        String department,
+        String programa
 ) {
-    /**
-     * Constructor desde entidad Persona
-     */
+
     public static UsuarioMessage fromEntity(co.unicauca.identity.entity.Persona persona) {
         // Convertir roles Enum a Set<String>
         Set<String> rolesString = persona.getRoles().stream()
                 .map(Enum::name)
                 .collect(java.util.stream.Collectors.toSet());
 
-        // Convertir departamento Enum a String (o null)
-        String departmentString = persona.getDepartamento() != null ?
+        // Obtener valores originales
+        String departmentOriginal = persona.getDepartamento() != null ?
                 persona.getDepartamento().name() : null;
-
-        // Convertir programa Enum a String (o null)
-        String programaString = persona.getPrograma() != null ?
+        String programaOriginal = persona.getPrograma() != null ?
                 persona.getPrograma().name() : null;
+
+        // ✅ APLICAR LA MISMA LÓGICA CONDICIONAL MEJORADA
+        boolean esSoloEstudiante = rolesString != null &&
+                rolesString.contains("ESTUDIANTE") &&
+                rolesString.size() == 1;
+
+        boolean esSoloRolConDepartamento = rolesString != null &&
+                (rolesString.contains("DOCENTE") ||
+                        rolesString.contains("COORDINADOR") ||
+                        rolesString.contains("JEFE_DEPARTAMENTO")) &&
+                rolesString.size() == 1;
+
+        // ✅ NUEVA VALIDACIÓN: Combinación de roles de departamento SIN estudiante
+        boolean esCombinacionRolesDepartamento = rolesString != null &&
+                (rolesString.contains("DOCENTE") || rolesString.contains("COORDINADOR") || rolesString.contains("JEFE_DEPARTAMENTO")) &&
+                !rolesString.contains("ESTUDIANTE") &&
+                rolesString.size() >= 1;
+
+        boolean esCombinacionMixta = rolesString != null &&
+                rolesString.contains("ESTUDIANTE") &&
+                (rolesString.contains("DOCENTE") || rolesString.contains("COORDINADOR") || rolesString.contains("JEFE_DEPARTAMENTO"));
+
+        String departmentFinal;
+        String programaFinal;
+
+        if (esSoloEstudiante) {
+            departmentFinal = null;
+            programaFinal = programaOriginal;
+        } else if (esSoloRolConDepartamento || esCombinacionRolesDepartamento) {
+            departmentFinal = departmentOriginal;
+            programaFinal = null;
+        } else if (esCombinacionMixta) {
+            departmentFinal = departmentOriginal;
+            programaFinal = programaOriginal;
+        } else {
+            departmentFinal = departmentOriginal;
+            programaFinal = programaOriginal;
+        }
 
         return new UsuarioMessage(
                 persona.getIdUsuario(),
@@ -38,8 +72,8 @@ public record UsuarioMessage(
                 persona.getLastname(),
                 persona.getEmail(),
                 rolesString,
-                departmentString,
-                programaString
+                departmentFinal,
+                programaFinal
         );
     }
 }

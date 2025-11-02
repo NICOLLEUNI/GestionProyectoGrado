@@ -113,7 +113,15 @@ public record PersonaResponse(
                         roles.contains("JEFE_DEPARTAMENTO")) &&
                 roles.size() == 1;
 
-        boolean esCombinacion = roles != null && roles.size() > 1;
+        // ✅ NUEVA VALIDACIÓN: Combinación de roles de departamento SIN estudiante
+        boolean esCombinacionRolesDepartamento = roles != null &&
+                (roles.contains("DOCENTE") || roles.contains("COORDINADOR") || roles.contains("JEFE_DEPARTAMENTO")) &&
+                !roles.contains("ESTUDIANTE") &&
+                roles.size() >= 1; // Puede ser 1 o más roles de departamento
+
+        boolean esCombinacionMixta = roles != null &&
+                roles.contains("ESTUDIANTE") &&
+                (roles.contains("DOCENTE") || roles.contains("COORDINADOR") || roles.contains("JEFE_DEPARTAMENTO"));
 
         String departamentFinal;
         String programaFinal;
@@ -122,12 +130,12 @@ public record PersonaResponse(
             // ✅ Solo ESTUDIANTE: muestra programa, oculta departamento
             departamentFinal = null;
             programaFinal = programa;
-        } else if (esSoloRolConDepartamento) {
-            // ✅ Solo DOCENTE/COORDINADOR/JEFE: muestra departamento, oculta programa
+        } else if (esSoloRolConDepartamento || esCombinacionRolesDepartamento) {
+            // ✅ Solo DOCENTE/COORDINADOR/JEFE (individual o combinados): muestra departamento, oculta programa
             departamentFinal = department;
             programaFinal = null;
-        } else if (esCombinacion) {
-            // ✅ COMBINACIÓN: muestra ambos campos
+        } else if (esCombinacionMixta) {
+            // ✅ COMBINACIÓN ESTUDIANTE + roles departamento: muestra ambos campos
             departamentFinal = department;
             programaFinal = programa;
         } else {

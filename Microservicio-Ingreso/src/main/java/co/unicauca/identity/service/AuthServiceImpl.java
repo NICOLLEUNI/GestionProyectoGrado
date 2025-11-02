@@ -234,7 +234,7 @@ public class AuthServiceImpl implements AuthService {
         String programaStr = persona.getPrograma() != null ? persona.getPrograma().name() : null;
 
         // Usar el factory method create con lógica condicional
-        return PersonaResponse.createForRabbitMQ(
+        return PersonaResponse.create(
                 persona.getIdUsuario(),
                 persona.getName(),
                 persona.getLastname(),
