@@ -9,30 +9,27 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PersonaListener {
-    private final PersonaService personaService;
-    private final ObjectMapper objectMapper;
 
-    public PersonaListener(PersonaService personaService, ObjectMapper objectMapper) {
+    private final PersonaService personaService;
+
+    public PersonaListener(PersonaService personaService) {
         this.personaService = personaService;
-        this.objectMapper = objectMapper;
     }
 
     /**
-     * Escucha la cola de usuarios definida en RabbitMQConfig.
-     * El mensaje llega en formato JSON, se convierte en PersonaRequest y se guarda.
+     * : Recibir PersonaRequest directamente, NO String
      */
     @RabbitListener(queues = RabbitMQConfig.USUARIO_QUEUE)
-    public void recibirPersona(String message) {
+    public void recibirPersona(PersonaRequest personaRequest) {
         try {
-            // 🟢 Convertir el mensaje JSON en un objeto PersonaRequest
-            PersonaRequest personaRequest = objectMapper.readValue(message, PersonaRequest.class);
+            System.out.println("✅ PERSONA RECIBIDA DIRECTAMENTE: " + personaRequest.email());
 
-            // 🟢 Guardar o actualizar la persona en la base de datos local
+            // Guardar la persona
             personaService.guardarPersona(personaRequest);
 
             System.out.println("✅ Persona procesada correctamente desde RabbitMQ: " + personaRequest.email());
         } catch (Exception e) {
-            System.err.println("❌ Error procesando mensaje de Persona: " + e.getMessage());
+            System.err.println("❌ Error procesando Persona: " + e.getMessage());
             e.printStackTrace();
         }
     }
