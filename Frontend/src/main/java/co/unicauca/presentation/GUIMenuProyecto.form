@@ -83,7 +83,7 @@
             <Component class="javax.swing.JLabel" name="lblLogo">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/LogoPeque&#xf1;o.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/LogoPeque&#xf1;o.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="jLabel2"/>
               </Properties>
@@ -105,7 +105,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/file-chart.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/file-chart.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Volver"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -182,7 +182,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/file-chart.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/file-chart.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Consultar Proyecto"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>

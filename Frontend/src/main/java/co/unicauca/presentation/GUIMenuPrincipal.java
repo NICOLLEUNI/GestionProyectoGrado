@@ -119,7 +119,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         btCoord.setBackground(new java.awt.Color(65, 55, 171));
         btCoord.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btCoord.setForeground(new java.awt.Color(255, 255, 255));
-        btCoord.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/account-multiple.png"))); // NOI18N
+        btCoord.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/account-multiple_1.png"))); // NOI18N
         btCoord.setText("COORDINADOR");
         btCoord.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
         btCoord.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -142,7 +142,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         btJefe.setBackground(new java.awt.Color(65, 55, 171));
         btJefe.setFont(new java.awt.Font("Roboto Medium", 0, 20)); // NOI18N
         btJefe.setForeground(new java.awt.Color(255, 255, 255));
-        btJefe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/account-multiple.png"))); // NOI18N
+        btJefe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/account-multiple_1.png"))); // NOI18N
         btJefe.setText("JEFE DE DEPARTAMENTO");
         btJefe.setAlignmentY(0.0F);
         btJefe.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));

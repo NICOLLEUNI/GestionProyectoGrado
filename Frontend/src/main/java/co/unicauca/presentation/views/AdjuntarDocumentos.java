@@ -112,7 +112,6 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
         btCarta = new javax.swing.JButton();
         txtRutaCarta = new javax.swing.JLabel();
         lblClendario = new javax.swing.JLabel();
-        dateChooser = new com.toedter.calendar.JDateChooser();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -164,10 +163,6 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
         lblClendario.setForeground(new java.awt.Color(0, 0, 0));
         lblClendario.setText("Fecha de publicacion");
 
-        dateChooser.setBackground(new java.awt.Color(153, 153, 153));
-        dateChooser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        dateChooser.setForeground(new java.awt.Color(204, 204, 204));
-
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Carta de aprobacion laboral");
@@ -195,36 +190,37 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
         ContenidoLayout.setHorizontalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(btnVolver)
-                .addGap(154, 154, 154)
-                .addComponent(jLabel2))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(btPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(txtRutaPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 532, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(220, 220, 220)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(btCarta, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(txtRutaCarta, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(432, 432, 432)
-                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(245, 245, 245)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblClendario)
-                    .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(btnVolver)
+                        .addGap(154, 154, 154)
+                        .addComponent(jLabel2))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(btPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(txtRutaPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 532, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(220, 220, 220)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(btCarta, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(txtRutaCarta, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(432, 432, 432)
+                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(245, 245, 245)
+                        .addComponent(lblClendario)))
+                .addContainerGap())
         );
         ContenidoLayout.setVerticalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,9 +245,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
                 .addComponent(txtRutaCarta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(lblClendario)
-                .addGap(6, 6, 6)
-                .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70)
+                .addGap(94, 94, 94)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(131, 131, 131))
         );
@@ -388,7 +382,6 @@ private void showJPanel(JPanel pl){
     private javax.swing.JButton btPDF;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnVolver;
-    private com.toedter.calendar.JDateChooser dateChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;

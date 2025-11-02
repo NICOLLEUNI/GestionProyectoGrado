@@ -278,7 +278,7 @@ ComBoxPrograma1.removeAllItems();
         BackGround.setPreferredSize(new java.awt.Dimension(910, 510));
         BackGround.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblLogoR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        lblLogoR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         lblLogoR.setText("jLabel1");
         BackGround.add(lblLogoR, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 163, 80));
 
@@ -518,7 +518,7 @@ ComBoxPrograma1.removeAllItems();
         BackGround.add(pnlBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, 640, 470));
 
         BgImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        BgImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/BackGroundSingIn.png"))); // NOI18N
+        BgImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/BackGroundSingIn.png"))); // NOI18N
         BackGround.add(BgImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 770, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
