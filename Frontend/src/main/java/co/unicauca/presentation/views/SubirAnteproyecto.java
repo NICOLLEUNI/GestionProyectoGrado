@@ -154,10 +154,13 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
 
         lblUObjGen.setForeground(new java.awt.Color(51, 51, 51));
         lblUObjGen.setText("Titulo");
+        lblUObjGen.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         Contenido.add(lblUObjGen, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 30, 310, 70));
 
         lblUObjEspec.setForeground(new java.awt.Color(51, 51, 51));
         lblUObjEspec.setText("Titulo");
+        lblUObjEspec.setToolTipText("");
+        lblUObjEspec.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         Contenido.add(lblUObjEspec, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 150, 300, 190));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
