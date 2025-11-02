@@ -25,7 +25,6 @@ public class GUIMenuCoord extends javax.swing.JFrame {
     public GUIMenuCoord(Persona logueado) {
         
      this.personaLogueado=logueado;
-     
      initComponents();
      initStyles();
      initContent();

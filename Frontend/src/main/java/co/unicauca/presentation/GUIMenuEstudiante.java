@@ -9,6 +9,7 @@ package co.unicauca.presentation;
 //Implementar la logica del panel para que muestre el formato A regiatrado 
 //con el correo del estudiante 
 
+
 import co.unicauca.workflow.access.Factory;
 import co.unicauca.workflow.access.FormatoARepository;
 import co.unicauca.workflow.access.IFormatoAVersionRepository;

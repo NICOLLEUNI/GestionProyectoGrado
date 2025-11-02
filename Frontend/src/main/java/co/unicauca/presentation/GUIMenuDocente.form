@@ -46,7 +46,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <Component id="Menu" min="-2" pref="267" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                   <Component id="Contenido" max="32767" attributes="0"/>
@@ -56,8 +56,8 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="Menu" pref="510" max="32767" attributes="0"/>
-              <Group type="102" attributes="0">
+              <Component id="Menu" alignment="0" pref="510" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Component id="Contenido" pref="490" max="32767" attributes="0"/>
                   <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
@@ -76,48 +76,6 @@
             </Property>
           </Properties>
 
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="Titulo" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace min="57" pref="57" max="-2" attributes="0"/>
-                              <Component id="Icon" min="-2" pref="158" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="btSubirFormatoA" min="-2" pref="270" max="-2" attributes="0"/>
-                          <Component id="btRespuestas" min="-2" pref="270" max="-2" attributes="0"/>
-                          <Component id="btRegresar" min="-2" pref="270" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="81" max="-2" attributes="0"/>
-                      <Component id="btnCloseSesion" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="22" pref="22" max="-2" attributes="0"/>
-                      <Component id="Icon" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="18" pref="18" max="-2" attributes="0"/>
-                      <Component id="Titulo" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="31" pref="31" max="-2" attributes="0"/>
-                      <Component id="btSubirFormatoA" min="-2" pref="64" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="btRespuestas" min="-2" pref="64" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                      <Component id="btRegresar" min="-2" pref="64" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="btnCloseSesion" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
             <Property name="useNullLayout" type="boolean" value="false"/>
           </Layout>
@@ -125,7 +83,7 @@
             <Component class="javax.swing.JLabel" name="Icon">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/LogoPeque&#xf1;o.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/LogoPeque&#xf1;o.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="jLabel2"/>
               </Properties>
@@ -189,7 +147,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/file-chart.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/file-chart.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Volver"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -207,8 +165,32 @@
                 <Property name="iconTextGap" type="int" value="7"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btRespuestasMouseClicked"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btRegresarMouseClicked"/>
               </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="0" y="380" width="270" height="64"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JButton" name="btnCloseSesion">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ab" green="37" red="41" type="rgb"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Cerrar Sesi&#xf3;n"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCloseSesionActionPerformed"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="78" y="469" width="-1" height="-1"/>
+                </Constraint>
+              </Constraints>
             </Component>
             <Component class="javax.swing.JButton" name="btSubirFormatoA">
               <Properties>
@@ -222,7 +204,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/file-chart.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/file-chart.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Subir FormatoA"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -260,7 +242,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/file-chart.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/file-chart.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Subir Anteproyecto"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -286,7 +268,6 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JButton" name="btnCloseSesion">
             <Component class="javax.swing.JButton" name="btRespuestas">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -299,7 +280,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/co/unicauca/workflow/presentation/images/file-chart.png"/>
+                  <Image iconType="3" name="/co/unicauca/presentation/images/file-chart.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Respuestas"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -317,7 +298,6 @@
                 <Property name="iconTextGap" type="int" value="7"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCloseSesionActionPerformed"/>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btRespuestasMouseClicked"/>
               </Events>
               <Constraints>

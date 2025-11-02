@@ -22,7 +22,7 @@ public class IdentityServiceApplication {
                 📚 Documentación API: http://localhost:8080/swagger-ui.html
                 🔐 Endpoints: /api/auth/register, /api/auth/login, /api/auth/profile
                 💾 Modelo: SINGLE_TABLE (Persona con múltiples roles)
-                🗄️  BD: PostgreSQL con Flyway migrations
+                🗄️  BD: h2
                 👥 Roles: ESTUDIANTE, DOCENTE, COORDINADOR, JEFE_DEPARTAMENTO
                 """);
     }
