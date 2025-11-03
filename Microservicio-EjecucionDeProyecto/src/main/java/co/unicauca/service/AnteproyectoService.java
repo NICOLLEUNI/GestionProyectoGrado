@@ -95,7 +95,7 @@ public class AnteproyectoService {
         // ✅ Crear nueva entidad SIN asignar ID manualmente
         Anteproyecto nuevoAnteproyecto = new Anteproyecto();
         nuevoAnteproyecto.setTitulo(request.titulo());
-        nuevoAnteproyecto.setFechaCreacion(request.fecha());
+        nuevoAnteproyecto.setFecha(request.fecha());
         nuevoAnteproyecto.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
         nuevoAnteproyecto.setObservaciones(request.observaciones());
         nuevoAnteproyecto.setProyectoGrado(proyecto);
@@ -132,7 +132,7 @@ public class AnteproyectoService {
 
         // ✏️ ACTUALIZAR CAMPOS
         anteproyectoExistente.setTitulo(request.titulo());
-        anteproyectoExistente.setFechaCreacion(request.fecha());
+        anteproyectoExistente.setFecha(request.fecha());
         anteproyectoExistente.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
         anteproyectoExistente.setObservaciones(request.observaciones());
         anteproyectoExistente.setProyectoGrado(proyecto);
@@ -199,7 +199,7 @@ public class AnteproyectoService {
                 anteproyecto.getEstado().name(), estadoAnterior);
 
         anteproyecto.setTitulo(request.titulo());
-        anteproyecto.setFechaCreacion(request.fecha());
+        anteproyecto.setFecha(request.fecha());
         anteproyecto.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
         anteproyecto.setObservaciones(request.observaciones());
         anteproyecto.setProyectoGrado(proyecto);
@@ -289,7 +289,7 @@ public class AnteproyectoService {
         System.out.println("   - ID: " + anteproyecto.getId());
         System.out.println("   - Título: " + anteproyecto.getTitulo());
         System.out.println("   - Estado: " + anteproyecto.getEstado());
-        System.out.println("   - Fecha: " + anteproyecto.getFechaCreacion());
+        System.out.println("   - Fecha: " + anteproyecto.getFecha());
         System.out.println("   - Observaciones: " + anteproyecto.getObservaciones());
 
         System.out.println("📋 PROYECTO:");
@@ -466,7 +466,7 @@ public class AnteproyectoService {
     private Anteproyecto convertirRequestAEntity(AnteproyectoRequest request, ProyectoGrado proyecto) {
         Anteproyecto entity = new Anteproyecto();
         entity.setTitulo(request.titulo());
-        entity.setFechaCreacion(request.fecha());
+        entity.setFecha(request.fecha());
         entity.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
         entity.setObservaciones(request.observaciones());
         entity.setProyectoGrado(proyecto);
@@ -500,7 +500,7 @@ public class AnteproyectoService {
         Map<String, Object> snapshot = new HashMap<>();
         snapshot.put("id", anteproyecto.getId());
         snapshot.put("titulo", anteproyecto.getTitulo());
-        snapshot.put("fecha", anteproyecto.getFechaCreacion());
+        snapshot.put("fecha", anteproyecto.getFecha());
         snapshot.put("estado", anteproyecto.getEstado().name());
         snapshot.put("observaciones", anteproyecto.getObservaciones());
         snapshot.put("idProyectoGrado", anteproyecto.getProyectoGrado() != null ? anteproyecto.getProyectoGrado().getId() : null);
@@ -528,7 +528,7 @@ public class AnteproyectoService {
         return new AnteproyectoResponse(
                 anteproyecto.getId(),
                 anteproyecto.getTitulo(),
-                anteproyecto.getFechaCreacion(),
+                anteproyecto.getFecha(),
                 anteproyecto.getEstado().name(),
                 anteproyecto.getObservaciones(),
                 anteproyecto.getProyectoGrado() != null ? anteproyecto.getProyectoGrado().getId() : null

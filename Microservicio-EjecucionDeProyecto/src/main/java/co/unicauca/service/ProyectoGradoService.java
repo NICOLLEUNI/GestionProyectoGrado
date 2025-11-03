@@ -74,7 +74,7 @@ public class ProyectoGradoService {
         // ✅ Crear nueva entidad SIN asignar ID manualmente
         ProyectoGrado nuevoProyecto = new ProyectoGrado();
         nuevoProyecto.setNombre(request.nombre());
-        nuevoProyecto.setFechaCreacion(request.fecha().atStartOfDay());
+        nuevoProyecto.setFecha(request.fecha().atStartOfDay());
         nuevoProyecto.setEstudiantesEmail(request.estudiantesEmail());
         nuevoProyecto.setEstado("ENTREGADO");
         nuevoProyecto.setIdFormatoA(request.IdFormatoA());
@@ -254,7 +254,7 @@ public class ProyectoGradoService {
     private ProyectoGrado convertirRequestAEntity(ProyectoGradoRequest request) {
         ProyectoGrado entity = new ProyectoGrado();
         entity.setNombre(request.nombre());
-        entity.setFechaCreacion(request.fecha().atStartOfDay());
+        entity.setFecha(request.fecha().atStartOfDay());
         entity.setEstudiantesEmail(request.estudiantesEmail());
         entity.setEstado("ENTREGADO");
         entity.setIdFormatoA(request.IdFormatoA());
@@ -288,7 +288,7 @@ public class ProyectoGradoService {
         Map<String, Object> snapshot = new HashMap<>();
         snapshot.put("id", proyecto.getId());
         snapshot.put("nombre", proyecto.getNombre());
-        snapshot.put("fecha", proyecto.getFechaCreacion().toLocalDate());
+        snapshot.put("fecha", proyecto.getFecha().toLocalDate());
         snapshot.put("estudiantesEmail", proyecto.getEstudiantesEmail());
         snapshot.put("IdFormatoA", proyecto.getIdFormatoA());
         snapshot.put("estado", proyecto.getEstado());
@@ -302,7 +302,7 @@ public class ProyectoGradoService {
         return new ProyectoGradoResponse(
                 proyecto.getId(),
                 proyecto.getNombre(),
-                proyecto.getFechaCreacion().toLocalDate(),
+                proyecto.getFecha().toLocalDate(),
                 proyecto.getEstudiantesEmail(),
                 proyecto.getIdFormatoA()
         );
