@@ -27,7 +27,7 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
 
     private List<FormatoAVersion> versionesFormatoA;
 
-    // ✅ Constructor que recibe List<FormatoAVersion>
+    //  Constructor que recibe List<FormatoAVersion>
     public ListaFormatosAestudiantes(List<FormatoAVersion> versionesFormatoA) {
         initComponents();
         this.versionesFormatoA = versionesFormatoA;
@@ -36,7 +36,7 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
     }
 
     private void cargarDatos() {
-        // ✅ AGREGAR LOGS PARA DEBUG
+        //  AGREGAR LOGS PARA DEBUG
         System.out.println("🔍 [ListaFormatosAestudiantes] Cargando " +
                 (versionesFormatoA != null ? versionesFormatoA.size() : 0) + " versiones");
 
