@@ -17,7 +17,6 @@ import java.util.List;
 @Table(name = "proyecto_grado")
 public class ProyectoGrado {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // ✅ QUITAR unique = true para eliminar la constraint única
@@ -25,7 +24,7 @@ public class ProyectoGrado {
     private String nombre;
 
     @Column(nullable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDateTime fecha;
 
     @ElementCollection
     @CollectionTable(name = "proyecto_estudiantes", joinColumns = @JoinColumn(name = "proyecto_id"))
@@ -62,3 +61,4 @@ public class ProyectoGrado {
         this.idFormatoA = idFormatoA;
     }
 }
+

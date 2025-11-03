@@ -2,6 +2,7 @@ package co.unicauca.service;
 
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.utils.GsonFactory;
 import co.unicauca.utils.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,7 +18,7 @@ import java.util.List;
 public class SubmissionService {
 
     private final String BASE_URL = "http://localhost:8081/api"; // Microservicio Submission
-    private final Gson gson = new Gson();
+    private final Gson gson = GsonFactory.create();
 
     // =====================================================
     // 🔹 MÉTODOS PARA FORMATO A
@@ -31,44 +32,86 @@ public class SubmissionService {
             String url = BASE_URL + "/formatoA";
             String jsonResponse = HttpUtil.get(url);
 
-            Type listType = new TypeToken<List<FormatoA>>() {}.getType();
-            return gson.fromJson(jsonResponse, listType);
+            if (jsonResponse.trim().startsWith("[")) {
+                Type listType = new TypeToken<List<FormatoA>>() {}.getType();
+                return gson.fromJson(jsonResponse, listType);
+            } else {
+                FormatoA formato = gson.fromJson(jsonResponse, FormatoA.class);
+                return List.of(formato);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            return List.of(); // mejor devolver lista vacía
+            return List.of();
         }
     }
+
 
     /**
      * Lista los FormatoA de un docente según su email.
      */
     public List<FormatoA> getFormatosPorDocente(String email) {
         try {
-            String url = BASE_URL + "/docente/" + email;
-            String jsonResponse = HttpUtil.get(url); // Aquí se hace GET al endpoint
+            String url = BASE_URL + "/formatoA/docente/" + email;
+            String jsonResponse = HttpUtil.get(url);
+
+            System.out.println("📦 JSON recibido: " + jsonResponse); // DEBUG
+
             Type listType = new TypeToken<List<FormatoA>>() {}.getType();
             return gson.fromJson(jsonResponse, listType);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<>(); // Retornamos lista vacía en caso de error
+            System.err.println("❌ Error en getFormatosPorDocente: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
     /**
      * Crea un nuevo FormatoA en el microservicio submission.
      */
+    /**
+     * Crea un nuevo FormatoA en el microservicio submission con logs de depuración
+     */
     public FormatoA createFormatoA(FormatoA formato) {
         try {
             String url = BASE_URL + "/formatoA";
             String jsonRequest = gson.toJson(formato);
 
+            System.out.println("📤 Enviando FormatoA al backend: " + jsonRequest);
+
+            // Llamada al endpoint
             String jsonResponse = HttpUtil.post(url, jsonRequest);
-            return gson.fromJson(jsonResponse, FormatoA.class);
+
+            // Mostramos exactamente lo que llega
+            System.out.println("📦 Respuesta cruda del backend: " + jsonResponse);
+
+            // Intentamos deserializar
+            FormatoA formatoCreado = gson.fromJson(jsonResponse, FormatoA.class);
+
+            // Mostramos el objeto deserializado
+            if (formatoCreado != null) {
+                System.out.println("🟢 FormatoA deserializado: ID=" + formatoCreado.getId() +
+                        ", Titulo=" + formatoCreado.getTitle() +
+                        ", Modalidad=" + formatoCreado.getMode());
+            } else {
+                System.err.println("⚠️ La deserialización falló: formatoCreado es null");
+            }
+
+            // Validación de ID
+            if (formatoCreado == null || formatoCreado.getId() == null) {
+                System.err.println("❌ Error: El ID de FormatoA es nulo. Revisar respuesta del backend.");
+            }
+
+            return formatoCreado;
+
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("❌ Excepción al crear FormatoA: " + e.getMessage());
             return null;
         }
     }
+
 
     /**
      * Busca un FormatoA por su ID.

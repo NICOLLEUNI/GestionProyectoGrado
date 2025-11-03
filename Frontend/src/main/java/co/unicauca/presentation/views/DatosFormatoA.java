@@ -57,7 +57,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
     private void cargarDocentesEnCombos() {
         try {
             List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
-            
+
             boxDirector.removeAllItems();
             boxCodirector.removeAllItems();
 
@@ -67,28 +67,83 @@ public class DatosFormatoA extends javax.swing.JPanel {
                     boxCodirector.addItem(d);
                 }
             }
-            
+
             boxDirector.setSelectedIndex(-1);
             boxCodirector.setSelectedIndex(-1);
+
+            // 🔹 Agregamos listeners dinámicos
+            boxDirector.addActionListener(e -> actualizarCodirectoresDisponibles());
+            boxCodirector.addActionListener(e -> actualizarDirectoresDisponibles());
 
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al cargar docentes desde el microservicio.");
         }
     }
-    
+
+    private void actualizarCodirectoresDisponibles() {
+        Persona directorSeleccionado = (Persona) boxDirector.getSelectedItem();
+
+        // Guardar selección actual del codirector para no perderla
+        Persona codirectorActual = (Persona) boxCodirector.getSelectedItem();
+
+        List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
+
+        boxCodirector.removeAllItems();
+        for (Persona d : docentes) {
+            // 🔹 No mostrar el director en el combo de codirector
+            if (directorSeleccionado == null || !d.getEmail().equals(directorSeleccionado.getEmail())) {
+                boxCodirector.addItem(d);
+            }
+        }
+
+        // Restaurar selección si sigue disponible
+        if (codirectorActual != null) {
+            for (int i = 0; i < boxCodirector.getItemCount(); i++) {
+                if (boxCodirector.getItemAt(i).getEmail().equals(codirectorActual.getEmail())) {
+                    boxCodirector.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void actualizarDirectoresDisponibles() {
+        Persona codirectorSeleccionado = (Persona) boxCodirector.getSelectedItem();
+        Persona directorActual = (Persona) boxDirector.getSelectedItem();
+
+        List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
+
+        boxDirector.removeAllItems();
+        for (Persona d : docentes) {
+            // 🔹 No mostrar el codirector en el combo de director
+            if (codirectorSeleccionado == null || !d.getEmail().equals(codirectorSeleccionado.getEmail())) {
+                boxDirector.addItem(d);
+            }
+        }
+
+        // Restaurar selección si sigue disponible
+        if (directorActual != null) {
+            for (int i = 0; i < boxDirector.getItemCount(); i++) {
+                if (boxDirector.getItemAt(i).getEmail().equals(directorActual.getEmail())) {
+                    boxDirector.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+
+
+
     /**
      * Carga los estudiantes que no tienen FormatoA asociado.
      */
     private void cargarEstudiantesEnCombos() {
         try {
-            // 1️⃣ Obtener todos los estudiantes
             List<Persona> estudiantes = submissionService.listPersonasByRol("ESTUDIANTE");
-
-            // 2️⃣ Obtener todos los formatos existentes
             List<FormatoA> formatos = submissionService.listFormatoA();
 
-            // 3️⃣ Reunir los correos de estudiantes que ya tienen formato
             List<String> ocupadosEmails = new ArrayList<>();
             for (FormatoA f : formatos) {
                 if (f.getEstudianteEmails() != null) {
@@ -96,7 +151,6 @@ public class DatosFormatoA extends javax.swing.JPanel {
                 }
             }
 
-            // 4️⃣ Filtrar estudiantes libres
             List<Persona> libres = new ArrayList<>();
             for (Persona e : estudiantes) {
                 boolean ocupado = ocupadosEmails.contains(e.getEmail());
@@ -105,7 +159,6 @@ public class DatosFormatoA extends javax.swing.JPanel {
                 }
             }
 
-            // 5️⃣ Poblar los combos
             boxEstudiante1.removeAllItems();
             boxEstudiante2.removeAllItems();
 
@@ -118,13 +171,59 @@ public class DatosFormatoA extends javax.swing.JPanel {
             boxEstudiante2.setSelectedIndex(-1);
             boxEstudiante2.setEnabled(false);
 
+            // 🔹 Escuchador para evitar seleccionar el mismo estudiante dos veces
+            boxEstudiante1.addActionListener(e -> actualizarEstudiante2Disponibles());
+
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al cargar estudiantes desde el microservicio.");
-
         }
     }
-    
+
+    private void actualizarEstudiante2Disponibles() {
+        Persona estudiante1 = (Persona) boxEstudiante1.getSelectedItem();
+
+        // Guardar la selección actual del estudiante 2
+        Persona est2Actual = (Persona) boxEstudiante2.getSelectedItem();
+
+        List<Persona> estudiantes = submissionService.listPersonasByRol("ESTUDIANTE");
+        List<FormatoA> formatos = submissionService.listFormatoA();
+
+        List<String> ocupadosEmails = new ArrayList<>();
+        for (FormatoA f : formatos) {
+            if (f.getEstudianteEmails() != null) {
+                ocupadosEmails.addAll(f.getEstudianteEmails());
+            }
+        }
+
+        // Filtrar los libres (igual que antes)
+        List<Persona> libres = new ArrayList<>();
+        for (Persona e : estudiantes) {
+            boolean ocupado = ocupadosEmails.contains(e.getEmail());
+            if (!ocupado && (estudiante1 == null || !e.getEmail().equals(estudiante1.getEmail()))) {
+                libres.add(e);
+            }
+        }
+
+        // Repoblar el combo de estudiante 2
+        boxEstudiante2.removeAllItems();
+        for (Persona e : libres) {
+            boxEstudiante2.addItem(e);
+        }
+
+        // Restaurar si sigue siendo válido
+        if (est2Actual != null) {
+            for (int i = 0; i < boxEstudiante2.getItemCount(); i++) {
+                if (boxEstudiante2.getItemAt(i).getEmail().equals(est2Actual.getEmail())) {
+                    boxEstudiante2.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+
+
     /**
      * Activa/desactiva el segundo estudiante según la modalidad
      */
@@ -397,7 +496,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
             formato.setArchivoPDF("pendiente.pdf");
             formato.setCartaLaboral("pendiente.pdf");
 
-            // Director y codirector (guardar su email)
+            // Director y codirector
             Persona director = (Persona) boxDirector.getSelectedItem();
             Persona codirector = (Persona) boxCodirector.getSelectedItem();
 
@@ -406,7 +505,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
             if (codirector != null)
                 formato.setProjectCoManagerEmail(codirector.getEmail());
 
-            // Estudiantes: se guardan los correos, no los objetos Persona
+            // Estudiantes
             List<String> estudiantes = new ArrayList<>();
             if (boxEstudiante1.getSelectedItem() != null)
                 estudiantes.add(((Persona) boxEstudiante1.getSelectedItem()).getEmail());
@@ -414,11 +513,16 @@ public class DatosFormatoA extends javax.swing.JPanel {
                 estudiantes.add(((Persona) boxEstudiante2.getSelectedItem()).getEmail());
             formato.setEstudianteEmails(estudiantes);
 
+            // 🔹 Solo enviar carta laboral si es PRACTICA_PROFESIONAL
+            if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
+                formato.setCartaLaboral(null);
+            }
 
-            
+
+
+
 
             if (formato != null) {
-                JOptionPane.showMessageDialog(this, "FormatoA registrado correctamente.");
                 AdjuntarDocumentos panelDocs = new AdjuntarDocumentos(formato, persona);
                 showJPanel(panelDocs);
             } else {

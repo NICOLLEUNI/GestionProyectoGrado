@@ -27,7 +27,7 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
 
     private List<FormatoAVersion> versionesFormatoA;
 
-    // ✅ Constructor que recibe List<FormatoAVersion>
+    //  Constructor que recibe List<FormatoAVersion>
     public ListaFormatosAestudiantes(List<FormatoAVersion> versionesFormatoA) {
         initComponents();
         this.versionesFormatoA = versionesFormatoA;
@@ -36,6 +36,24 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
     }
 
     private void cargarDatos() {
+        //  AGREGAR LOGS PARA DEBUG
+        System.out.println("🔍 [ListaFormatosAestudiantes] Cargando " +
+                (versionesFormatoA != null ? versionesFormatoA.size() : 0) + " versiones");
+
+        if (versionesFormatoA != null) {
+            for (int i = 0; i < versionesFormatoA.size(); i++) {
+                FormatoAVersion version = versionesFormatoA.get(i);
+                System.out.println("📋 Versión " + i + ":");
+                System.out.println("   - ID: " + version.getId());
+                System.out.println("   - Número Versión: " + version.getNumeroVersion());
+                System.out.println("   - Título: " + version.getTitle());
+                System.out.println("   - Modalidad: " + (version.getMode() != null ? version.getMode().name() : "null"));
+                System.out.println("   - Estado: " + (version.getState() != null ? version.getState().name() : "null"));
+                System.out.println("   - Counter: " + version.getCounter());
+                System.out.println("   - Observaciones: " + version.getObservations());
+            }
+        }
+
         // ✅ Columnas de la tabla
         String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Versión"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
@@ -50,8 +68,10 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
             for (FormatoAVersion version : versionesFormatoA) {
                 EnumEstado estado = version.getState() != null ? version.getState() : EnumEstado.ENTREGADO;
                 String observaciones = version.getObservations() != null ? version.getObservations() : "";
+
+                // ✅ CORREGIDO: Usar Integer en lugar de int para permitir null
                 int numeroVersion = version.getNumeroVersion();
-                String titulo = version.getTitle() != null ? version.getTitle() : "";
+                String titulo = version.getTitle() != null ? version.getTitle() : "N/A";
                 String modalidad = version.getMode() != null ? version.getMode().name() : "N/A";
 
                 Object[] fila = {
@@ -59,13 +79,15 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
                         modalidad,
                         estado.name(),
                         observaciones,
-                        numeroVersion
+                        numeroVersion  // ✅ Ahora es Integer, no int
                 };
                 modelo.addRow(fila);
             }
         }
 
         jTable1.setModel(modelo);
+        System.out.println("✅ Tabla cargada con " + modelo.getRowCount() + " filas");
+
     }
 
     

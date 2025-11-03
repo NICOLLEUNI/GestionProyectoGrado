@@ -54,4 +54,11 @@ public class Persona {
             return false;
         }
     }
+
+    //Para mostrar en el front los correos y no la entidad completa
+    @Override
+    public String toString() {
+        return this.email; // o cualquier atributo que quieras mostrar en el combo
+    }
+
 }

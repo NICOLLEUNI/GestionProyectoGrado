@@ -58,6 +58,8 @@ public class FormatoAController {
     @PostMapping
     public ResponseEntity<FormatoA> subirFormatoA(@Valid @RequestBody FormatoA formatoA) {
         FormatoA formatoCreado = formatoAService.subirFormatoA(formatoA);
+
+        System.out.println("🟢 FormatoA devuelto al frontend: " + formatoCreado);
         return ResponseEntity.status(HttpStatus.CREATED).body(formatoCreado);
     }
 
@@ -120,11 +122,12 @@ public class FormatoAController {
      * Endpoint para listar todos los Formatos A asociados a un docente
      * (como director o codirector)
      */
+    /*
     @GetMapping("/docente/{emailDocente}")
     public ResponseEntity<List<FormatoA>> listarFormatosPorDocente(
             @PathVariable String emailDocente) {
 
         List<FormatoA> formatos = formatoAService.listarFormatosAPorDocente(emailDocente);
         return ResponseEntity.ok(formatos);
-    }
+    }*/
 }
