@@ -155,9 +155,6 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
         Menu.setLayout(MenuLayout);
         MenuLayout.setHorizontalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
@@ -168,13 +165,16 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(80, 80, 80)
                 .addComponent(JButtonCloseSesion))
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(47, 47, 47)
+                .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         MenuLayout.setVerticalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
+                .addGap(20, 20, 20)
                 .addComponent(lblLogo)
-                .addGap(32, 32, 32)
+                .addGap(18, 18, 18)
                 .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(56, 56, 56)
                 .addComponent(btProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)

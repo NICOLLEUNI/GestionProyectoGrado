@@ -96,8 +96,10 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setOpaque(false);
         Menu.setPreferredSize(new java.awt.Dimension(270, 510));
+        Menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        Icono.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        Icono.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
+        Menu.add(Icono, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 190, 80));
 
         btEst.setBackground(new java.awt.Color(65, 55, 171));
         btEst.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -113,6 +115,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 btEstMouseClicked(evt);
             }
         });
+        Menu.add(btEst, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 270, 64));
 
         btCoord.setBackground(new java.awt.Color(65, 55, 171));
         btCoord.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -127,6 +130,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 btCoordMouseClicked(evt);
             }
         });
+        Menu.add(btCoord, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 270, 64));
 
         jButtonCloseSesion.setBackground(new java.awt.Color(65, 55, 171));
         jButtonCloseSesion.setForeground(new java.awt.Color(255, 255, 255));
@@ -136,6 +140,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 jButtonCloseSesionActionPerformed(evt);
             }
         });
+        Menu.add(jButtonCloseSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 450, -1, -1));
 
         btJefe.setBackground(new java.awt.Color(65, 55, 171));
         btJefe.setFont(new java.awt.Font("Roboto Medium", 0, 20)); // NOI18N
@@ -153,6 +158,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 btJefeMouseClicked(evt);
             }
         });
+        Menu.add(btJefe, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 340, 270, 64));
 
         btDoc.setBackground(new java.awt.Color(65, 55, 171));
         btDoc.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -170,38 +176,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
                 btDocMouseClicked(evt);
             }
         });
-
-        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
-        Menu.setLayout(MenuLayout);
-        MenuLayout.setHorizontalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(38, 38, 38)
-                .addComponent(Icono))
-            .addComponent(btDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(btEst, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(btCoord, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(btJefe, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(64, 64, 64)
-                .addComponent(jButtonCloseSesion))
-        );
-        MenuLayout.setVerticalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(Icono)
-                .addGap(70, 70, 70)
-                .addComponent(btDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(btEst, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(btCoord, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(btJefe, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(jButtonCloseSesion))
-        );
+        Menu.add(btDoc, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 156, 270, 64));
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
 
