@@ -66,64 +66,88 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setForeground(new java.awt.Color(255, 255, 255));
+        Contenido.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitulo.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(0, 0, 0));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblTitulo.setText("Titulo");
+        Contenido.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 26, 61, -1));
 
         lblUTitulo.setForeground(new java.awt.Color(51, 51, 51));
         lblUTitulo.setText("Titulo");
+        Contenido.add(lblUTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 23, 233, -1));
+        Contenido.add(jSeparator9, new org.netbeans.lib.awtextra.AbsoluteConstraints(126, 43, 230, -1));
 
         lblEstudiante.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEstudiante.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblEstudiante.setText("Estudiante");
+        Contenido.add(lblEstudiante, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 52, 92, -1));
 
         lblUEstudiante.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante.setText("Estudiante");
+        Contenido.add(lblUEstudiante, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 52, 233, -1));
+        Contenido.add(jSeparator10, new org.netbeans.lib.awtextra.AbsoluteConstraints(126, 72, 230, -1));
 
         lblEstudiante2.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEstudiante2.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblEstudiante2.setText("Estudiante");
+        Contenido.add(lblEstudiante2, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 87, 92, -1));
 
         lblUEstudiante2.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante2.setText("Estudiante");
+        Contenido.add(lblUEstudiante2, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 87, 233, -1));
+        Contenido.add(jSeparator13, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 107, 230, -1));
 
         lblDirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblDirector.setForeground(new java.awt.Color(0, 0, 0));
         lblDirector.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblDirector.setText("Dir.Proyecto");
+        Contenido.add(lblDirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 117, -1, -1));
 
         lblUDirector.setForeground(new java.awt.Color(51, 51, 51));
         lblUDirector.setText("Director");
+        Contenido.add(lblUDirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 117, 233, -1));
+        Contenido.add(jSeparator11, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 137, 230, -1));
 
         lblModalidad.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblModalidad.setForeground(new java.awt.Color(0, 0, 0));
         lblModalidad.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lblModalidad.setText("Modalidad");
+        Contenido.add(lblModalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 146, -1, -1));
 
         lblUModalidad.setForeground(new java.awt.Color(51, 51, 51));
         lblUModalidad.setText("Modalidad");
+        Contenido.add(lblUModalidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 146, 233, -1));
+        Contenido.add(jSeparator12, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 166, 230, -1));
 
         Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
+        Contenido.add(Icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 194, 80));
 
         lblEvaluador1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEvaluador1.setForeground(new java.awt.Color(0, 0, 0));
         lblEvaluador1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEvaluador1.setText("Primer Evaluador");
+        Contenido.add(lblEvaluador1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, -1, 16));
+
+        Contenido.add(boxEvaluador1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 310, 192, -1));
 
         lblCodirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblCodirector.setForeground(new java.awt.Color(0, 0, 0));
         lblCodirector.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCodirector.setText("Segundo Evaluador");
+        Contenido.add(lblCodirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, -1, -1));
+
+        Contenido.add(boxEvaluador2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 380, 192, -1));
 
         jLabel1.setFont(new java.awt.Font("Roboto Medium", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("EVALUADORES");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        Contenido.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 250, 194, 20));
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -143,127 +167,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
         );
 
-        javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
-        Contenido.setLayout(ContenidoLayout);
-        ContenidoLayout.setHorizontalGroup(
-            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38)
-                        .addComponent(lblUTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(126, 126, 126)
-                        .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(lblEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)
-                        .addComponent(lblUEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(126, 126, 126)
-                        .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(lblEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(8, 8, 8)
-                        .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(125, 125, 125)
-                        .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(lblDirector)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(125, 125, 125)
-                        .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(lblModalidad)
-                        .addGap(29, 29, 29)
-                        .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(125, 125, 125)
-                        .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addComponent(lblEvaluador1)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblCodirector))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17))))
-        );
-        ContenidoLayout.setVerticalGroup(
-            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(lblTitulo))
-                    .addComponent(lblUTitulo))
-                .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEstudiante)
-                    .addComponent(lblUEstudiante))
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEstudiante2)
-                    .addComponent(lblUEstudiante2))
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(7, 7, 7)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblDirector)
-                    .addComponent(lblUDirector))
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblModalidad)
-                    .addComponent(lblUModalidad))
-                .addGap(3, 3, 3)
-                .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addComponent(lblEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblCodirector)
-                        .addGap(13, 13, 13)
-                        .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(13, 13, 13))
-        );
+        Contenido.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 193, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -273,7 +177,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
     public void setAnteproyecto(Anteproyecto anteproyecto) {
@@ -312,9 +216,25 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             if (formatoRelacionado != null) {
                 // Llenar combo boxes con docentes disponibles
                 cargarEvaluadoresDisponibles(formatoRelacionado.getId());
+
+                // ✅ Mostrar modalidad del FormatoA
+                if (formatoRelacionado.getMode() != null) {
+                    lblUModalidad.setText(formatoRelacionado.getMode());
+                } else {
+                    lblUModalidad.setText("Sin modalidad");
+                }
+
+// ✅ Mostrar PDF del FormatoA
+                if (formatoRelacionado.getArchivoPDF() != null && !formatoRelacionado.getArchivoPDF().isEmpty()) {
+                    lblPDF.setText(formatoRelacionado.getArchivoPDF());
+                } else {
+                    lblPDF.setText("Sin archivo");
+                }
             }
             // 👩‍🎓 Estudiantes del formato relacionado
             List<Persona> estudiantes = formatoRelacionado.getEstudiantes();
+
+
 
             if (estudiantes != null && !estudiantes.isEmpty()) {
                 Persona est1 = estudiantes.get(0);
@@ -339,34 +259,28 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             lblUEstudiante2.setText("Sin segundo estudiante");
         }
 
-        // 📄 Documento asociado
-        String rutaArchivo = anteproyecto.getArchivoPDF();
-        if (rutaArchivo != null && !rutaArchivo.trim().isEmpty()) {
-            if (!rutaArchivo.toLowerCase().endsWith(".pdf")) {
-                rutaArchivo += ".pdf";
-            }
-            lblPDF.setText(rutaArchivo);
-        } else {
-            lblPDF.setText("Sin archivo");
-        }
     }
     private void cargarEvaluadoresDisponibles(Long idFormatoA) {
         if (idFormatoA == null) return;
 
-        // 1️⃣ Obtener la lista de docentes disponibles para evaluar desde el microservicio
+        // Obtener docentes
         List<Persona> docentesDisponibles = evaluacionService.listarDocentesDisponibles(idFormatoA);
 
-        // 2️⃣ Limpiar los combo boxes antes de llenarlos
+        // Limpiar comboboxes
         boxEvaluador1.removeAllItems();
         boxEvaluador2.removeAllItems();
 
-        // 3️⃣ Agregar cada docente al combo box usando su correo como identificador
+        // Llenar comboboxes
         if (docentesDisponibles != null && !docentesDisponibles.isEmpty()) {
             for (Persona docente : docentesDisponibles) {
                 boxEvaluador1.addItem(docente.getEmail());
                 boxEvaluador2.addItem(docente.getEmail());
             }
         }
+
+        // ✅ Dejar ambos combos SIN selección por defecto
+        boxEvaluador1.setSelectedIndex(-1);
+        boxEvaluador2.setSelectedIndex(-1);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

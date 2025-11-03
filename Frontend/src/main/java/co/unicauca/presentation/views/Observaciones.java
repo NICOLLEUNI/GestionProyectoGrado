@@ -61,25 +61,28 @@ public class Observaciones extends javax.swing.JPanel {
         lblPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lblPDF.setToolTipText("Abrir PDF");
     }
-   
-   private void abrirPDF() {
-    try {
-        String ruta = lblPDF.getText();  
-        File file = new File(ruta);
 
-        if (file.exists()) {
-            if (Desktop.isDesktopSupported()) {
-                Desktop.getDesktop().open(file);  // abre con el programa por defecto
+    private void abrirPDF() {
+        try {
+            // Obtiene la ruta del proyecto dinámicamente
+            String rutaBase = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "formatoA" + File.separator;
+            String nombreArchivo = lblPDF.getText();
+
+            File file = new File(rutaBase + nombreArchivo);
+
+            if (file.exists()) {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                } else {
+                    JOptionPane.showMessageDialog(this, "La función Desktop no está soportada en este sistema.");
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "La función Desktop no está soportada en este sistema.");
+                JOptionPane.showMessageDialog(this, "El archivo no existe: " + file.getAbsolutePath());
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "El archivo no existe: " + ruta);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + e.getMessage());
         }
-    } catch (IOException e) {
-        JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + e.getMessage());
     }
-}
     public void setFormatoA(DtoFormatoA formato) {
         if (formato == null) return;
         this.formatoActual = formato;
