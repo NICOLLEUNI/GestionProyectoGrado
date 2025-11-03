@@ -366,8 +366,8 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
     }//GEN-LAST:event_lblRegistrarseMouseExited
 
     private void lblRegistrarseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRegistrarseMouseClicked
-        //GUISingIn ventanaSingIn = new GUISingIn(); // crear la nueva ventana
-        //ventanaSingIn.setVisible(true);            // mostrarla
+        GUISingIn ventanaSingIn = new GUISingIn(); // crear la nueva ventana
+        ventanaSingIn.setVisible(true);            // mostrarla
         this.dispose();       
     }//GEN-LAST:event_lblRegistrarseMouseClicked
 
