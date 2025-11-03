@@ -13,5 +13,4 @@ public enum EnumRol {
     DOCENTE,
     COORDINADOR,
     JEFE_DEPARTAMENTO
-
 }

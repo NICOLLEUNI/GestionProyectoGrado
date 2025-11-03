@@ -4,25 +4,25 @@
  */
 package co.unicauca.presentation.views;
 
-
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.entity.EnumModalidad;
+import co.unicauca.service.SubmissionService;
+
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.time.ZoneId;
-import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 /**
@@ -30,11 +30,14 @@ import javax.swing.UIManager;
  * @author Usuario
  */
 public class AdjuntarDocumentos extends javax.swing.JPanel {
-    
+
+    private final SubmissionService submissionService = new SubmissionService();
 
     private Persona persona;
-    
     private FormatoA formatoA;
+
+    private File archivoPDFSeleccionado;
+    private File archivoCartaSeleccionada;
     /**
      * Creates new form AdjuntarDocumentos
      */
@@ -45,11 +48,13 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
 
         initStyles();
 
-        dateChooser.setMinSelectableDate(java.sql.Date.valueOf(LocalDate.now()));
-       
-        
+        LocalDate hoy = LocalDate.now();
+        Date fechaHoy = Date.from(hoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        dateChooser.setMinSelectableDate(fechaHoy); // ✅ funciona
+
+
         // Habilitar carta laboral solo si es práctica laboral
-        if (formatoA.getMode() != enumModalidad.PRACTICA_PROFESIONAL) {
+        if (formatoA.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
             btCarta.setEnabled(false);
         }
         
@@ -111,6 +116,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         btnVolver = new javax.swing.JButton();
+        dateChooser = new com.toedter.calendar.JDateChooser();
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(646, 530));
@@ -155,17 +161,14 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
 
         lblClendario.setBackground(new java.awt.Color(0, 0, 0));
         lblClendario.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblClendario.setForeground(new java.awt.Color(0, 0, 0));
         lblClendario.setText("Fecha de publicacion");
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Carta de aprobacion laboral");
         jLabel1.setMaximumSize(new java.awt.Dimension(112, 19));
         jLabel1.setMinimumSize(new java.awt.Dimension(112, 19));
 
         jLabel2.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("PDF - Formato A");
 
         btnVolver.setBackground(new java.awt.Color(51, 51, 255));
@@ -179,6 +182,10 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
                 btnVolverMouseClicked(evt);
             }
         });
+
+        dateChooser.setBackground(new java.awt.Color(153, 153, 153));
+        dateChooser.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        dateChooser.setForeground(new java.awt.Color(204, 204, 204));
 
         javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
         Contenido.setLayout(ContenidoLayout);
@@ -213,8 +220,10 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
                         .addGap(432, 432, 432)
                         .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addGap(245, 245, 245)
-                        .addComponent(lblClendario)))
+                        .addGap(243, 243, 243)
+                        .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblClendario))))
                 .addContainerGap())
         );
         ContenidoLayout.setVerticalGroup(
@@ -240,7 +249,9 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
                 .addComponent(txtRutaCarta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(lblClendario)
-                .addGap(94, 94, 94)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(64, 64, 64)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(131, 131, 131))
         );
@@ -262,100 +273,84 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fecha.");
             return;
         }
-        LocalDate fechaSeleccionada = dateChooser.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        LocalDate fechaSeleccionada = dateChooser.getDate().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
         formatoA.setDate(fechaSeleccionada);
 
-        
-        boolean ok = serviceFormato.subirFormatoA(formatoA);
+        try {
+            // 1️⃣ Subir el FormatoA completo al microservicio
+            FormatoA formatoCreado = submissionService.createFormatoA(formatoA);
 
-        if (ok) {
+            if (formatoCreado == null) {
+                JOptionPane.showMessageDialog(this, "Error al crear el Formato A.");
+                return;
+            }
+
+            // 2️⃣ Subir archivos PDF y carta laboral si existen
+            if (archivoPDFSeleccionado != null) {
+                String respuestaPDF = submissionService.subirFormatoAPDF(formatoCreado.getId(), archivoPDFSeleccionado);
+                if (respuestaPDF == null) {
+                    JOptionPane.showMessageDialog(this, "Error al subir el PDF del Formato A.");
+                    return;
+                } else {
+                    formatoCreado.setArchivoPDF(respuestaPDF);
+                    System.out.println("PDF subido correctamente: " + respuestaPDF);
+                }
+            }
+
+            if (archivoCartaSeleccionada != null && formatoCreado.getMode() == EnumModalidad.PRACTICA_PROFESIONAL) {
+                String respuestaCarta = submissionService.subirCartaLaboral(formatoCreado.getId(), archivoCartaSeleccionada);
+                if (respuestaCarta == null) {
+                    JOptionPane.showMessageDialog(this, "Error al subir la carta laboral.");
+                    return;
+                } else {
+                    formatoCreado.setCartaLaboral(respuestaCarta);
+                    System.out.println("Carta laboral subida correctamente: " + respuestaCarta);
+                }
+            }
+
+
             JOptionPane.showMessageDialog(this, "Formato A actualizado con éxito.");
-              showJPanel(new Principal(persona));
-        } else {
-            JOptionPane.showMessageDialog(this, "Error al guardar el Formato A.");
+            showJPanel(new Principal(persona));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al guardar el Formato A: " + e.getMessage());
         }
+
     }//GEN-LAST:event_btnGuardarMouseClicked
+
 
     private void btPDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btPDFMousePressed
         JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Seleccionar archivo PDF");
+        fileChooser.setDialogTitle("Seleccionar archivo PDF");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+        fileChooser.setFileFilter(filtro);
 
-            // Filtro para solo mostrar PDFs
-            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
-            fileChooser.setFileFilter(filtro);
-
-            int resultado = fileChooser.showOpenDialog(this);
-
-            if (resultado == JFileChooser.APPROVE_OPTION) {
-                File archivoSeleccionado = fileChooser.getSelectedFile();
-
-                try {
-                    // Ruta de destino dentro del proyecto
-                    String carpetaDestino = System.getProperty("user.dir") + File.separator + "archivosPDF";
-                    File directorio = new File(carpetaDestino);
-                    if (!directorio.exists()) {
-                        directorio.mkdir(); // crea la carpeta si no existe
-                    }
-
-                    // Copiar el archivo al destino
-                    File archivoDestino = new File(carpetaDestino, archivoSeleccionado.getName());
-                    Files.copy(archivoSeleccionado.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                    // Guardar la ruta en el objeto FormatoA
-                    String rutaGuardada = archivoDestino.getAbsolutePath();
-                    formatoA.setArchivoPDF(rutaGuardada);
-                    txtRutaPDF.setText(rutaGuardada);
-
-                    JOptionPane.showMessageDialog(this, "Archivo guardado en: " + rutaGuardada);
-
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage());
-                }
+        int resultado = fileChooser.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            archivoPDFSeleccionado = fileChooser.getSelectedFile();
+            txtRutaPDF.setText(archivoPDFSeleccionado.getAbsolutePath());
         }
     }//GEN-LAST:event_btPDFMousePressed
 
     private void btCartaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btCartaMouseClicked
-       
-            if (formatoA.getMode() != enumModalidad.PRACTICA_PROFESIONAL) {
-        JOptionPane.showMessageDialog(this,
-            "Solo la modalidad 'Práctica Profesional' permite adjuntar carta laboral.");
-        return;
-    }
+        if (formatoA.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
+            JOptionPane.showMessageDialog(this, "Solo la modalidad 'Práctica Profesional' permite adjuntar carta laboral.");
+            return;
+        }
+
         JFileChooser fileChooser = new JFileChooser();
-           fileChooser.setDialogTitle("Seleccionar carta laboral (PDF)");
+        fileChooser.setDialogTitle("Seleccionar carta laboral (PDF)");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+        fileChooser.setFileFilter(filtro);
 
-           // Filtro para solo mostrar PDFs
-           FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
-           fileChooser.setFileFilter(filtro);
-
-           int resultado = fileChooser.showOpenDialog(this);
-
-           if (resultado == JFileChooser.APPROVE_OPTION) {
-               File archivoSeleccionado = fileChooser.getSelectedFile();
-
-               try {
-                   // Ruta de destino dentro del proyecto
-                   String carpetaDestino = System.getProperty("user.dir") + File.separator + "archivosPDF";
-                   File directorio = new File(carpetaDestino);
-                   if (!directorio.exists()) {
-                       directorio.mkdir(); // crea la carpeta si no existe
-                   }
-
-                   // Copiar el archivo al destino
-                   File archivoDestino = new File(carpetaDestino, archivoSeleccionado.getName());
-                   Files.copy(archivoSeleccionado.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                   // Guardar la ruta en el objeto FormatoA
-                   String rutaGuardada = archivoDestino.getAbsolutePath();
-                   formatoA.setCartaLaboral(rutaGuardada);
-                   txtRutaCarta.setText(rutaGuardada);
-
-                   JOptionPane.showMessageDialog(this, "Archivo guardado en: " + rutaGuardada);
-
-               } catch (IOException ex) {
-                   JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage());
-               }
-           }
+        int resultado = fileChooser.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            archivoCartaSeleccionada = fileChooser.getSelectedFile();
+            txtRutaCarta.setText(archivoCartaSeleccionada.getAbsolutePath());
+        }
     }//GEN-LAST:event_btCartaMouseClicked
 
     private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
@@ -377,6 +372,7 @@ private void showJPanel(JPanel pl){
     private javax.swing.JButton btPDF;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnVolver;
+    private com.toedter.calendar.JDateChooser dateChooser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;

@@ -7,6 +7,8 @@ package co.unicauca.presentation.views;
 
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.service.SubmissionService;
+
 
 import java.awt.BorderLayout;
 import java.util.List;
@@ -16,6 +18,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author Usuario
@@ -24,82 +27,108 @@ public class ListaFormatosA extends javax.swing.JPanel {
 
     private Persona personaLogueada;
     private List<FormatoA> formatosDocente; // lista en memoria para mapear filas con objetos
+    private SubmissionService submissionService; // nuevo
 
-        
     public ListaFormatosA(Persona personaLogueada) {
         initComponents();
         this.personaLogueada = personaLogueada;
+        this.submissionService = new SubmissionService(); // instanciamos el cliente
         initStyles();
-        cargarDatos();
+        cargarDatos(); // ahora hace la llamada al microservicio
         initListeners();
-    } 
-    
-    
-    /**
-     * Carga solo los FormatoA subidos por el docente logueado.
-     */
+    }
+
     private void cargarDatos() {
+        try {
+            // 🔹 Obtener los formatos del docente logueado desde el microservicio
+            formatosDocente = submissionService.getFormatosPorDocente(personaLogueada.getEmail());
 
-
-        // Traemos todos los formatos desde la BD
-        List<FormatoA> todos = repo.list();
-        this.formatosDocente = new ArrayList<>();
-
-        // Filtramos solo los que pertenecen al docente logueado
-        for (FormatoA f : todos) {
-            if (f.getProjectManager() != null &&
-                f.getProjectManager().getIdUsuario() == personaLogueada.getIdUsuario()) {
-                formatosDocente.add(f);
-            }
-        }
-
-        // Definimos columnas
-        String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Versión", "Contador"};
-        DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Hacemos la tabla de solo lectura
-            }
-        };
-
-        // Rellenamos filas - SOLO DATOS DEL FORMATOA PRINCIPAL
-        for (FormatoA f : formatosDocente) {
-            // DEBUG
-            System.out.println("DEBUG - Formato: " + f.getTitle() + 
-                              ", Estado: " + f.getState() + 
-                              ", Observaciones: " + f.getObservations() +
-                              ", Counter: " + f.getCounter());
-
-            // Calcular número de versión para mostrar (última versión + 1)
-            int numeroVersion = 1; // Por defecto
-            if (f.getVersiones() != null && !f.getVersiones().isEmpty()) {
-                FormatoAVersion ultima = f.getVersiones().get(f.getVersiones().size() - 1);
-                numeroVersion = ultima.getNumeroVersion();
-            }
-
-            Object[] fila = {
-                f.getTitle() != null ? f.getTitle() : "",           // ✅ Del FormatoA principal
-                f.getMode() != null ? f.getMode().name() : "N/A",   // ✅ Del FormatoA principal
-                f.getState() != null ? f.getState().name() : "N/A", // ✅ Estado actual del principal
-                f.getObservations() != null ? f.getObservations() : "", // ✅ Observaciones del coordinador
-                numeroVersion,                                      // ✅ Número de la última versión
-                f.getCounter()                                      // ✅ Contador de reenvíos
+            // 🔹 Definir columnas de la tabla
+            String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Contador"};
+            DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // solo lectura
+                }
             };
-            modelo.addRow(fila);
-        }
 
-        jTable1.setModel(modelo);
+            // 🔹 Llenar la tabla
+            for (FormatoA f : formatosDocente) {
+                Object[] fila = {
+                        f.getTitle() != null ? f.getTitle() : "",
+                        f.getMode() != null ? f.getMode().name() : "N/A",
+                        f.getState() != null ? f.getState().name() : "N/A",
+                        f.getObservations() != null ? f.getObservations() : "",
+                        f.getCounter()
+                };
+                modelo.addRow(fila);
+            }
 
-        // Ajustar el ancho de las columnas
-        if (modelo.getRowCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(150);
-            jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
-            jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
-            jTable1.getColumnModel().getColumn(3).setPreferredWidth(200);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(60);
-            jTable1.getColumnModel().getColumn(5).setPreferredWidth(60);
+            jTable1.setModel(modelo);
+
+            // 🔹 Ajuste visual
+            if (modelo.getRowCount() > 0) {
+                jTable1.getColumnModel().getColumn(0).setPreferredWidth(150);
+                jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
+                jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
+                jTable1.getColumnModel().getColumn(3).setPreferredWidth(200);
+                jTable1.getColumnModel().getColumn(4).setPreferredWidth(60);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error cargando formatos del docente: " + e.getMessage());
         }
     }
+
+
+    private void abrirDetalleConSeguridad(FormatoA seleccionado) {
+        try {
+            // 🔹 Primero revisamos el contador del formato
+            if (seleccionado.getCounter() >= 3) {
+                int opcion = JOptionPane.showConfirmDialog(
+                        this,
+                        "Este formato ya se ha reenviado 3 veces.\n" +
+                                "¿Desea eliminarlo junto con sus estudiantes?",
+                        "Aviso",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                if (opcion == JOptionPane.YES_OPTION) {
+                    // 🔹 Llamamos al microservicio para eliminar el formato
+                    boolean eliminado = submissionService.eliminarFormatoA(seleccionado.getId());
+
+                    if (eliminado) {
+                        JOptionPane.showMessageDialog(this, "Formato eliminado correctamente.");
+                        cargarDatos(); // 🔹 refrescamos la tabla
+                    } else {
+                        JOptionPane.showMessageDialog(this, "No se pudo eliminar el formato.");
+                    }
+                    return; // salir sin abrir detalle
+                } else {
+                    return; // usuario canceló, no abrimos detalle
+                }
+            }
+
+            // 🔹 Abrimos la vista de detalle directamente, ya que personaLogueada se usa solo para el panel
+            DetallesFormatoA detalle = new DetallesFormatoA(seleccionado, personaLogueada);
+
+            Contenido.removeAll();
+            Contenido.setLayout(new BorderLayout());
+            Contenido.add(detalle, BorderLayout.CENTER);
+            Contenido.revalidate();
+            Contenido.repaint();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error abriendo detalle: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
     /**
      * Inicializa listeners para acciones en la tabla.
      * Ahora se abre DetallesFormatoA cuando se selecciona una fila (clic simple).
@@ -123,77 +152,10 @@ public class ListaFormatosA extends javax.swing.JPanel {
             }
         });
     }
-    
-    
-     /**
-     * Abre el panel DetallesFormatoA asegurando que tengamos un objeto Docente válido.
-     * Si personaLogueada no es Docente, intentamos obtenerlo del repositorio.
-     */
-  private void abrirDetalleConSeguridad(FormatoA seleccionado) {
-    try {
-        // 🔹 Primero revisamos el contador del formato
-        if (seleccionado.getCounter() >= 3) { // o el número que quieras
-            int opcion = JOptionPane.showConfirmDialog(
-                this,
-                "Este formato ya se ha reenviado 3 veces.\n" +
-                "¿Desea eliminarlo junto con sus estudiantes?",
-                "Aviso",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-            );
 
-            if (opcion == JOptionPane.YES_OPTION) {
-                // 🔹 Aquí llamamos al Service para eliminar el formato y sus estudiantes
-               
-                boolean eliminado = serviceFormato.eliminarFormatoAConVersiones(seleccionado.getId());
-                if (eliminado) {
-                    JOptionPane.showMessageDialog(this, "Formato eliminado correctamente.");
-                    cargarDatos(); // 🔹 refrescamos la tabla
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se pudo eliminar el formato.");
-                }
-                return; // 🔹 salir sin abrir detalle
-            } else {
-                // El usuario dijo que no, entonces no abrimos el detalle
-                return;
-            }
-        }
 
-        // 🔹 Si el contador <3, seguimos flujo normal
-        Docente docente = null;
 
-        if (personaLogueada instanceof Docente) {
-            docente = (Docente) personaLogueada;
-        } else {
-            // Intentamos recuperar el docente por id
-            IDocenteRepository repoDoc = Factory.getInstance().getDocenteRepository("default");
-            docente = repoDoc.findById(personaLogueada.getIdUsuario());
-        }
 
-        if (docente == null) {
-            JOptionPane.showMessageDialog(this,
-                    "No se pudo determinar el docente logueado. Asegúrese de estar con un usuario con rol DOCENTE.",
-                    "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Abrimos la vista de detalle
-        DetallesFormatoA detalle = new DetallesFormatoA(seleccionado, docente, personaLogueada);
-
-        // Cambiamos la vista dentro de este panel
-        Contenido.removeAll();
-        Contenido.setLayout(new BorderLayout());
-        Contenido.add(detalle, BorderLayout.CENTER);
-        Contenido.revalidate();
-        Contenido.repaint();
-
-    } catch (Exception ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Error abriendo detalle: " + ex.getMessage(),
-                "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-    
     private void initStyles() {
         jTable1.setRowHeight(30);
         jTable1.setShowGrid(false);
