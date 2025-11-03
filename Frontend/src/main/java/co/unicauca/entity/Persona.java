@@ -20,11 +20,12 @@ public class Persona {
     private String department;
     private String programa;
     private Set<EnumRol> roles;
+    private String phone;
 
     // ✅ AGREGAR: Constructor vacío para JSON
     public Persona() {}
 
-    public Persona(Long idUsuario, String name, String lastname, String email, String department, String programa, Set<EnumRol> roles) {
+    public Persona(Long idUsuario, String name, String lastname, String email, String department, String programa, Set<EnumRol> roles, String phone) {
         this.idUsuario = idUsuario;
         this.name = name;
         this.lastname = lastname;
@@ -32,8 +33,12 @@ public class Persona {
         this.department = department;
         this.programa = programa;
         this.roles = roles;
+        this.phone = phone;
     }
 
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
     public boolean tieneRol(EnumRol rol) {
         return roles != null && roles.contains(rol);

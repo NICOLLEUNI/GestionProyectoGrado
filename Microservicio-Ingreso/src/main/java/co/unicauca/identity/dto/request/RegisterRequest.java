@@ -17,6 +17,7 @@ import java.util.Set;
  * DTO para la solicitud de registro de usuario
  * Maneja múltiples roles y campos condicionales por rol
  */
+
 @RoleSpecificValidation
 public record RegisterRequest(
         @NotBlank(message = "El nombre es obligatorio")
@@ -119,6 +120,14 @@ public record RegisterRequest(
         return roles != null && roles.contains(enumRol.ESTUDIANTE);
     }
 
+
+
+    public boolean requierePrograma() {
+        return roles != null && (
+                roles.contains(enumRol.ESTUDIANTE) ||
+                        roles.contains(enumRol.COORDINADOR)
+        );
+    }
     /**
      * Método de utilidad para verificar si el registro contiene roles que requieren departamento
      */
