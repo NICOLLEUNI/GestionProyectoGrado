@@ -16,14 +16,13 @@ import java.time.LocalDate;
 @Table(name = "anteproyecto")
 public class Anteproyecto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String titulo;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDate fechaCreacion;
+    private LocalDate fecha;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

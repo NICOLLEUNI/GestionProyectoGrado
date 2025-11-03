@@ -285,10 +285,11 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
             // 1️⃣ Subir el FormatoA completo al microservicio
             FormatoA formatoCreado = submissionService.createFormatoA(formatoA);
 
-            if (formatoCreado == null) {
-                JOptionPane.showMessageDialog(this, "Error al crear el Formato A.");
+            if (formatoCreado == null || formatoCreado.getId() == null) {
+                System.err.println("❌ No se pudo crear el FormatoA: el ID es nulo");
                 return;
             }
+
 
             // 2️⃣ Subir archivos PDF y carta laboral si existen
             if (archivoPDFSeleccionado != null) {
@@ -314,7 +315,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
             }
 
 
-            JOptionPane.showMessageDialog(this, "Formato A actualizado con éxito.");
+            JOptionPane.showMessageDialog(this, "Formato A registrado con éxito.");
 
             showJPanel(new Principal(persona));
 
@@ -360,7 +361,8 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
     private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
         showJPanel(new DatosFormatoA(persona));
     }//GEN-LAST:event_btnVolverMouseClicked
-private void showJPanel(JPanel pl){
+
+    private void showJPanel(JPanel pl){
         pl.setSize(641,498);
         pl.setLocation(0, 0);
 

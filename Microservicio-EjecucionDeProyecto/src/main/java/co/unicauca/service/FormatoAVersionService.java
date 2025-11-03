@@ -3,26 +3,26 @@ package co.unicauca.service;
 import co.unicauca.entity.FormatoAVersion;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.EnumModalidad;
+import co.unicauca.entity.ProyectoGrado;
 import co.unicauca.infra.dto.FormatoAVersionRequest;
 import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.infra.memento.RequestHistoryManager;
 import co.unicauca.infra.memento.RequestMemento;
 import co.unicauca.repository.FormatoAVersionRepository;
+import co.unicauca.repository.ProyectoGradoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class FormatoAVersionService {
 
     private final FormatoAVersionRepository versionRepository;
+    private final ProyectoGradoRepository proyectoGradoRepository;
     private final RequestHistoryManager historyManager;
 
     @Transactional
@@ -457,4 +457,30 @@ public class FormatoAVersionService {
             return timestampId;
         }
     }
+
+
+    public FormatoAVersion findByProyectoId(Long proyectoId) {
+        // 1. Buscar el proyecto
+        ProyectoGrado proyecto = proyectoGradoRepository.findById(proyectoId)
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado ID: " + proyectoId));
+
+        // 2. Validar que tenga un FormatoA asociado
+        if (proyecto.getIdFormatoA() == null) {
+            throw new RuntimeException("El proyecto no tiene FormatoA asociado");
+        }
+
+        // 3. Buscar la última versión de ese FormatoA
+        List<FormatoAVersion> versiones = versionRepository.findByIdFormatoAOrderByNumeroVersionDesc(proyecto.getIdFormatoA());
+
+        if (versiones.isEmpty()) {
+            throw new RuntimeException("No se encontraron versiones para el FormatoA ID: " + proyecto.getIdFormatoA());
+        }
+
+        // 4. Retornar la versión más reciente
+        return versiones.get(0);
+    }
+
+
+
 }
+

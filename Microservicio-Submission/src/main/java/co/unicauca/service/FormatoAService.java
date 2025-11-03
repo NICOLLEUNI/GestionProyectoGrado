@@ -56,28 +56,23 @@ public class FormatoAService {
     @Transactional
     public FormatoA subirFormatoA(FormatoA formatoA) {
 
-        // VALIDAR participantes del FormatoA
         validarParticipantes(formatoA);
 
-        // Validar el FormatoA según reglas de negocio
-        //formatoA.validar();
-
+        // Guardar primero el FormatoA base
         FormatoA formatoAGuardado = formatoARepository.save(formatoA);
 
+
+        // Guardar nuevamente para actualizar rutas
+        formatoAGuardado = formatoARepository.save(formatoAGuardado);
+
+        // Crear versión inicial con rutas correctas
         FormatoAVersion version1 = versionService.crearVersionInicial(formatoAGuardado);
 
         proyectoService.crearProyectoGrado(formatoAGuardado, version1);
 
-        // ⭐⭐ CONVERTIR A RESPONSE Y PUBLICAR ⭐⭐
-        FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
-        rabbitMQPublisher.publicarFormatoACreado(response);
-
-        // 2. Para notificaciones (solo correos)
-        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
-        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
-
         return formatoAGuardado;
     }
+
 
     public boolean saveFormatoAPDF(Long id, MultipartFile file) {
         try {

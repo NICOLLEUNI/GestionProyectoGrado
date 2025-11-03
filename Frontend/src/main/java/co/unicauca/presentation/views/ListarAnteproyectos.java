@@ -37,25 +37,29 @@ public class ListarAnteproyectos extends javax.swing.JPanel {
 
     private void cargarDatos() {
         // ✅ Columnas de la tabla para anteproyectos
-        String[] columnas = {"ID", "Título", "Estado"};
+        String[] columnas = {"ID", "Título", "Estado", "Fecha", "Proyecto"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex == 0 ? Long.class : String.class;
-            }
         };
 
-        // ✅ Llenamos la tabla con el anteproyecto recibido
         if (anteproyecto != null) {
+            // Formatear fecha
+            String fechaStr = anteproyecto.getFecha() != null ?
+                    anteproyecto.getFecha().toString() : "N/A";
+
+            // Información del proyecto
+            String proyectoStr = anteproyecto.getIdProyectoGrado() != null ?
+                    "Id Proyecto " + anteproyecto.getIdProyectoGrado() : "Sin proyecto";
+
             Object[] fila = {
                     anteproyecto.getId(),
-                    anteproyecto.getTitulo() != null ? anteproyecto.getTitulo() : "",
-                    anteproyecto.getEstado() != null ? anteproyecto.getEstado() : "N/A"
+                    anteproyecto.getTitulo() != null ? anteproyecto.getTitulo() : "Sin título",
+                    anteproyecto.getEstado() != null ? anteproyecto.getEstado() : "N/A",
+                    fechaStr,
+                    proyectoStr
             };
             modelo.addRow(fila);
         }
