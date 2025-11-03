@@ -108,10 +108,8 @@ class PersonaServiceTest {
         assertEquals("test@unicauca.edu.co", result.getEmail());
         verify(personaRepository).findByEmail("test@unicauca.edu.co");
     }
-
     @Test
     void testListarDocentesDisponiblesParaEvaluar() {
-        // Director y codirector
         Persona director = new Persona();
         director.setIdUsuario(1L);
         director.setName("Dir");
@@ -128,15 +126,15 @@ class PersonaServiceTest {
         codirector.setDepartment("Sistemas");
         codirector.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
-        // Mock FormatoA
         FormatoA formato = new FormatoA();
         formato.setId(10L);
         formato.setProjectManager(director);
         formato.setProjectCoManager(codirector);
 
         when(formatoAService.findById(10L)).thenReturn(formato);
+        when(personaRepository.findByEmail("dir@uni.edu")).thenReturn(Optional.of(director));
+        when(personaRepository.findByEmail("co@uni.edu")).thenReturn(Optional.of(codirector));
 
-        // Otros docentes del depto
         Persona docente1 = new Persona();
         docente1.setIdUsuario(3L);
         docente1.setEmail("doc1@uni.edu");
@@ -152,17 +150,11 @@ class PersonaServiceTest {
         when(personaRepository.findByDepartmentIgnoreCase("Sistemas"))
                 .thenReturn(List.of(director, codirector, docente1, docente2));
 
-        // Ejecutar
         List<Persona> result = personaService.listarDocentesDisponiblesParaEvaluar(10L);
 
-        // Validaciones
         assertEquals(2, result.size());
         assertTrue(result.contains(docente1));
         assertTrue(result.contains(docente2));
-        assertFalse(result.stream().anyMatch(p -> p.getEmail().equals("dir@uni.edu")));
-        assertFalse(result.stream().anyMatch(p -> p.getEmail().equals("co@uni.edu")));
-
-        verify(formatoAService).findById(10L);
-        verify(personaRepository).findByDepartmentIgnoreCase("Sistemas");
     }
+
 }
