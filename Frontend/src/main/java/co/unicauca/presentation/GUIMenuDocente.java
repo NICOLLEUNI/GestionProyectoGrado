@@ -20,7 +20,8 @@ public class GUIMenuDocente extends javax.swing.JFrame {
     /**
      * Creates new form GUIMenuDocente
      */private static Persona personaLogueado;
-    public GUIMenuDocente() {
+    public GUIMenuDocente(Persona personaLogueado) {
+        this.personaLogueado = personaLogueado;
         initComponents();
     }
 
@@ -306,7 +307,7 @@ public class GUIMenuDocente extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUIMenuDocente().setVisible(true);
+              //  new GUIMenuDocente().setVisible(true);
             }
         });
     }

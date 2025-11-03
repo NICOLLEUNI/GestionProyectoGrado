@@ -23,4 +23,6 @@ public interface ProyectoGradoRepository extends JpaRepository<ProyectoGrado, Lo
 
     @Query("SELECT DISTINCT p FROM ProyectoGrado p LEFT JOIN FETCH p.estudiantesEmail")
     List<ProyectoGrado> findAllWithEstudiantes();
+
+    Optional<ProyectoGrado> findByEstudiantesEmailContaining(String email);
 }

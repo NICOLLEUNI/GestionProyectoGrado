@@ -10,6 +10,7 @@ package co.unicauca.presentation.views;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.Color;
@@ -31,7 +32,7 @@ public class Observaciones extends javax.swing.JPanel {
     
 
 
-    private FormatoA formatoActual;
+    private DtoFormatoA formatoActual;
     private final EvaluacionService evaluacionService;
 
     // Constructor recibe la misma instancia del service
@@ -79,7 +80,7 @@ public class Observaciones extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + e.getMessage());
     }
 }
-    public void setFormatoA(FormatoA formato) {
+    public void setFormatoA(DtoFormatoA formato) {
         if (formato == null) return;
         this.formatoActual = formato;
 
@@ -90,8 +91,8 @@ public class Observaciones extends javax.swing.JPanel {
         lblUModalidad.setText(formato.getMode() != null ? formato.getMode().toString() : "N/A");
 
         // 🎓 Director y codirector
-        Persona director = evaluacionService.findPersonaByEmail(formato.getProjectManagerEmail());
-        Persona codirector = evaluacionService.findPersonaByEmail(formato.getProjectCoManagerEmail());
+        Persona director = evaluacionService.findPersonaByEmail(formato.getProjectManager().getEmail());
+        Persona codirector = evaluacionService.findPersonaByEmail(formato.getProjectCoManager().getEmail());
 
         lblUDirector.setText(
                 director != null
@@ -99,26 +100,19 @@ public class Observaciones extends javax.swing.JPanel {
                         : "Sin director"
         );
 
-        // 👩‍🎓 Estudiantes
-        List<String> emailsEstudiantes = formato.getEstudianteEmails();
-        if (emailsEstudiantes != null && !emailsEstudiantes.isEmpty()) {
-            Persona est1 = evaluacionService.findPersonaByEmail(emailsEstudiantes.get(0));
-            lblUEstudiante.setText(
-                    est1 != null
-                            ? est1.getName() + " " + est1.getLastname()
-                            : "Estudiante no encontrado"
-            );
+        List<Persona> estudiantes = formato.getEstudiantes();
 
-            if (emailsEstudiantes.size() > 1) {
-                Persona est2 = evaluacionService.findPersonaByEmail(emailsEstudiantes.get(1));
-                lblUEstudiante2.setText(
-                        est2 != null
-                                ? est2.getName() + " " + est2.getLastname()
-                                : "Sin segundo estudiante"
-                );
+        if (estudiantes != null && !estudiantes.isEmpty()) {
+            Persona est1 = estudiantes.get(0);
+            lblUEstudiante.setText(est1.getName() + " " + est1.getLastname());
+
+            if (estudiantes.size() > 1) {
+                Persona est2 = estudiantes.get(1);
+                lblUEstudiante2.setText(est2.getName() + " " + est2.getLastname());
             } else {
                 lblUEstudiante2.setText("Sin segundo estudiante");
             }
+
         } else {
             lblUEstudiante.setText("Sin estudiantes");
             lblUEstudiante2.setText("Sin segundo estudiante");
@@ -282,7 +276,7 @@ public class Observaciones extends javax.swing.JPanel {
         lblUEstudiante2.setForeground(new java.awt.Color(51, 51, 51));
         lblUEstudiante2.setText("Estudiante");
 
-        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
 
         btEvaluar.setBackground(new java.awt.Color(65, 55, 171));
         btEvaluar.setFont(new java.awt.Font("Roboto Medium", 1, 24)); // NOI18N
@@ -301,64 +295,66 @@ public class Observaciones extends javax.swing.JPanel {
         ContenidoLayout.setHorizontalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addComponent(lblUTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(122, 122, 122)
-                .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(lblEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addComponent(lblUEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(122, 122, 122)
-                .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lblEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lblDirector)
-                .addGap(18, 18, 18)
-                .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lblModalidad)
-                .addGap(29, 29, 29)
-                .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(lblObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(80, 80, 80)
-                .addComponent(CBXAprobado)
-                .addGap(164, 164, 164)
-                .addComponent(CBXRechazado))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addComponent(Icon))
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addGap(340, 340, 340)
-                .addComponent(btEvaluar))
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38)
+                        .addComponent(lblUTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(122, 122, 122)
+                        .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(lblEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(lblUEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(122, 122, 122)
+                        .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblDirector)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblModalidad)
+                        .addGap(29, 29, 29)
+                        .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(120, 120, 120)
+                        .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(lblObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(80, 80, 80)
+                        .addComponent(CBXAprobado)
+                        .addGap(164, 164, 164)
+                        .addComponent(CBXRechazado))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(156, 156, 156)
+                        .addComponent(btEvaluar)))
+                .addGap(26, 26, 26))
         );
         ContenidoLayout.setVerticalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,10 +400,13 @@ public class Observaciones extends javax.swing.JPanel {
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(CBXAprobado)
                     .addComponent(CBXRechazado))
-                .addGap(30, 30, 30)
-                .addComponent(Icon)
-                .addGap(10, 10, 10)
-                .addComponent(btEvaluar))
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(btEvaluar))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -474,50 +473,17 @@ try {
         formatoActual.setObservations(observaciones);
 
         // Llamar al servicio para actualizar el FormatoA principal
-        boolean actualizado = formatoAService.updateEstadoObservacionesYContador(
-           idFormato, estado, observaciones, nuevoContador);
+        boolean actualizado =  evaluacionService.updateEstadoObservaciones(
+           idFormato, estado, observaciones);
 
-        // 🔹 PASO 2: Actualizar la última versión con los mismos datos
-        if (actualizado) {
-            try {
-                // Obtener el repositorio de versiones
+    if (actualizado) {
+        JOptionPane.showMessageDialog(this, "Formato evaluado correctamente.");
+        this.setVisible(false);
+    } else {
+        JOptionPane.showMessageDialog(this, "No se pudo actualizar el formato.");
+    }
 
-                
-                // Obtener todas las versiones de este formato
 
-                
-                if (versiones != null && !versiones.isEmpty()) {
-                    // Obtener la última versión (la más reciente)
-                    co.unicauca.workflow.domain.entities.FormatoAVersion ultimaVersion = 
-                        versiones.get(versiones.size() - 1);
-                    
-                    // Actualizar la última versión con el estado y observaciones de la evaluación
-                    ultimaVersion.setState(co.unicauca.workflow.domain.entities.enumEstado.valueOf(estado));
-                    ultimaVersion.setObservations(observaciones);
-                    
-                    // Guardar los cambios en la versión
-                    boolean versionActualizada = versionRepo.update(ultimaVersion);
-                    
-                    if (versionActualizada) {
-                        System.out.println("DEBUG - Última versión actualizada correctamente");
-                    } else {
-                        System.out.println("DEBUG - Error al actualizar la última versión");
-                    }
-                } else {
-                    System.out.println("DEBUG - No se encontraron versiones para actualizar");
-                }
-                
-            } catch (Exception e) {
-                System.out.println("DEBUG - Error al actualizar versión: " + e.getMessage());
-                e.printStackTrace();
-                // No mostrar error al usuario para no confundirlo, solo log
-            }
-            
-            JOptionPane.showMessageDialog(this, "Formato evaluado correctamente.");
-            this.setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo actualizar el formato.");
-        }
 
     } catch (Exception ex) {
         JOptionPane.showMessageDialog(this, "Error al evaluar: " + ex.getMessage());

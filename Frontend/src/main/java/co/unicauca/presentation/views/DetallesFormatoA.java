@@ -34,7 +34,6 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         this.formato = formato;
         this.personaLogueada = personaLogueada;
         this.submissionService = new SubmissionService();
-
         cargarDatos();
         // No necesitas initListeners si usas los listeners generados por NetBeans
     }
@@ -432,6 +431,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             if (!esEditable()) {
                 JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
                 return;
+
             }
 
             if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
@@ -467,6 +467,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
 
     private void btActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btActualizarMouseClicked
         try {
+
             if (!esEditable()) {
                 JOptionPane.showMessageDialog(this, "No puede actualizar el formato en el estado actual.");
                 return;
@@ -496,6 +497,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
 
             if (formato.getMode() == EnumModalidad.PRACTICA_PROFESIONAL &&
                     (formato.getCartaLaboral() == null || formato.getCartaLaboral().trim().isEmpty())) {
+
                 JOptionPane.showMessageDialog(this, "Para práctica profesional debe adjuntar la carta laboral.");
                 return;
             }
@@ -514,11 +516,13 @@ public class DetallesFormatoA extends javax.swing.JPanel {
                 formato.setCounter(actualizado.getCounter());
                 formato.setState(actualizado.getState());
 
+
                 cargarDatos();
                 JOptionPane.showMessageDialog(this, "Formato reenviado correctamente.");
             } else {
                 JOptionPane.showMessageDialog(this, "No se recibió respuesta del servidor. Intente nuevamente.");
             }
+
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -553,6 +557,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         int counter = formato.getCounter();
 
         return (estado == EnumEstado.RECHAZADO && counter < 3);
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

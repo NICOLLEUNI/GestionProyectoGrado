@@ -4,19 +4,91 @@
  */
 package co.unicauca.presentation;
 
+import co.unicauca.entity.Anteproyecto;
+import co.unicauca.entity.Persona;
+import co.unicauca.service.EvaluacionService;
+import co.unicauca.presentation.views.*;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+
 /**
  *
  * @author User
  */
 public class GUIAsingarEvaluadores extends javax.swing.JFrame {
 
+    private EvaluacionService evaluacionService= new EvaluacionService();
+    private Persona personaLogueado;
     /**
      * Creates new form GUIAsingarEvaluadores
      */
-    public GUIAsingarEvaluadores() {
+    public GUIAsingarEvaluadores(Persona personaLogueado) {
+        this.personaLogueado = personaLogueado;
         initComponents();
+        initContent();
+        cargarDatos();
     }
 
+    private void cargarDatos() {
+
+        // Obtener los anteproyectos desde el servicio
+        List<Anteproyecto> lista = evaluacionService.listarAnteproyectos();
+
+        // Encabezados de la tabla
+        String[] columnas = {"ID", "Título", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+
+        // Poblar la tabla
+        if (lista != null && !lista.isEmpty()) {
+            for (Anteproyecto a : lista) {
+                Object[] fila = {
+                        a.getId(),
+                        a.getTitulo(),
+                        a.getEstado()
+                };
+                modelo.addRow(fila);
+            }
+        } else {
+            System.err.println("⚠ No se encontraron anteproyectos registrados.");
+        }
+
+        // Asignar el modelo a la tabla
+        jTable1.setModel(modelo);
+    }
+    
+    private void initContent(){
+
+        jTable1.getSelectionModel().addListSelectionListener(e -> {
+       if (!e.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
+        int fila = jTable1.getSelectedRow();
+        Long id = (Long) jTable1.getValueAt(fila, 0); // ID está en la columna 0
+
+        // Buscar el FormatoA desde repo
+        Anteproyecto anteproyecto = evaluacionService.buscarAnteproyectoPorId(id);
+
+        if (anteproyecto != null) {
+        AsignacionEvaluadores panelObs = new AsignacionEvaluadores(personaLogueado,evaluacionService);
+            panelObs.setAnteproyecto(anteproyecto);
+            showJPanel(panelObs);
+        }}
+         });
+         }
+    private void showJPanel(JPanel pl){
+        pl.setSize(533,456);
+        pl.setLocation(0, 0);
+
+        Contenido.removeAll();
+        Contenido.add(pl, BorderLayout.CENTER);
+        Contenido.revalidate();
+        Contenido.repaint();
+
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -153,7 +225,9 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btVolverMouseClicked
-      
+        GUIMenuJefe VentanaJefe = new GUIMenuJefe(personaLogueado);
+        VentanaJefe.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btVolverMouseClicked
 
     /**
@@ -184,11 +258,7 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GUIAsingarEvaluadores().setVisible(true);
-            }
-        });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

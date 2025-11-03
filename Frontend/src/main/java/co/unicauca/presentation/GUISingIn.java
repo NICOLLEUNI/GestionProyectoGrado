@@ -3,213 +3,196 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package co.unicauca.presentation;
-
-//Arreglar el combobox de programa intitucional ya que con algunas carreras no permite el registro
-//la funcionalidad de programa solo se abilita para estudiante
-
-//Añadir el rol del coordinador
-//ñadir el campo donde se elije el departamento   
-//Para docente y coordinador se debe habilitar el campo de departamento al que pertenece 
-
-//Debemos usar la instancia de factory no crear un nuevo repositorio
-
-//DEBES IMPLEMENTAR TODA ESTA LOGICA CON LA CLASE PERSONA
-
-// IMPORTS NECESARIOS - AGREGAR AL INICIO DE TU ARCHIVO
-
-
-
 import co.unicauca.entity.EnumRol;
 
+import co.unicauca.service.AuthService;
+import co.unicauca.entity.Persona;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import javax.swing.JOptionPane;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.util.*;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.ArrayList;
-import java.awt.Color;
 import javax.swing.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.*;
+
+public class GUISingIn extends javax.swing.JFrame {
+
+    private final AuthService authService;
+    private final Gson gson;
+    public GUISingIn() {
+
+        this.authService = new AuthService();
+        this.gson = new Gson();
+        initComponents();
+        configurarComponentesIniciales();
+        configurarListeners();
+        cargarOpcionesDesdeMicroservicio(); // ✅ NUEVO: Cargar desde microservicio
+
+    }
+
 
 
 /**
- *
- * @author User
+ * Configuración inicial de ComboBox y componentes
  */
-public class GUISingIn extends javax.swing.JFrame {
-    
+private void configurarComponentesIniciales() {
+    // Deshabilitar ComboBox inicialmente
+    ComBoxPrograma1.setEnabled(false);
+    ComBoxDepartamento.setEnabled(false);
 
-    
+    // Cargar programas en ComboBox
+    cargarProgramasFallback();
+    cargarDepartamentosFallback();
+}
 
-    public GUISingIn() {
-       
-       initComponents();
-        
-        // ← Usar Factory correctamente como se requiere
-
-        
-        // Repositorios para guardar solo Programa y Departamento
-
-        
-        // Configurar componentes iniciales
-        configurarComponentesIniciales();
-        configurarListeners(); 
-        
-        
-    }
-       /**
-     * Configuración inicial de ComboBox y componentes
-     */
-    private void configurarComponentesIniciales() {
-        // Deshabilitar ComboBox inicialmente
-        ComBoxPrograma1.setEnabled(false);
-        ComBoxDepartamento.setEnabled(false);
-        
-        // Cargar programas en ComboBox
-        cargarProgramas();
-        cargarDepartamentos();
-    }
-    
-    /**
-     * Configurar listeners para CheckBoxes de roles
-     */
-       private void configurarListeners() {
-        // Listener para CheckBox Estudiante
-        CBEstudiante1.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                actualizarEstadoComboBoxes();
-            }
-        });
-        
-          // Listener para CheckBox Docente
-        CBDocente1.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                actualizarEstadoComboBoxes();
-            }
-        });
-        
-        // Listener para CheckBox Coordinador
-        CBJefeDepartamento.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                actualizarEstadoComboBoxes();
-            }
-        });
-    }
-    
-    /**
-     * Actualiza el estado de los ComboBox según los roles seleccionados
-     */
-    private void actualizarEstadoComboBoxes() {
-        boolean esEstudiante = CBEstudiante1.isSelected();
-        boolean esDocenteOCoordinador = CBDocente1.isSelected() || CBJefeDepartamento.isSelected();
-        
-        // Habilitar ComboBox Programa solo si es estudiante
-        ComBoxPrograma1.setEnabled(esEstudiante);
-        if (!esEstudiante) {
-            ComBoxPrograma1.setSelectedIndex(0); // Reset a opción por defecto
+/**
+ * Configurar listeners para CheckBoxes de roles
+ */
+private void configurarListeners() {
+    // Listener para CheckBox Estudiante
+    CBEstudiante1.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            actualizarEstadoComboBoxes();
         }
-        
-        // Habilitar ComboBox Departamento solo si es docente o coordinador
-        ComBoxDepartamento.setEnabled(esDocenteOCoordinador);
-        if (!esDocenteOCoordinador) {
-            ComBoxDepartamento.setSelectedIndex(0); // Reset a opción por defecto
+    });
+
+    // Listener para CheckBox Docente
+    CBDocente1.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            actualizarEstadoComboBoxes();
         }
+    });
+
+    // Listener para CheckBox Coordinador
+    CBEJefeDepartamento.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            actualizarEstadoComboBoxes();
+        }
+    });
+}
+
+/**
+ * Actualiza el estado de los ComboBox según los roles seleccionados
+ */
+private void actualizarEstadoComboBoxes() {
+    boolean esEstudiante = CBEstudiante1.isSelected();
+    boolean esDocenteOCoordinador = CBDocente1.isSelected() || CBEJefeDepartamento.isSelected();
+
+    // Habilitar ComboBox Programa solo si es estudiante
+    ComBoxPrograma1.setEnabled(esEstudiante);
+    if (!esEstudiante) {
+        ComBoxPrograma1.setSelectedIndex(0); // Reset a opción por defecto
     }
-    
-    /**
-     * Cargar programas desde la base de datos
-     */
-    private void cargarProgramas() {
-        ComBoxPrograma1.removeAllItems();
-        ComBoxPrograma1.addItem("Seleccione un programa"); // Opción por defecto
-        
-        // Agregar programas hardcoded según tus especificaciones
-        ComBoxPrograma1.addItem("Ingeniería de Sistemas");
-        ComBoxPrograma1.addItem("Ingeniería Electrónica y Telecomunicaciones");
-        ComBoxPrograma1.addItem("Automática industrial");
-        ComBoxPrograma1.addItem("Tecnología en Telemática");
-        
-        // Intentar cargar desde BD como respaldo (opcional)
-        try {
-            List<Programa> programas = programaRepository.list();
-            if (!programas.isEmpty()) {
-                // Si hay programas en BD, agregar los que no están hardcoded
-                for (Programa programa : programas) {
-                    String nombrePrograma = programa.getNombrePrograma();
-                    boolean yaExiste = false;
-                    for (int i = 0; i < ComBoxPrograma1.getItemCount(); i++) {
-                        if (ComBoxPrograma1.getItemAt(i).equals(nombrePrograma)) {
-                            yaExiste = true;
-                            break;
-                        }
-                    }
-                    if (!yaExiste) {
-                        ComBoxPrograma1.addItem(nombrePrograma);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error cargando programas desde BD: " + e.getMessage());
-            // Los hardcoded ya están cargados, continuar
-        }
+
+    // Habilitar ComboBox Departamento solo si es docente o coordinador
+    ComBoxDepartamento.setEnabled(esDocenteOCoordinador);
+    if (!esDocenteOCoordinador) {
+        ComBoxDepartamento.setSelectedIndex(0); // Reset a opción por defecto
     }
-        
-    /**
-     * Cargar departamentos desde la base de datos
-     */
-     private void cargarDepartamentos() {
-ComBoxPrograma1.removeAllItems();
-        ComBoxPrograma1.addItem("Seleccione un programa"); // Opción por defecto
-        
-        // Agregar programas hardcoded según tus especificaciones
-        ComBoxPrograma1.addItem("Ingeniería de Sistemas");
-        ComBoxPrograma1.addItem("Ingeniería Electrónica y Telecomunicaciones");
-        ComBoxPrograma1.addItem("Automática industrial");
-        ComBoxPrograma1.addItem("Tecnología en Telemática");
-        
-         
-    // ComboBox Departamentos (para docentes/coordinadores)
-    ComBoxDepartamento.addItem("Seleccione un departamento");
-    ComBoxDepartamento.addItem("Sistemas");
-    ComBoxDepartamento.addItem("Electrónica");                 // ← NUEVO
-    ComBoxDepartamento.addItem("Instrumentación y Control");    // ← NUEVO
-    ComBoxDepartamento.addItem("Telemática");                  // ← NUEVO
-        
-        // Intentar cargar desde BD como respaldo (opcional)
-        try {
-            List<Programa> programas = programaRepository.list();
-            if (!programas.isEmpty()) {
-                // Si hay programas en BD, agregar los que no están hardcoded
-                for (Programa programa : programas) {
-                    String nombrePrograma = programa.getNombrePrograma();
-                    boolean yaExiste = false;
-                    for (int i = 0; i < ComBoxPrograma1.getItemCount(); i++) {
-                        if (ComBoxPrograma1.getItemAt(i).equals(nombrePrograma)) {
-                            yaExiste = true;
-                            break;
-                        }
-                    }
-                    if (!yaExiste) {
-                        ComBoxPrograma1.addItem(nombrePrograma);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            System.err.println("Error cargando programas desde BD: " + e.getMessage());
-            // Los hardcoded ya están cargados, continuar
-        }
-     }
-    
-    
+}
+
+/**
+ * Cargar programas desde la base de datos
+
+ private void cargarProgramas() {
+ ComBoxPrograma1.removeAllItems();
+ ComBoxPrograma1.addItem("Seleccione un programa"); // Opción por defecto
+
+ // Agregar programas hardcoded según tus especificaciones
+ ComBoxPrograma1.addItem("Ingeniería de Sistemas");
+ ComBoxPrograma1.addItem("Ingeniería Electrónica y Telecomunicaciones");
+ ComBoxPrograma1.addItem("Automática industrial");
+ ComBoxPrograma1.addItem("Tecnología en Telemática");
+
+ // Intentar cargar desde BD como respaldo (opcional)
+ try {
+ List<Programa> programas = programaRepository.list();
+ if (!programas.isEmpty()) {
+ // Si hay programas en BD, agregar los que no están hardcoded
+ for (Programa programa : programas) {
+ String nombrePrograma = programa.getNombrePrograma();
+ boolean yaExiste = false;
+ for (int i = 0; i < ComBoxPrograma1.getItemCount(); i++) {
+ if (ComBoxPrograma1.getItemAt(i).equals(nombrePrograma)) {
+ yaExiste = true;
+ break;
+ }
+ }
+ if (!yaExiste) {
+ ComBoxPrograma1.addItem(nombrePrograma);
+ }
+ }
+ }
+ } catch (Exception e) {
+ System.err.println("Error cargando programas desde BD: " + e.getMessage());
+ // Los hardcoded ya están cargados, continuar
+ }
+ }*/
+
+/**
+ * Cargar departamentos desde la base de datos
+
+ private void cargarDepartamentos() {
+ ComBoxPrograma1.removeAllItems();
+ ComBoxPrograma1.addItem("Seleccione un programa"); // Opción por defecto
+
+ // Agregar programas hardcoded según tus especificaciones
+ ComBoxPrograma1.addItem("Ingeniería de Sistemas");
+ ComBoxPrograma1.addItem("Ingeniería Electrónica y Telecomunicaciones");
+ ComBoxPrograma1.addItem("Automática industrial");
+ ComBoxPrograma1.addItem("Tecnología en Telemática");
 
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
+ // ComboBox Departamentos (para docentes/coordinadores)
+ ComBoxDepartamento.addItem("Seleccione un departamento");
+ ComBoxDepartamento.addItem("Sistemas");
+ ComBoxDepartamento.addItem("Electrónica");                 // ← NUEVO
+ ComBoxDepartamento.addItem("Instrumentación y Control");    // ← NUEVO
+ ComBoxDepartamento.addItem("Telemática");                  // ← NUEVO
+
+ // Intentar cargar desde BD como respaldo (opcional)
+ try {
+ List<Programa> programas = programaRepository.list();
+ if (!programas.isEmpty()) {
+ // Si hay programas en BD, agregar los que no están hardcoded
+ for (Programa programa : programas) {
+ String nombrePrograma = programa.getNombrePrograma();
+ boolean yaExiste = false;
+ for (int i = 0; i < ComBoxPrograma1.getItemCount(); i++) {
+ if (ComBoxPrograma1.getItemAt(i).equals(nombrePrograma)) {
+ yaExiste = true;
+ break;
+ }
+ }
+ if (!yaExiste) {
+ ComBoxPrograma1.addItem(nombrePrograma);
+ }
+ }
+ }
+ } catch (Exception e) {
+ System.err.println("Error cargando programas desde BD: " + e.getMessage());
+ // Los hardcoded ya están cargados, continuar
+ }
+ }
+ */
+
+
+/**
+ * This method is called from within the constructor to initialize the form.
+ * WARNING: Do NOT modify this code. The content of this method is always
+ * regenerated by the Form Editor.
+ */
+@SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -230,7 +213,7 @@ ComBoxPrograma1.removeAllItems();
         jSeparator2 = new javax.swing.JSeparator();
         txtCelular = new javax.swing.JTextField();
         txtContrasenia = new javax.swing.JPasswordField();
-        CBJefeDepartamento = new javax.swing.JCheckBox();
+        CBEJefeDepartamento = new javax.swing.JCheckBox();
         ComBoxDepartamento = new javax.swing.JComboBox<>();
         jSeparator8 = new javax.swing.JSeparator();
         txtNombre = new javax.swing.JTextField();
@@ -248,12 +231,9 @@ ComBoxPrograma1.removeAllItems();
         lblPrograma1 = new javax.swing.JLabel();
         ComBoxPrograma1 = new javax.swing.JComboBox<>();
         CBECoordinador1 = new javax.swing.JCheckBox();
-        CBECoordinador2 = new javax.swing.JCheckBox();
         BgImage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setLocationByPlatform(true);
-        setResizable(false);
 
         BackGround.setBackground(new java.awt.Color(0, 64, 128));
         BackGround.setPreferredSize(new java.awt.Dimension(910, 510));
@@ -338,7 +318,7 @@ ComBoxPrograma1.removeAllItems();
         pnlBttRegistrar.setLayout(pnlBttRegistrarLayout);
         pnlBttRegistrarLayout.setHorizontalGroup(
             pnlBttRegistrarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblBttRegistrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lblBttRegistrar, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
         );
         pnlBttRegistrarLayout.setVerticalGroup(
             pnlBttRegistrarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -374,17 +354,17 @@ ComBoxPrograma1.removeAllItems();
         });
         pnlBack.add(txtContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, 200, -1));
 
-        CBJefeDepartamento.setBackground(new java.awt.Color(255, 255, 255));
-        CBJefeDepartamento.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
-        CBJefeDepartamento.setForeground(new java.awt.Color(0, 0, 0));
-        CBJefeDepartamento.setText("Jefe Departamento");
-        CBJefeDepartamento.setToolTipText("");
-        CBJefeDepartamento.addActionListener(new java.awt.event.ActionListener() {
+        CBEJefeDepartamento.setBackground(new java.awt.Color(255, 255, 255));
+        CBEJefeDepartamento.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
+        CBEJefeDepartamento.setForeground(new java.awt.Color(0, 0, 0));
+        CBEJefeDepartamento.setText("JefeDepartamento");
+        CBEJefeDepartamento.setToolTipText("");
+        CBEJefeDepartamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CBJefeDepartamentoActionPerformed(evt);
+                CBEJefeDepartamentoActionPerformed(evt);
             }
         });
-        pnlBack.add(CBJefeDepartamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 330, -1, -1));
+        pnlBack.add(CBEJefeDepartamento, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 300, -1, -1));
 
         ComBoxDepartamento.setBackground(new java.awt.Color(255, 255, 255));
         ComBoxDepartamento.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
@@ -482,21 +462,9 @@ ComBoxPrograma1.removeAllItems();
                 CBECoordinador1ActionPerformed(evt);
             }
         });
-        pnlBack.add(CBECoordinador1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 300, -1, -1));
+        pnlBack.add(CBECoordinador1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 330, -1, -1));
 
-        CBECoordinador2.setBackground(new java.awt.Color(255, 255, 255));
-        CBECoordinador2.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
-        CBECoordinador2.setForeground(new java.awt.Color(0, 0, 0));
-        CBECoordinador2.setText("Coordinador");
-        CBECoordinador2.setToolTipText("");
-        CBECoordinador2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CBECoordinador2ActionPerformed(evt);
-            }
-        });
-        pnlBack.add(CBECoordinador2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 300, -1, -1));
-
-        BackGround.add(pnlBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, 640, 470));
+        BackGround.add(pnlBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 20, -1, -1));
 
         BgImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         BgImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/BackGroundSingIn.png"))); // NOI18N
@@ -514,32 +482,34 @@ ComBoxPrograma1.removeAllItems();
         );
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void CBEJefeDepartamentoActionPerformed(ActionEvent evt) {
+    }
 
     private void txtNombreMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNombreMousePressed
     manejarPlaceHolder(txtNombre, "Ingrese su Nombre", txtEmail, txtCelular, txtApellidos);
     restaurarPlaceholderPassword(txtContrasenia);
-    }//GEN-LAST:event_txtNombreMousePressed
+}//GEN-LAST:event_txtNombreMousePressed
 
-    private void txtApellidosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtApellidosMousePressed
-        manejarPlaceHolder(txtApellidos, "Ingrese sus Apellidos", txtEmail, txtCelular, txtNombre);
-        restaurarPlaceholderPassword(txtContrasenia);
-    }//GEN-LAST:event_txtApellidosMousePressed
+private void txtApellidosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtApellidosMousePressed
+    manejarPlaceHolder(txtApellidos, "Ingrese sus Apellidos", txtEmail, txtCelular, txtNombre);
+    restaurarPlaceholderPassword(txtContrasenia);
+}//GEN-LAST:event_txtApellidosMousePressed
 
-    
-    private void txtCelularMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCelularMousePressed
-         manejarPlaceHolder(txtCelular, "Ingrese su celular", txtNombre, txtEmail, txtApellidos);
-        restaurarPlaceholderPassword(txtContrasenia);
-    }//GEN-LAST:event_txtCelularMousePressed
 
-    private void txtEmailMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEmailMousePressed
-        manejarPlaceHolder(txtEmail, "Ingrese su Email", txtNombre, txtCelular, txtApellidos);
-        restaurarPlaceholderPassword(txtContrasenia);
-    }//GEN-LAST:event_txtEmailMousePressed
+private void txtCelularMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtCelularMousePressed
+    manejarPlaceHolder(txtCelular, "Ingrese su celular", txtNombre, txtEmail, txtApellidos);
+    restaurarPlaceholderPassword(txtContrasenia);
+}//GEN-LAST:event_txtCelularMousePressed
 
-    private void txtContraseniaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtContraseniaMousePressed
-       // Si el campo contraseña está en modo placeholder → lo limpio
+private void txtEmailMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtEmailMousePressed
+    manejarPlaceHolder(txtEmail, "Ingrese su Email", txtNombre, txtCelular, txtApellidos);
+    restaurarPlaceholderPassword(txtContrasenia);
+}//GEN-LAST:event_txtEmailMousePressed
+
+private void txtContraseniaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtContraseniaMousePressed
+    // Si el campo contraseña está en modo placeholder → lo limpio
     if (String.valueOf(txtContrasenia.getPassword()).equals("********")) {
         txtContrasenia.setText("");
         txtContrasenia.setForeground(Color.BLACK);
@@ -562,404 +532,425 @@ ComBoxPrograma1.removeAllItems();
         txtApellidos.setText("Ingrese sus Apellidos");
         txtApellidos.setForeground(Color.GRAY);
     }
-    }//GEN-LAST:event_txtContraseniaMousePressed
+}//GEN-LAST:event_txtContraseniaMousePressed
 
-    private void lblBttRegistrarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBttRegistrarMouseEntered
-      pnlBttRegistrar.setBackground(new Color(0,64,128));
-    }//GEN-LAST:event_lblBttRegistrarMouseEntered
+private void lblBttRegistrarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBttRegistrarMouseEntered
+    pnlBttRegistrar.setBackground(new Color(0, 64, 128));
+}//GEN-LAST:event_lblBttRegistrarMouseEntered
 
-    private void lblBttRegistrarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBttRegistrarMouseExited
-     pnlBttRegistrar.setBackground(new Color(0,102,204));
-    }//GEN-LAST:event_lblBttRegistrarMouseExited
+private void lblBttRegistrarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBttRegistrarMouseExited
+    pnlBttRegistrar.setBackground(new Color(0, 102, 204));
+}//GEN-LAST:event_lblBttRegistrarMouseExited
 
-    private void lblBttRegistrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBttRegistrarMouseClicked
+/**
+ * ✅ Cargar programas y departamentos desde el microservicio
+ */
+private void cargarOpcionesDesdeMicroservicio() {
+    try {
+        JsonObject opciones = authService.getRegistrationOptions();
 
-       // Obtener todos los datos del formulario
-        String nombre = txtNombre.getText().trim();
-        String apellidos = txtApellidos.getText().trim();
-        String celularStr = txtCelular.getText().trim();
-        String email = txtEmail.getText().trim();
-        String password = String.valueOf(txtContrasenia.getPassword()).trim();
-        
-        // Validar todos los campos y recopilar errores
-        List<String> errores = new ArrayList<>();
-        
-        // 1. Validar campos básicos obligatorios
-        if (nombre.isEmpty() || nombre.equals("Ingrese su Nombre")) {
-            errores.add("• El nombre es obligatorio");
+        // Cargar programas
+        ComBoxPrograma1.removeAllItems();
+        ComBoxPrograma1.addItem("Seleccione un programa");
+        JsonArray programasArray = opciones.get("programas").getAsJsonArray();
+        for (int i = 0; i < programasArray.size(); i++) {
+            ComBoxPrograma1.addItem(programasArray.get(i).getAsString());
         }
-        
-        if (apellidos.isEmpty() || apellidos.equals("Ingrese sus Apellidos ")) {
-            errores.add("• Los apellidos son obligatorios");
+
+        // Cargar departamentos
+        ComBoxDepartamento.removeAllItems();
+        ComBoxDepartamento.addItem("Seleccione un departamento");
+        JsonArray departamentosArray = opciones.get("departamentos").getAsJsonArray();
+        for (int i = 0; i < departamentosArray.size(); i++) {
+            ComBoxDepartamento.addItem(departamentosArray.get(i).getAsString());
         }
-        
-        if (email.isEmpty() || email.equals("Ingrese su Email ")) {
-            errores.add("• El correo electrónico es obligatorio");
-        }
-        
-        if (password.isEmpty() || password.equals("********")) {
-            errores.add("• La contraseña es obligatoria");
-        }
-        
-        // 2. Validar roles seleccionados
-        EnumSet<EnumRol> roles = obtenerRolesSeleccionados();
-        if (roles.isEmpty()) {
-            errores.add("• Debe seleccionar al menos un rol (Estudiante, Docente, Coordinador, Jefe Departamento )");
-        }
-        
-        // 3. Validar programa si es estudiante
-        if (roles.contains(EnumRol.ESTUDIANTE)) {
-            String programaSeleccionado = (String) ComBoxPrograma1.getSelectedItem();
-            if (programaSeleccionado == null || programaSeleccionado.equals("Seleccione un programa")) {
-                errores.add("• Debe seleccionar un programa académico (requerido para estudiantes)");
-            }
-        }
-        
-        // 4. Validar departamento si es docente o coordinador
-        if (roles.contains(EnumRol.DOCENTE) || roles.contains(EnumRol.COORDINADOR)) {
-            String deptSeleccionado = (String) ComBoxDepartamento.getSelectedItem();
-            if (deptSeleccionado == null || deptSeleccionado.equals("Seleccione un departamento")) {
-                errores.add("• Debe seleccionar un departamento (requerido para docentes/coordinadores/ Jefe Departamento)");
-            }
-        }
-        
-        // 5. Validar formato de correo si no está vacío
-        if (!email.isEmpty() && !email.equals("Ingrese su Email ")) {
-            if (!personaService.validateEmail(email)) {
-                errores.add("• El correo debe ser institucional (ejemplo: usuario@unicauca.edu.co)");
-            }
-        }
-        
-        // 6. Validar fortaleza de contraseña si no está vacía
-        if (!password.isEmpty() && !password.equals("********")) {
-            if (!personaService.validatePassword(password)) {
-                errores.add("• La contraseña debe tener mínimo 6 caracteres, al menos una mayúscula, un dígito y un carácter especial");
-            }
-        }
-        
-        // 7. Validar celular si se ingresó algo
-        if (!celularStr.isEmpty() && !celularStr.equals("Ingrese su celular")) {
-            if (!celularStr.matches("\\d+")) {
-                errores.add("• El celular debe contener solo números");
-            }
-        }
-        
-        // 8. Validar si ya existe el correo
-        if (!email.isEmpty() && !email.equals("Ingrese su Email ") && personaService.validateEmail(email)) {
-            if (personaService.personExists(email)) {
-                errores.add("• Ya existe una persona registrada con este correo electrónico");
-            }
-        }
-        
-        // Mostrar todos los errores si los hay
-        if (!errores.isEmpty()) {
-            StringBuilder mensajeError = new StringBuilder("Por favor corrige los siguientes errores:\n\n");
-            for (String error : errores) {
-                mensajeError.append(error).append("\n");
-            }
-            JOptionPane.showMessageDialog(this, mensajeError.toString(), "Errores de Validación", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Si llegamos aquí, todos los datos son válidos
-        // Procesar celular opcional
-        String celular = null;
-        if (!celularStr.isEmpty() && !celularStr.equals("Ingrese su celular")) {
-            celular = celularStr;
-        }
-        
-        // PASO 1: Obtener nombres seleccionados por el usuario
-        String nombrePrograma = null;
-        String nombreDepartamento = null ;
-        
-        if (roles.contains(EnumRol.ESTUDIANTE)) {
-            nombrePrograma = (String) ComBoxPrograma1.getSelectedItem();
-        }
-        
-        if (roles.contains(EnumRol.DOCENTE) || roles.contains(EnumRol.COORDINADOR)) {
-            nombreDepartamento = (String) ComBoxDepartamento.getSelectedItem();
-        }
-        
-        // PASO 2: PersonaService maneja todo el guardado internamente
-        // En lblBttRegistrarMouseClicked, envuelve la llamada al PersonaService:
-try {
-    boolean registrado = personaService.savePerson(nombre, apellidos, celular, email, password, roles, nombrePrograma, nombreDepartamento);
-    
-    if (registrado) {
-        JOptionPane.showMessageDialog(this, 
-            "¡Registro exitoso!\n\nLa persona ha sido registrada correctamente en el sistema.", 
-            "Registro Completado", 
-            JOptionPane.INFORMATION_MESSAGE);
-        irALogin();
-    } else {
-        JOptionPane.showMessageDialog(this, 
-            "Error interno del sistema.\n\nNo se pudo completar el registro. Por favor intente nuevamente.", 
-            "Error del Sistema", 
-            JOptionPane.ERROR_MESSAGE);
+
+    } catch (Exception e) {
+        // Fallback: cargar valores hardcodeados si el microservicio no responde
+        cargarProgramasFallback();
+        cargarDepartamentosFallback();
+        JOptionPane.showMessageDialog(this,
+                "No se pudieron cargar las opciones del servidor. Usando valores por defecto.",
+                "Advertencia",
+                JOptionPane.WARNING_MESSAGE);
     }
-} catch (Exception e) {
-    System.err.println("Excepción en registro GUI: " + e.getMessage());
-    e.printStackTrace();
-    JOptionPane.showMessageDialog(this, 
-        "Error inesperado: " + e.getMessage(), 
-        "Error del Sistema", 
-        JOptionPane.ERROR_MESSAGE);
 }
-    }//GEN-LAST:event_lblBttRegistrarMouseClicked
 
-    /**
-     * Validar campos básicos
-     */
-    private String validarCamposBasicos(String nombre, String apellidos, String email, String password) {
-        if (nombre.isEmpty() || nombre.equals("Ingrese su Nombre") ||
+/**
+ * ✅ Fallback para programas
+ */
+private void cargarProgramasFallback() {
+    ComBoxPrograma1.removeAllItems();
+    ComBoxPrograma1.addItem("Seleccione un programa");
+    ComBoxPrograma1.addItem("INGENIERIA_DE_SISTEMAS");
+    ComBoxPrograma1.addItem("INGENIERIA_ELECTRONICA_Y_TELECOMUNICACIONES");
+    ComBoxPrograma1.addItem("AUTOMATICA_INDUSTRIAL");
+    ComBoxPrograma1.addItem("TECNOLOGIA_EN_TELEMATICA");
+}
+
+/**
+ * ✅ Fallback para departamentos
+ */
+private void cargarDepartamentosFallback() {
+    ComBoxDepartamento.removeAllItems();
+    ComBoxDepartamento.addItem("Seleccione un departamento");
+    ComBoxDepartamento.addItem("SISTEMAS");
+    ComBoxDepartamento.addItem("ELECTRONICA");
+    ComBoxDepartamento.addItem("TELECOMUNICACIONES");
+    ComBoxDepartamento.addItem("TELEMATICA");
+    ComBoxDepartamento.addItem("AUTOMATICA_INDUSTRIAL");
+}
+
+
+
+
+private void lblBttRegistrarMouseClicked(java.awt.event.MouseEvent evt) {
+    // ✅ SOLO validar campos vacíos en el frontend
+    String nombre = txtNombre.getText().trim();
+    String apellidos = txtApellidos.getText().trim();
+    String celular = txtCelular.getText().trim();
+    String email = txtEmail.getText().trim();
+    String password = String.valueOf(txtContrasenia.getPassword()).trim();
+
+    List<String> erroresFrontend = new ArrayList<>();
+
+    // Validar campos obligatorios
+    if (nombre.isEmpty() || nombre.equals("Ingrese su Nombre")) {
+        erroresFrontend.add("• El nombre es obligatorio");
+    }
+    if (apellidos.isEmpty() || apellidos.equals("Ingrese sus Apellidos")) {
+        erroresFrontend.add("• Los apellidos son obligatorios");
+    }
+    if (email.isEmpty() || email.equals("Ingrese su Email")) {
+        erroresFrontend.add("• El email es obligatorio");
+    }
+    if (password.isEmpty() || password.equals("********")) {
+        erroresFrontend.add("• La contraseña es obligatoria");
+    }
+
+    // Validar roles seleccionados
+    Set<EnumRol> roles = obtenerRolesSeleccionados();
+    if (roles.isEmpty()) {
+        erroresFrontend.add("• Debe seleccionar al menos un rol");
+    }
+
+    // Validar programa si es estudiante
+    if (roles.contains(EnumRol.ESTUDIANTE)) {
+        String programa = (String) ComBoxPrograma1.getSelectedItem();
+        if (programa == null || programa.equals("Seleccione un programa")) {
+            erroresFrontend.add("• Debe seleccionar un programa para el rol Estudiante");
+        }
+    }
+
+    // Validar departamento si es docente, coordinador o jefe
+    boolean requiereDepto = roles.contains(EnumRol.DOCENTE) ||
+            roles.contains(EnumRol.COORDINADOR) ||
+            roles.contains(EnumRol.JEFE_DEPARTAMENTO);
+    if (requiereDepto) {
+        String departamento = (String) ComBoxDepartamento.getSelectedItem();
+        if (departamento == null || departamento.equals("Seleccione un departamento")) {
+            erroresFrontend.add("• Debe seleccionar un departamento para los roles Docente, Coordinador o Jefe de Departamento");
+        }
+    }
+
+    // Mostrar errores de frontend
+    if (!erroresFrontend.isEmpty()) {
+        StringBuilder mensaje = new StringBuilder("Por favor complete:\n\n");
+        for (String error : erroresFrontend) {
+            mensaje.append(error).append("\n");
+        }
+        JOptionPane.showMessageDialog(this, mensaje.toString(),
+                "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    try {
+        // ✅ MICROSERVICIO maneja TODA la validación de negocio
+        String programa = roles.contains(EnumRol.ESTUDIANTE) ?
+                (String) ComBoxPrograma1.getSelectedItem() : null;
+        String departamento = requiereDepto ?
+                (String) ComBoxDepartamento.getSelectedItem() : null;
+
+        // Procesar celular (opcional)
+        String celularProcesado = (celular.isEmpty() || celular.equals("Ingrese su celular")) ?
+                null : celular;
+
+        // Llamar al microservicio
+        Persona personaRegistrada = authService.register(
+                nombre, apellidos, celularProcesado, email, password,
+                roles, programa, departamento
+        );
+
+        // ✅ Éxito - microservicio aprobó todas las validaciones
+        JOptionPane.showMessageDialog(this,
+                "¡Registro exitoso!\nBienvenido/a " + personaRegistrada.getName(),
+                "Registro Completado",
+                JOptionPane.INFORMATION_MESSAGE);
+
+        irALogin();
+
+    } catch (Exception e) {
+        // ✅ MOSTRAR ERRORES DEL MICROSERVICIO
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(), // Mensaje del microservicio
+                "Error en Registro",
+                JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+/**
+ * Validar campos básicos
+ */
+private String validarCamposBasicos(String nombre, String apellidos, String email, String password) {
+    if (nombre.isEmpty() || nombre.equals("Ingrese su Nombre") ||
             apellidos.isEmpty() || apellidos.equals("Ingrese sus Apellidos ") ||
             email.isEmpty() || email.equals("Ingrese su Email ") ||
             password.isEmpty() || password.equals("********")) {
-            return "Por favor completa todos los campos obligatorios.";
-        }
-        return null; // Sin errores
+        return "Por favor completa todos los campos obligatorios.";
     }
-    
+    return null; // Sin errores
+}
 
-    
-  
-  
-    /**
-     * Obtener roles seleccionados
-     */
-     private EnumSet<EnumRol> obtenerRolesSeleccionados() {
-        EnumSet<EnumRol> roles = EnumSet.noneOf(EnumRol.class);
-        
-        if (CBEstudiante1.isSelected()) {
-            roles.add(EnumRol.ESTUDIANTE);
-        }
-        if (CBDocente1.isSelected()) {
-            roles.add(EnumRol.DOCENTE);
-        }
-        if (CBJefeDepartamento.isSelected()) {
-            roles.add(EnumRol.COORDINADOR);
-        }
-        
-        return roles;
-    }
-    
-   
-    
- /**
-     * Procesar celular (opcional)
-     */
-    private String procesarCelular(String celularStr) {
-        if (celularStr.isEmpty() || celularStr.equals("Ingrese su celular")) {
-            return null; // Celular opcional
-        }
-        
-        if (!celularStr.matches("\\d+")) {
-            return null; // Inválido
-        }
-        
-        return celularStr;
-    }
 
-    
+
+
 /**
-     * Obtener programa seleccionado
+ * Obtener roles seleccionados
+ */
+private Set<EnumRol> obtenerRolesSeleccionados() {
+    Set<EnumRol> roles = EnumSet.noneOf(EnumRol.class);
+
+    if (CBEstudiante1.isSelected()) {
+        roles.add(EnumRol.ESTUDIANTE);
+    }
+    if (CBDocente1.isSelected()) {
+        roles.add(EnumRol.DOCENTE);
+    }
+    if (CBECoordinador1.isSelected() || CBECoordinador1.isSelected()) {
+        roles.add(EnumRol.COORDINADOR);
+    }
+    if (CBEJefeDepartamento.isSelected()) {
+        roles.add(EnumRol.JEFE_DEPARTAMENTO);
+    }
+
+    return roles;
+}
+
+
+/**
+ * Procesar celular (opcional)
+ */
+private String procesarCelular(String celularStr) {
+    if (celularStr.isEmpty() || celularStr.equals("Ingrese su celular")) {
+        return null; // Celular opcional
+    }
+
+    if (!celularStr.matches("\\d+")) {
+        return null; // Inválido
+    }
+
+    return celularStr;
+}
+
+
+/**
+ * Obtener programa seleccionado
+
+ private Programa obtenerProgramaSeleccionado() {
+ String programaSeleccionado = (String) ComBoxPrograma1.getSelectedItem();
+ if (programaSeleccionado == null || programaSeleccionado.equals("Seleccione un programa")) {
+ return null;
+ }
+
+ try {
+ // Intentar buscar en la base de datos primero
+ List<Programa> programas = programaRepository.list();
+ for (Programa programa : programas) {
+ if (programa.getNombrePrograma().equals(programaSeleccionado)) {
+ return programa;
+ }
+ }
+
+ // Si no se encuentra en BD, crear un programa temporal con los datos básicos
+ // Esto asume que tienes una Facultad y Departamento por defecto
+ return crearProgramaTemporal(programaSeleccionado);
+
+ } catch (Exception e) {
+ System.err.println("Error buscando programa: " + e.getMessage());
+ // Crear programa temporal como fallback
+ return crearProgramaTemporal(programaSeleccionado);
+ }
+ }
+ */
+/**
+ * Obtener departamento seleccionado
+
+ private Departamento obtenerDepartamentoSeleccionado() {
+ String deptSeleccionado = (String) ComBoxDepartamento.getSelectedItem();
+ if (deptSeleccionado == null || deptSeleccionado.equals("Seleccione un departamento")) {
+ return null;
+ }
+
+ try {
+ // Intentar buscar en la base de datos primero
+ List<Departamento> departamentos = departamentoRepository.list();
+ for (Departamento dept : departamentos) {
+ if (dept.getNombre().equals(deptSeleccionado)) {
+ return dept;
+ }
+ }
+
+ // Si no se encuentra en BD, crear departamento temporal
+ return crearDepartamentoTemporal(deptSeleccionado);
+
+ } catch (Exception e) {
+ System.err.println("Error buscando departamento: " + e.getMessage());
+ // Crear departamento temporal como fallback
+ return crearDepartamentoTemporal(deptSeleccionado);
+ }
+ }*/
+
+/**
+ * Crear programa temporal cuando no existe en BD
+
+ private Programa crearProgramaTemporal(String nombrePrograma) {
+ try {
+ // Crear facultad FIET por defecto
+ Facultad facultad = new Facultad("Facultad de Ingeniería Electrónica y Telecomunicaciones");
+ facultad.setCodFacultad(1); // ID temporal
+
+ // Crear departamento de Sistemas por defecto
+ Departamento departamento = new Departamento("Sistemas", facultad);
+ departamento.setCodDepartamento(1); // ID temporal
+
+ // Crear programa
+ Programa programa = new Programa(nombrePrograma, departamento);
+ programa.setCodPrograma(1); // ID temporal
+
+ return programa;
+
+ } catch (ValidationException e) {
+ System.err.println("Error creando programa temporal: " + e.getMessage());
+ return null;
+ }
+ }
+ */
+/**
+ * Crear departamento temporal cuando no existe en BD
+ * private Departamento crearDepartamentoTemporal(String nombreDepartamento) {
+ * try {
+ * // Crear facultad FIET por defecto
+ * Facultad facultad = new Facultad("Facultad de Ingeniería Electrónica y Telecomunicaciones");
+ * facultad.setCodFacultad(1); // ID temporal
+ * <p>
+ * // Crear departamento
+ * Departamento departamento = new Departamento(nombreDepartamento, facultad);
+ * departamento.setCodDepartamento(1); // ID temporal
+ * <p>
+ * return departamento;
+ * <p>
+ * } catch (ValidationException e) {
+ * System.err.println("Error creando departamento temporal: " + e.getMessage());
+ * return null;
+ * }
+ * }
+ */
+
+
+private void CBJefeDepartamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBJefeDepartamentoActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_CBJefeDepartamentoActionPerformed
+
+private void CBEstudiante1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBEstudiante1ActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_CBEstudiante1ActionPerformed
+
+private void ComBoxDepartamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComBoxDepartamentoActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_ComBoxDepartamentoActionPerformed
+
+private void CBECoordinador1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBECoordinador1ActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_CBECoordinador1ActionPerformed
+
+private void CBECoordinador2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBECoordinador2ActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_CBECoordinador2ActionPerformed
+
+public void irALogin() {
+    GUILogin ventanaLogin = new GUILogin();
+    ventanaLogin.setVisible(true);
+    this.dispose();
+}
+
+// MANTENER TUS MÉTODOS DE PLACEHOLDER EXISTENTES
+private void manejarPlaceHolder(JTextField campo, String placeholder, JTextField... otros) {
+    if (campo.getText().equals(placeholder)) {
+        campo.setText("");
+        campo.setForeground(Color.BLACK);
+    }
+    for (JTextField otro : otros) {
+        if (otro.getText().isEmpty()) {
+            if (otro == txtNombre) otro.setText("Ingrese su Nombre");
+            if (otro == txtEmail) otro.setText("Ingrese su Email");
+            if (otro == txtCelular) otro.setText("Ingrese su celular");
+            if (otro == txtApellidos) otro.setText("Ingrese sus Apellidos");
+            otro.setForeground(Color.GRAY);
+        }
+    }
+}
+
+
+private void restaurarPlaceholderPassword(JPasswordField campo) {
+    if (String.valueOf(campo.getPassword()).isEmpty()) {
+        campo.setText("********");
+        campo.setForeground(Color.GRAY);
+    }
+}
+
+
+/**
+ * @param args the command line arguments
+ */
+public static void main(String args[]) {
+    /* Set the Nimbus look and feel */
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
      */
-    private Programa obtenerProgramaSeleccionado() {
-        String programaSeleccionado = (String) ComBoxPrograma1.getSelectedItem();
-        if (programaSeleccionado == null || programaSeleccionado.equals("Seleccione un programa")) {
-            return null;
-        }
-        
-        try {
-            // Intentar buscar en la base de datos primero
-            List<Programa> programas = programaRepository.list();
-            for (Programa programa : programas) {
-                if (programa.getNombrePrograma().equals(programaSeleccionado)) {
-                    return programa;
-                }
-            }
-            
-            // Si no se encuentra en BD, crear un programa temporal con los datos básicos
-            // Esto asume que tienes una Facultad y Departamento por defecto
-            return crearProgramaTemporal(programaSeleccionado);
-            
-        } catch (Exception e) {
-            System.err.println("Error buscando programa: " + e.getMessage());
-            // Crear programa temporal como fallback
-            return crearProgramaTemporal(programaSeleccionado);
-        }
-    }
-    
-    /**
-     * Obtener departamento seleccionado
-     */
-    private Departamento obtenerDepartamentoSeleccionado() {
-        String deptSeleccionado = (String) ComBoxDepartamento.getSelectedItem();
-        if (deptSeleccionado == null || deptSeleccionado.equals("Seleccione un departamento")) {
-            return null;
-        }
-        
-        try {
-            // Intentar buscar en la base de datos primero
-            List<Departamento> departamentos = departamentoRepository.list();
-            for (Departamento dept : departamentos) {
-                if (dept.getNombre().equals(deptSeleccionado)) {
-                    return dept;
-                }
-            }
-            
-            // Si no se encuentra en BD, crear departamento temporal
-            return crearDepartamentoTemporal(deptSeleccionado);
-            
-        } catch (Exception e) {
-            System.err.println("Error buscando departamento: " + e.getMessage());
-            // Crear departamento temporal como fallback
-            return crearDepartamentoTemporal(deptSeleccionado);
-        }
-    }
-    
-    /**
-     * Crear programa temporal cuando no existe en BD
-     */
-    private Programa crearProgramaTemporal(String nombrePrograma) {
-        try {
-            // Crear facultad FIET por defecto
-            Facultad facultad = new Facultad("Facultad de Ingeniería Electrónica y Telecomunicaciones");
-            facultad.setCodFacultad(1); // ID temporal
-            
-            // Crear departamento de Sistemas por defecto
-            Departamento departamento = new Departamento("Sistemas", facultad);
-            departamento.setCodDepartamento(1); // ID temporal
-            
-            // Crear programa
-            Programa programa = new Programa(nombrePrograma, departamento);
-            programa.setCodPrograma(1); // ID temporal
-            
-            return programa;
-            
-        } catch (ValidationException e) {
-            System.err.println("Error creando programa temporal: " + e.getMessage());
-            return null;
-        }
-    }
-    
-    /**
-     * Crear departamento temporal cuando no existe en BD
-     */
-    private Departamento crearDepartamentoTemporal(String nombreDepartamento) {
-        try {
-            // Crear facultad FIET por defecto
-            Facultad facultad = new Facultad("Facultad de Ingeniería Electrónica y Telecomunicaciones");
-            facultad.setCodFacultad(1); // ID temporal
-            
-            // Crear departamento
-            Departamento departamento = new Departamento(nombreDepartamento, facultad);
-            departamento.setCodDepartamento(1); // ID temporal
-            
-            return departamento;
-            
-        } catch (ValidationException e) {
-            System.err.println("Error creando departamento temporal: " + e.getMessage());
-            return null;
-        }
-    }
-    
-    
-
-    private void CBJefeDepartamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBJefeDepartamentoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CBJefeDepartamentoActionPerformed
-
-    private void CBEstudiante1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBEstudiante1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CBEstudiante1ActionPerformed
-
-    private void ComBoxDepartamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ComBoxDepartamentoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ComBoxDepartamentoActionPerformed
-
-    private void CBECoordinador1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBECoordinador1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CBECoordinador1ActionPerformed
-
-    private void CBECoordinador2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBECoordinador2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CBECoordinador2ActionPerformed
-   
-public void irALogin(){
-          GUILogin ventanaLogin = new GUILogin();
-        ventanaLogin.setVisible(true);
-        this.dispose();
-    }
-    
-    // MANTENER TUS MÉTODOS DE PLACEHOLDER EXISTENTES
-    private void manejarPlaceHolder(JTextField campo, String placeholder, JTextField... otros) {
-        if (campo.getText().equals(placeholder)) {
-            campo.setText("");
-            campo.setForeground(Color.BLACK);
-        }
-        for (JTextField otro : otros) {
-            if (otro.getText().isEmpty()) {
-                if (otro == txtNombre) otro.setText("Ingrese su Nombre");
-                if (otro == txtEmail) otro.setText("Ingrese su Email");
-                if (otro == txtCelular) otro.setText("Ingrese su celular");
-                if (otro == txtApellidos) otro.setText("Ingrese sus Apellidos");
-                otro.setForeground(Color.GRAY);
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                break;
             }
         }
+    } catch (ClassNotFoundException ex) {
+        java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (InstantiationException ex) {
+        java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (IllegalAccessException ex) {
+        java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
+    //</editor-fold>
 
-
-        private void restaurarPlaceholderPassword(JPasswordField campo) {
-        if (String.valueOf(campo.getPassword()).isEmpty()) {
-            campo.setText("********");
-            campo.setForeground(Color.GRAY);
-        }}
-
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUISingIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater(new Runnable() {
+        public void run() {
+            new GUISingIn().setVisible(true);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GUISingIn().setVisible(true);
-            }
-        });
-    }
+    });
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel BackGround;
     private javax.swing.JLabel BgImage;
     private javax.swing.JCheckBox CBDocente1;
     private javax.swing.JCheckBox CBECoordinador1;
-    private javax.swing.JCheckBox CBECoordinador2;
+    private javax.swing.JCheckBox CBEJefeDepartamento;
     private javax.swing.JCheckBox CBEstudiante1;
-    private javax.swing.JCheckBox CBJefeDepartamento;
     private javax.swing.JComboBox<String> ComBoxDepartamento;
     private javax.swing.JComboBox<String> ComBoxPrograma1;
     private javax.swing.JSeparator jSeparator1;
@@ -991,4 +982,9 @@ public void irALogin(){
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration//GEN-END:variables
+
 }
+
+
+
+

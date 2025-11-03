@@ -4,16 +4,20 @@
  */
 package co.unicauca.presentation;
 
+import co.unicauca.entity.Persona;
+
 /**
  *
  * @author User
  */
 public class GUISubirAnteproyecto extends javax.swing.JFrame {
 
+    Persona personaLogueado;
     /**
      * Creates new form GUISubirAnteproyecto
      */
-    public GUISubirAnteproyecto() {
+    public GUISubirAnteproyecto(Persona personaLogueado) {
+        this.personaLogueado = personaLogueado;
         initComponents();
     }
 
@@ -192,7 +196,7 @@ public class GUISubirAnteproyecto extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUISubirAnteproyecto().setVisible(true);
+               // new GUISubirAnteproyecto().setVisible(true);
             }
         });
     }

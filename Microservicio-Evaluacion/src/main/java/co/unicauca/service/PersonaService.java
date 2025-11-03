@@ -13,9 +13,11 @@ import java.util.Set;
 @Service
 public class PersonaService {
     private final PersonaRepository personaRepository;
+    private final FormatoAService formatoAService;
 
-    public PersonaService(PersonaRepository personaRepository) {
+    public PersonaService(PersonaRepository personaRepository, FormatoAService formatoAService) {
         this.personaRepository = personaRepository;
+        this.formatoAService = formatoAService;
     }
 
 
@@ -75,5 +77,34 @@ public class PersonaService {
 
         Optional<Persona> personaOpt = personaRepository.findByEmail(email);
         return personaOpt.orElse(null);
+    }
+
+    public List<Persona> listarDocentesDisponiblesParaEvaluar(Long idFormatoA) {
+        // 1️⃣ Obtener el FormatoA
+        FormatoA formato = formatoAService.findById(idFormatoA.longValue());
+        if (formato == null) {
+            return List.of(); // retornar lista vacía si no existe el formato
+        }
+
+        // 2️⃣ Obtener director y codirector
+        Persona director = findPersonaByEmail(formato.getProjectManager().getEmail());
+        Persona codirector = findPersonaByEmail(formato.getProjectCoManager().getEmail());
+
+        String departmentDirector = director != null ? director.getDepartment() : null;
+        String emailDirector = director != null ? director.getEmail() : null;
+        String emailCodirector = codirector != null ? codirector.getEmail() : null;
+
+        if (departmentDirector == null || departmentDirector.isBlank()) {
+            return List.of(); // si el director no tiene departamento, no hay docentes a listar
+        }
+
+        // 3️⃣ Listar todos los docentes del mismo departamento
+        List<Persona> docentes = personaRepository.findByDepartmentIgnoreCase(departmentDirector).stream()
+                .filter(p -> p.tieneRol(EnumRol.DOCENTE)) // solo docentes
+                .filter(p -> !p.getEmail().equalsIgnoreCase(emailDirector)) // excluir director
+                .filter(p -> !p.getEmail().equalsIgnoreCase(emailCodirector)) // excluir codirector
+                .toList();
+
+        return docentes;
     }
 }

@@ -407,4 +407,15 @@ public class ProyectoGradoService {
                 (Long) map.get("IdFormatoA")
         );
     }
+
+    @Transactional(readOnly = true)
+    public ProyectoGradoResponse buscarPorEmailEstudiante(String email) {
+        System.out.println("🔍 BUSCANDO proyecto de grado para estudiante: " + email);
+
+        ProyectoGrado proyecto = proyectoRepository.findByEstudiantesEmailContaining(email)
+                .orElseThrow(() -> new RuntimeException("No se encontró proyecto para el estudiante: " + email));
+
+        System.out.println("✅ PROYECTO ENCONTRADO - ID: " + proyecto.getId() + " | Estudiantes: " + proyecto.getEstudiantesEmail());
+        return convertirAResponse(proyecto);
+    }
 }

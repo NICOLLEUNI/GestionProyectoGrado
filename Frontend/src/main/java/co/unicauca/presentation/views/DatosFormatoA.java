@@ -42,6 +42,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
         boxModalidad.setModel(new javax.swing.DefaultComboBoxModel<>(EnumModalidad.values()));
         boxModalidad.setSelectedIndex(-1);
 
+
         initStyles();
         configurarModalidadListener();
 
@@ -56,7 +57,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
     private void cargarDocentesEnCombos() {
         try {
             List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
-
+            
             boxDirector.removeAllItems();
             boxCodirector.removeAllItems();
 
@@ -66,7 +67,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
                     boxCodirector.addItem(d);
                 }
             }
-
+            
             boxDirector.setSelectedIndex(-1);
             boxCodirector.setSelectedIndex(-1);
 
@@ -120,10 +121,10 @@ public class DatosFormatoA extends javax.swing.JPanel {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al cargar estudiantes desde el microservicio.");
+
         }
     }
-
-
+    
     /**
      * Activa/desactiva el segundo estudiante según la modalidad
      */
@@ -137,6 +138,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
                 boxEstudiante2.setEnabled(false);
                 boxEstudiante2.setSelectedIndex(-1);
             }
+
         });
     }
     
@@ -427,6 +429,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al continuar: " + e.getMessage());
         }
+
     }//GEN-LAST:event_btContinuarMouseClicked
 
     private void txtTituloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtTituloMouseClicked

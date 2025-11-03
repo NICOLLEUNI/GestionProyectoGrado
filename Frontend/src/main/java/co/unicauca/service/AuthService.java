@@ -1,5 +1,5 @@
 package co.unicauca.service;
-
+import co.unicauca.entity.EnumRol; // ✅ AGREGAR
 import co.unicauca.entity.Persona;
 import co.unicauca.utils.HttpUtil;
 import com.google.gson.Gson;
@@ -52,9 +52,11 @@ public class AuthService {
     /**
      * Convierte JSON del microservicio a objeto Persona
      */
+
     private Persona mapJsonToPersona(JsonObject personaJson) {
         Persona persona = new Persona();
 
+        // ✅ CORREGIDO: Usar getId() en lugar de getIdUsuario() del JSON
         persona.setIdUsuario(personaJson.get("id").getAsLong());
         persona.setName(personaJson.get("name").getAsString());
         persona.setLastname(personaJson.get("lastname").getAsString());
@@ -71,12 +73,12 @@ public class AuthService {
         }
 
         // Procesar roles - convertir de String a EnumRol
-        Set<co.unicauca.entity.EnumRol> roles = new HashSet<>();
+        Set<EnumRol> roles = new HashSet<>();
         JsonArray rolesArray = personaJson.get("roles").getAsJsonArray();
         for (int i = 0; i < rolesArray.size(); i++) {
             String rolString = rolesArray.get(i).getAsString();
             try {
-                co.unicauca.entity.EnumRol rol = co.unicauca.entity.EnumRol.valueOf(rolString);
+                EnumRol rol = EnumRol.valueOf(rolString);
                 roles.add(rol);
             } catch (IllegalArgumentException e) {
                 System.err.println("Rol desconocido: " + rolString);
@@ -86,7 +88,6 @@ public class AuthService {
 
         return persona;
     }
-
     /**
      * Verifica disponibilidad de email
      */
@@ -101,10 +102,86 @@ public class AuthService {
 
     /**
      * Obtiene roles y programas disponibles
-     */
+
     public JsonObject getAvailableRolesAndPrograms() throws Exception {
         String url = BASE_URL + "/roles";
         String responseJson = HttpUtil.get(url);
         return gson.fromJson(responseJson, JsonObject.class);
+    }*/
+    /**
+     * Registra un nuevo usuario en el microservicio
+     * ✅ TODA la validación la hace el microservicio
+     */
+    public Persona register(String name, String lastname, String phone, String email,
+                            String password, Set<EnumRol> roles, String programa,
+                            String departamento) throws Exception {
+        String url = BASE_URL + "/register";
+
+        // Crear JSON request
+        JsonObject registerRequest = new JsonObject();
+        registerRequest.addProperty("name", name);
+        registerRequest.addProperty("lastname", lastname);
+        registerRequest.addProperty("phone", phone != null ? phone : "");
+        registerRequest.addProperty("email", email);
+        registerRequest.addProperty("password", password);
+
+        // Convertir roles a JSON array
+        JsonArray rolesArray = new JsonArray();
+        for (EnumRol rol : roles) {
+            rolesArray.add(rol.name());
+        }
+        registerRequest.add("roles", rolesArray);
+
+        // Agregar programa y departamento si no son null
+        if (programa != null && !programa.equals("Seleccione un programa")) {
+            registerRequest.addProperty("programa", programa);
+        }
+        if (departamento != null && !departamento.equals("Seleccione un departamento")) {
+            registerRequest.addProperty("departamento", departamento);
+        }
+
+        String jsonRequest = gson.toJson(registerRequest);
+
+        // Llamar al microservicio - ✅ LA VALIDACIÓN ESTÁ AQUÍ
+        String responseJson = HttpUtil.post(url, jsonRequest);
+
+        // Procesar respuesta
+        JsonObject response = gson.fromJson(responseJson, JsonObject.class);
+
+        boolean success = response.get("success").getAsBoolean();
+        String message = response.get("message").getAsString();
+
+        if (success) {
+            JsonObject data = response.get("data").getAsJsonObject();
+            return mapJsonToPersona(data);
+        } else {
+            throw new Exception(message);
+        }
     }
+
+    /**
+     * Verifica si un email está disponible
+     */
+    public boolean isEmailAvailable(String email) throws Exception {
+        String url = BASE_URL + "/check-email?email=" + java.net.URLEncoder.encode(email, "UTF-8");
+        String responseJson = HttpUtil.get(url);
+
+        JsonObject response = gson.fromJson(responseJson, JsonObject.class);
+        return response.get("success").getAsBoolean() && response.get("data").getAsBoolean();
+    }
+
+    /**
+     * Obtiene roles, programas y departamentos disponibles del microservicio
+     */
+    public JsonObject getRegistrationOptions() throws Exception {
+        String url = BASE_URL + "/roles";
+        String responseJson = HttpUtil.get(url);
+        return gson.fromJson(responseJson, JsonObject.class);
+    }
+
+
+
+
+
+
 }

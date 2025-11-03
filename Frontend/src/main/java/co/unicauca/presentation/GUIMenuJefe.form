@@ -86,7 +86,7 @@
                               <EmptySpace min="57" pref="57" max="-2" attributes="0"/>
                               <Component id="Icon" min="-2" pref="158" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="btSubirFormatoA" alignment="0" min="-2" pref="270" max="-2" attributes="0"/>
+                          <Component id="btAnteproyectos" alignment="0" min="-2" pref="270" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
@@ -105,7 +105,7 @@
                       <EmptySpace min="18" pref="18" max="-2" attributes="0"/>
                       <Component id="Titulo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="31" pref="31" max="-2" attributes="0"/>
-                      <Component id="btSubirFormatoA" min="-2" pref="64" max="-2" attributes="0"/>
+                      <Component id="btAnteproyectos" min="-2" pref="64" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnCloseSesion" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
@@ -159,7 +159,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="btSubirFormatoA">
+            <Component class="javax.swing.JButton" name="btAnteproyectos">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ab" green="37" red="41" type="rgb"/>
@@ -189,7 +189,7 @@
                 <Property name="iconTextGap" type="int" value="7"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btSubirFormatoAMouseClicked"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btAnteproyectosMouseClicked"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="btnCloseSesion">

@@ -5,8 +5,11 @@
 package co.unicauca.presentation.views;
 
 
+import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.infra.Observer;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,13 +28,14 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
     private DefaultPieDataset dataset;
     private JFreeChart chart;
     private ChartPanel chartPanel;
+    private EvaluacionService evaluacionService;
 
-    private FormatoAService formatoAService;
 
-    public GraficoPastel() {
+
+    public GraficoPastel(EvaluacionService evaluacionService) {
         // Inicializamos el theme
+        this.evaluacionService = evaluacionService;
         FlatMTMaterialLighterIJTheme.setup();
-        this.formatoAService = formatoAService;
 
         initComponents();
         initGrafico();
@@ -51,18 +55,18 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
 
     private void cargarDatosIniciales() {
         // Cargamos datos iniciales desde el servicio
-        List<FormatoA> lista = formatoAService.listFormatoA();
+        List<DtoFormatoA> lista =  evaluacionService.listFormatoA();
         actualizarDataset(lista);
     }
 
-    private void actualizarDataset(List<FormatoA> lista) {
+    private void actualizarDataset(List<DtoFormatoA> lista) {
     int entregados = 0;
     int aprobados = 0;
     int rechazados = 0;
 
-    for (FormatoA f : lista) {
+    for (DtoFormatoA f : lista) {
         // Aseguramos que el estado no sea null
-        co.unicauca.workflow.domain.entities.enumEstado estado = f.getState();
+        EnumEstado estado = f.getState();
 
         if (estado == null) {
             entregados++;
@@ -132,11 +136,11 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
               if (o instanceof List<?>) {
             List<?> lista = (List<?>) o;
             if (!lista.isEmpty() && lista.get(0) instanceof FormatoA) {
-                actualizarDataset((List<FormatoA>) lista);
+                actualizarDataset((List<DtoFormatoA>) lista);
             }
         } else {
             // Si no pasan lista, la cargamos directamente del service
-            List<FormatoA> lista = formatoAService.listFormatoA();
+            List<DtoFormatoA> lista =  evaluacionService.listFormatoA();
             actualizarDataset(lista);
         }
     }

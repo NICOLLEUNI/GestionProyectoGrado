@@ -79,14 +79,10 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="34" pref="34" max="-2" attributes="0"/>
-                      <Component id="lblLogo" min="-2" pref="157" max="-2" attributes="0"/>
-                  </Group>
                   <Component id="Titulo" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="btConsultarFormatoA" min="-2" pref="258" max="-2" attributes="0"/>
+                      <Component id="btProyecto" min="-2" pref="258" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
@@ -96,17 +92,21 @@
                       <EmptySpace min="80" pref="80" max="-2" attributes="0"/>
                       <Component id="JButtonCloseSesion" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
+                      <Component id="lblLogo" min="-2" pref="157" max="-2" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       <Component id="lblLogo" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="Titulo" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="56" pref="56" max="-2" attributes="0"/>
-                      <Component id="btConsultarFormatoA" min="-2" pref="64" max="-2" attributes="0"/>
+                      <Component id="btProyecto" min="-2" pref="64" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                       <Component id="btRegresar" min="-2" pref="64" max="-2" attributes="0"/>
                       <EmptySpace min="109" pref="109" max="-2" attributes="0"/>
@@ -191,7 +191,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="btConsultarFormatoA">
+            <Component class="javax.swing.JButton" name="btProyecto">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ab" green="37" red="41" type="rgb"/>
@@ -220,8 +220,8 @@
                 <Property name="iconTextGap" type="int" value="7"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btConsultarFormatoAMouseClicked"/>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btConsultarFormatoAActionPerformed"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btProyectoMouseClicked"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btProyectoActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="JButtonCloseSesion">

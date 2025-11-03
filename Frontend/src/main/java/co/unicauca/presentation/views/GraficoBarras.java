@@ -7,7 +7,9 @@ package co.unicauca.presentation.views;
 
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.infra.Observer;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,11 +28,11 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer {
     private DefaultCategoryDataset dataset;
     private JFreeChart chart;
     private ChartPanel chartPanel;
-    private FormatoAService formatoAService;
+    private EvaluacionService evaluacionService;
 
-    public GraficoBarras() {
+    public GraficoBarras(EvaluacionService evaluacionService) {
+       this.evaluacionService = evaluacionService;
         FlatMTMaterialLighterIJTheme.setup();
-        this.formatoAService = formatoAService;
         initComponents();
         initGrafico();
         cargarDatosIniciales();
@@ -52,16 +54,16 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer {
     }
 
     private void cargarDatosIniciales() {
-        List<FormatoA> lista = formatoAService.listFormatoA();
+        List<DtoFormatoA> lista =  evaluacionService.listFormatoA();
         actualizarDataset(lista);
     }
 
-    private void actualizarDataset(List<FormatoA> lista) {
+    private void actualizarDataset(List<DtoFormatoA> lista) {
         int entregados = 0;
         int aprobados = 0;
         int rechazados = 0;
 
-        for (FormatoA f : lista) {
+        for (DtoFormatoA f : lista) {
             EnumEstado estado = f.getState();
             if (estado == null) {
                 entregados++;
@@ -130,10 +132,10 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer {
         if (o instanceof List<?>) {
             List<?> lista = (List<?>) o;
             if (!lista.isEmpty() && lista.get(0) instanceof FormatoA) {
-                actualizarDataset((List<FormatoA>) lista);
+                actualizarDataset((List<DtoFormatoA>) lista);
             }
         } else {
-            List<FormatoA> lista = formatoAService.listFormatoA();
+            List<DtoFormatoA> lista =  evaluacionService.listFormatoA();
             actualizarDataset(lista);
         }
     }

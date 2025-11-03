@@ -10,6 +10,7 @@ package co.unicauca.presentation;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.presentation.views.GraficoBarras;
 import co.unicauca.presentation.views.GraficoPastel;
 import co.unicauca.presentation.views.Observaciones;
@@ -39,8 +40,9 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
     
     //private List<FormatoA> listaFormateada = new ArrayList<>();
     
-   public GUIEvaluarFormato(Persona logueado)  {
+   public GUIEvaluarFormato(Persona logueado,EvaluacionService evaluacionService)  {
 
+        this.evaluacionService = evaluacionService;
         this.personaLogueado=logueado;
         initComponents();
         initContent();
@@ -49,8 +51,8 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
          }
 
    private void inicializarObservadores() {
-    GraficoPastel graficoPastel = new GraficoPastel();
-    GraficoBarras graficoBarras = new GraficoBarras();
+    GraficoPastel graficoPastel = new GraficoPastel(evaluacionService);
+    GraficoBarras graficoBarras = new GraficoBarras(evaluacionService);
 
        evaluacionService.addObserver(graficoPastel);
        evaluacionService.addObserver(graficoBarras);
@@ -75,27 +77,41 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
                             yPrincipal + framePastel.getHeight() + 30);
     frameBarras.setVisible(true);
 }
-private void cargarDatos() {
-    List<FormatoA> lista = evaluacionService.listFormatoA();
-
-    String[] columnas = {"ID", "Título", "Estado"};
-    DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
-
-    for (FormatoA f : lista) {
-        // Si getState() devuelve enumEstado
-        if (f.getState() == EnumEstado.ENTREGADO) {
-            Object[] fila = {
-                f.getId(),
-                f.getTitle(),
-                f.getState().getDescripcion() // Mostramos la descripción legible
-            };
-            modelo.addRow(fila);
+    private void cargarDatos() {
+        if (personaLogueado == null || personaLogueado.getPrograma() == null) {
+            System.err.println("⚠ No se pudo cargar el programa del usuario logueado.");
+            return;
         }
 
-    }
+        // Obtener el nombre del programa desde la persona logueada
+        String programa = personaLogueado.getPrograma();
 
-    jTable1.setModel(modelo);
-}
+        // Llamar al servicio para traer solo los formatos de ese programa
+        List<FormatoA> lista = evaluacionService.listarFormatosPorPrograma(programa);
+        System.out.println("DEBUG -> Programa usuario logueado: " + personaLogueado.getPrograma());
+
+        // Encabezados de la tabla
+        String[] columnas = {"ID", "Título", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+
+        // Poblar la tabla con los formatos entregados
+        if (lista != null) {
+            for (FormatoA f : lista) {
+                if (f.getState() == EnumEstado.ENTREGADO) {
+                    Object[] fila = {
+                            f.getId(),
+                            f.getTitle(),
+                            f.getState().getDescripcion() // descripción legible del estado
+                    };
+                    modelo.addRow(fila);
+                }
+            }
+        } else {
+            System.err.println("⚠ No se encontraron formatos para el programa: " + programa);
+        }
+
+        jTable1.setModel(modelo);
+    }
 
     private void cerrarGraficas() {
     if (framePastel != null) {
@@ -125,10 +141,10 @@ private void cargarDatos() {
      jTable1.getSelectionModel().addListSelectionListener(e -> {
        if (!e.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
         int fila = jTable1.getSelectedRow();
-        int id = (int) jTable1.getValueAt(fila, 0); // ID está en la columna 0
+        Long id = (Long) jTable1.getValueAt(fila, 0); // ID está en la columna 0
 
         // Buscar el FormatoA desde repo
-        FormatoA formato = evaluacionService.findById(id);
+        DtoFormatoA formato = evaluacionService.findById(id);
 
         if (formato != null) {
             Observaciones panelObs = new Observaciones(evaluacionService);
@@ -287,7 +303,7 @@ private void cargarDatos() {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
               
-                    new GUIEvaluarFormato(personaLogueado).setVisible(true);
+                   // new GUIEvaluarFormato(personaLogueado, evaluacionService).setVisible(true);
                 
             }
         });

@@ -38,11 +38,12 @@ public class ListaFormatosA extends javax.swing.JPanel {
         initListeners();
     }
 
+
     private void cargarDatos() {
         try {
             // 🔹 Obtener los formatos del docente logueado desde el microservicio
             formatosDocente = submissionService.getFormatosPorDocente(personaLogueada.getEmail());
-
+            
             // 🔹 Definir columnas de la tabla
             String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Contador"};
             DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
@@ -50,6 +51,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
                 public boolean isCellEditable(int row, int column) {
                     return false; // solo lectura
                 }
+
             };
 
             // 🔹 Llenar la tabla
@@ -127,8 +129,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
         }
     }
 
-
-
+    
     /**
      * Inicializa listeners para acciones en la tabla.
      * Ahora se abre DetallesFormatoA cuando se selecciona una fila (clic simple).
@@ -152,9 +153,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
             }
         });
     }
-
-
-
+    
 
     private void initStyles() {
         jTable1.setRowHeight(30);

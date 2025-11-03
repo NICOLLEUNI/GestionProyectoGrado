@@ -5,6 +5,7 @@
 package co.unicauca.presentation.views;
 
 
+import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 
@@ -22,61 +23,39 @@ import javax.swing.JOptionPane;
  */
 public class ListarAnteproyectos extends javax.swing.JPanel {
 
-     
-  
- private Persona personaLogueada;
-    private List<FormatoA> formatosUsuario;
 
-    public ListarAnteproyectos(Persona personaLogueada) {
-       
+
+    private Anteproyecto anteproyecto;
+
+    // ✅ Constructor que recibe Anteproyecto
+    public ListarAnteproyectos(Anteproyecto anteproyecto) {
+        initComponents();
+        this.anteproyecto = anteproyecto;
+        initStyles();
+        cargarDatos();
     }
 
     private void cargarDatos() {
-
-
-        // Traemos todos los formatos
-        List<FormatoA> todos = repo.list();
-        formatosUsuario = new ArrayList<>();
-
-        // Filtramos solo los formatos donde el usuario logueado esté como estudiante
-        for (FormatoA f : todos) {
-            if (f.getEstudiantes() != null) {
-                f.getEstudiantes().stream()
-                 .filter(e -> e.getIdUsuario() == personaLogueada.getIdUsuario())
-                 .findFirst()
-                 .ifPresent(e -> formatosUsuario.add(f));
-            }
-        }
-
-        // Columnas de la tabla
-        String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Versión"};
+        // ✅ Columnas de la tabla para anteproyectos
+        String[] columnas = {"ID", "Título", "Estado"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Long.class : String.class;
+            }
         };
 
-        // Llenamos la tabla
-        for (FormatoA f : formatosUsuario) {
-            enumEstado estado = f.getState() != null ? f.getState() : enumEstado.ENTREGADO;
-            String observaciones = f.getObservations() != null ? f.getObservations() : "";
-            int version = 1;
-
-            // Si hay versiones, tomamos la última
-            if (f.getVersiones() != null && !f.getVersiones().isEmpty()) {
-                FormatoAVersion ultima = f.getVersiones().get(f.getVersiones().size() - 1);
-                estado = ultima.getState();
-                observaciones = ultima.getObservations() != null ? ultima.getObservations() : "";
-                version = ultima.getNumeroVersion();
-            }
-
+        // ✅ Llenamos la tabla con el anteproyecto recibido
+        if (anteproyecto != null) {
             Object[] fila = {
-                f.getTitle() != null ? f.getTitle() : "",
-                f.getMode() != null ? f.getMode().name() : "N/A",
-                estado.name(),
-                observaciones,
-                version
+                    anteproyecto.getId(),
+                    anteproyecto.getTitulo() != null ? anteproyecto.getTitulo() : "",
+                    anteproyecto.getEstado() != null ? anteproyecto.getEstado() : "N/A"
             };
             modelo.addRow(fila);
         }

@@ -4,6 +4,7 @@
  */
 package co.unicauca.presentation.views;
 
+
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.entity.EnumModalidad;
@@ -48,9 +49,11 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
 
         initStyles();
 
+
         LocalDate hoy = LocalDate.now();
         Date fechaHoy = Date.from(hoy.atStartOfDay(ZoneId.systemDefault()).toInstant());
         dateChooser.setMinSelectableDate(fechaHoy); // ✅ funciona
+
 
 
         // Habilitar carta laboral solo si es práctica laboral
@@ -75,14 +78,14 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
     btnGuardar.putClientProperty("JButton.buttonType", "roundRect");
 
     // Estilo para el calendario: botón
-    dateChooser.getCalendarButton().putClientProperty("JButton.buttonType", "roundRect");
+    //dateChooser.getCalendarButton().putClientProperty("JButton.buttonType", "roundRect");
 
     // Campo de texto del calendario
       // Campo de texto del calendario
-    ((JTextField) dateChooser.getDateEditor().getUiComponent())
-            .setBackground(Color.WHITE);
-    ((JTextField) dateChooser.getDateEditor().getUiComponent())
-            .setBorder(javax.swing.BorderFactory.createLineBorder(new Color(30, 144, 255)));
+    //((JTextField) dateChooser.getDateEditor().getUiComponent())
+        //    .setBackground(Color.WHITE);
+   // ((JTextField) dateChooser.getDateEditor().getUiComponent())
+          //  .setBorder(javax.swing.BorderFactory.createLineBorder(new Color(30, 144, 255)));
 
     // 🔹 Colores del popup del calendario (JXMonthView)
     UIManager.put("JXMonthView.background", Color.WHITE);               // Fondo
@@ -312,6 +315,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
 
 
             JOptionPane.showMessageDialog(this, "Formato A actualizado con éxito.");
+
             showJPanel(new Principal(persona));
 
         } catch (Exception e) {

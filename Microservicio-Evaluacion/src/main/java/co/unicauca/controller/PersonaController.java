@@ -53,4 +53,10 @@ public class PersonaController {
         }
         return ResponseEntity.ok(persona);
     }
+
+    @GetMapping("/docentesDisponibles/{idFormatoA}")
+    public ResponseEntity<List<Persona>> listarDocentesDisponibles(@PathVariable Long idFormatoA) {
+        List<Persona> docentes = personaService.listarDocentesDisponiblesParaEvaluar(idFormatoA);
+        return ResponseEntity.ok(docentes);
+    }
 }
