@@ -291,7 +291,10 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
         ventanaCoord.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btVolverMouseClicked
-
+    public void recargarTabla() {
+        cargarDatos(); // reutiliza el método existente
+        System.out.println("✅ Tabla de formatos actualizada tras evaluación.");
+    }
     /**
      * @param args the command line arguments
      */

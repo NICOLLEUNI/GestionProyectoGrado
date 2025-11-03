@@ -444,54 +444,63 @@ public class Observaciones extends javax.swing.JPanel {
     }//GEN-LAST:event_CBXRechazadoMouseClicked
 
     private void btEvaluarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEvaluarMouseClicked
-try {
-        // Obtener el estado
-        String estado = null;
-        if (CBXAprobado.isSelected()) {
-            estado = "APROBADO";
-        } else if (CBXRechazado.isSelected()) {
-            estado = "RECHAZADO";
+        try {
+            // Obtener el estado
+            String estado = null;
+            if (CBXAprobado.isSelected()) {
+                estado = "APROBADO";
+            } else if (CBXRechazado.isSelected()) {
+                estado = "RECHAZADO";
+            }
+
+            if (estado == null) {
+                JOptionPane.showMessageDialog(this, "Debes seleccionar Aprobado o Rechazado.");
+                return;
+            }
+
+            // Obtener observaciones
+            String observaciones = txtObservaciones.getText().trim();
+
+            // Validar si está rechazado y no hay observaciones
+            if (estado.equals("RECHAZADO") && (observaciones.isEmpty() || observaciones.equals("Ingrese sus Observaciones"))) {
+                JOptionPane.showMessageDialog(this, "Las observaciones son obligatorias si se rechaza.");
+                return;
+            }
+
+            // Obtener el formato actual
+            Long idFormato = formatoActual.getId();
+
+            // Actualizar estado y observaciones del FormatoA principal
+            formatoActual.setState(EnumEstado.valueOf(estado));
+            formatoActual.setObservations(observaciones);
+
+            // Llamar al servicio para actualizar el FormatoA principal
+            boolean actualizado = evaluacionService.updateEstadoObservaciones(
+                    idFormato, estado, observaciones);
+
+            if (actualizado) {
+                JOptionPane.showMessageDialog(this, "Formato evaluado correctamente.");
+                this.setVisible(false);
+
+                // 🔄 Refrescar la tabla del GUIEvaluarFormato
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    java.awt.Container parent = this.getParent();
+                    while (parent != null && !(parent instanceof co.unicauca.presentation.GUIEvaluarFormato)) {
+                        parent = parent.getParent();
+                    }
+                    if (parent instanceof co.unicauca.presentation.GUIEvaluarFormato gui) {
+                        gui.recargarTabla();
+                    }
+                });
+
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo actualizar el formato.");
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al evaluar: " + ex.getMessage());
+            ex.printStackTrace();
         }
-
-        if (estado == null) {
-            JOptionPane.showMessageDialog(this, "Debes seleccionar Aprobado o Rechazado.");
-            return;
-        }
-
-        // Obtener observaciones
-        String observaciones = txtObservaciones.getText().trim();
-
-        // Validar si está rechazado y no hay observaciones
-        if (estado.equals("RECHAZADO") && (observaciones.isEmpty() || observaciones.equals("Ingrese sus Observaciones"))) {
-            JOptionPane.showMessageDialog(this, "Las observaciones son obligatorias si se rechaza.");
-            return;
-        }
-
-        //Obtener el formato actual
-        Long idFormato = formatoActual.getId();
-        
-
-        // Actualizar estado y observaciones del FormatoA principal
-        formatoActual.setState(EnumEstado.valueOf(estado));
-        formatoActual.setObservations(observaciones);
-
-        // Llamar al servicio para actualizar el FormatoA principal
-        boolean actualizado =  evaluacionService.updateEstadoObservaciones(
-           idFormato, estado, observaciones);
-
-    if (actualizado) {
-        JOptionPane.showMessageDialog(this, "Formato evaluado correctamente.");
-        this.setVisible(false);
-    } else {
-        JOptionPane.showMessageDialog(this, "No se pudo actualizar el formato.");
-    }
-
-
-
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, "Error al evaluar: " + ex.getMessage());
-        ex.printStackTrace();
-    }
     }//GEN-LAST:event_btEvaluarMouseClicked
     
 
