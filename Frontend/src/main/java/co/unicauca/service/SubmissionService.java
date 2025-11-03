@@ -52,13 +52,18 @@ public class SubmissionService {
      */
     public List<FormatoA> getFormatosPorDocente(String email) {
         try {
-            String url = BASE_URL + "/docente/" + email;
-            String jsonResponse = HttpUtil.get(url); // Aquí se hace GET al endpoint
+            String url = BASE_URL + "/formatoA/docente/" + email;
+            String jsonResponse = HttpUtil.get(url);
+
+            System.out.println("📦 JSON recibido: " + jsonResponse); // DEBUG
+
             Type listType = new TypeToken<List<FormatoA>>() {}.getType();
             return gson.fromJson(jsonResponse, listType);
+
         } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<>(); // Retornamos lista vacía en caso de error
+            System.err.println("❌ Error en getFormatosPorDocente: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
 
