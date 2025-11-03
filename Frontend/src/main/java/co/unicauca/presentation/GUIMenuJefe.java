@@ -38,6 +38,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btAnteproyectos = new javax.swing.JButton();
         btnCloseSesion = new javax.swing.JButton();
+        btRegresar = new javax.swing.JButton();
         Contenido = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -47,9 +48,11 @@ public class GUIMenuJefe extends javax.swing.JFrame {
 
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setPreferredSize(new java.awt.Dimension(270, 512));
+        Menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         Icon.setText("jLabel2");
+        Menu.add(Icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(57, 22, 158, -1));
 
         Titulo.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -71,6 +74,8 @@ public class GUIMenuJefe extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        Menu.add(Titulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 110, 270, -1));
+
         btAnteproyectos.setBackground(new java.awt.Color(65, 55, 171));
         btAnteproyectos.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btAnteproyectos.setForeground(new java.awt.Color(255, 255, 255));
@@ -86,6 +91,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
                 btAnteproyectosMouseClicked(evt);
             }
         });
+        Menu.add(btAnteproyectos, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 270, 64));
 
         btnCloseSesion.setBackground(new java.awt.Color(65, 55, 171));
         btnCloseSesion.setForeground(new java.awt.Color(255, 255, 255));
@@ -95,37 +101,24 @@ public class GUIMenuJefe extends javax.swing.JFrame {
                 btnCloseSesionActionPerformed(evt);
             }
         });
+        Menu.add(btnCloseSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(81, 457, -1, -1));
 
-        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
-        Menu.setLayout(MenuLayout);
-        MenuLayout.setHorizontalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Titulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(MenuLayout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btAnteproyectos, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(81, 81, 81)
-                .addComponent(btnCloseSesion)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        MenuLayout.setVerticalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(Icon)
-                .addGap(18, 18, 18)
-                .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(btAnteproyectos, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCloseSesion)
-                .addGap(33, 33, 33))
-        );
+        btRegresar.setBackground(new java.awt.Color(65, 55, 171));
+        btRegresar.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        btRegresar.setForeground(new java.awt.Color(255, 255, 255));
+        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
+        btRegresar.setText("Volver");
+        btRegresar.setToolTipText("");
+        btRegresar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        btRegresar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btRegresar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btRegresar.setIconTextGap(7);
+        btRegresar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btRegresarMouseClicked(evt);
+            }
+        });
+        Menu.add(btRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 254, 270, 64));
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(641, 498));
@@ -186,6 +179,13 @@ public class GUIMenuJefe extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_btnCloseSesionActionPerformed
 
+    private void btRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btRegresarMouseClicked
+
+        GUIMenuPrincipal ventanaPrincipal = new GUIMenuPrincipal(personaLogueado);
+        ventanaPrincipal.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btRegresarMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -228,6 +228,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
     private javax.swing.JPanel Menu;
     private javax.swing.JPanel Titulo;
     private javax.swing.JButton btAnteproyectos;
+    private javax.swing.JButton btRegresar;
     private javax.swing.JButton btnCloseSesion;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
