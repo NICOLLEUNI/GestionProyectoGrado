@@ -43,7 +43,7 @@ public class DataLoader implements CommandLineRunner {
         codirector.setName("María Soto");
         codirector.setLastname("Pérez");
         codirector.setEmail("maria.soto@unicauca.edu.co");
-        codirector.setDepartment("Ingeniería de Sistemas");
+        codirector.setDepartment("INGENIERIA_DE_SISTEMAS");
         codirector.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
         Persona estudiante1 = new Persona();
@@ -51,16 +51,18 @@ public class DataLoader implements CommandLineRunner {
         estudiante1.setName("Nicolle");
         estudiante1.setLastname("Montaño");
         estudiante1.setEmail("nicolle.montano@unicauca.edu.co");
-        estudiante1.setDepartment("Ingeniería de Sistemas");
+        estudiante1.setDepartment("INGENIERIA_DE_SISTEMAS");
         estudiante1.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
+        estudiante1.setPrograma("INGENIERIA_DE_SISTEMAS");
 
         Persona estudiante2 = new Persona();
         estudiante2.setIdUsuario(4L);
         estudiante2.setName("Juan");
         estudiante2.setLastname("Pérez");
         estudiante2.setEmail("juan.perez@unicauca.edu.co");
-        estudiante2.setDepartment("Ingeniería de Sistemas");
+        estudiante2.setDepartment("INGENIERIA_DE_SISTEMAS");
         estudiante2.setRoles(EnumSet.of(EnumRol.ESTUDIANTE));
+        estudiante2.setPrograma("INGENIERIA_DE_SISTEMAS");
 
         personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2));
 

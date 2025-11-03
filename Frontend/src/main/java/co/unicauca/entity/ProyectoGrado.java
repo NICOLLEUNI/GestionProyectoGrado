@@ -8,7 +8,7 @@ public class ProyectoGrado {
 
     private long id;
     private String nombre;
-    private LocalDateTime fechaCreacion;
+    public LocalDateTime fechaCreacion;
     private List<String> estudiantesEmail;
     private FormatoA formatoAActual;
     private List<FormatoAVersion> historialFormatosA = new ArrayList<>();

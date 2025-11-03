@@ -6,7 +6,7 @@ public class FormatoAVersion {
 
     private Long id;
     private int numeroVersion;
-    private LocalDate fecha;
+    public LocalDate fecha;
     private String title;
     private EnumModalidad mode;
     private String generalObjetive;

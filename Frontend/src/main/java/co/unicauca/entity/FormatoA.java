@@ -16,7 +16,7 @@ public class FormatoA {
         private EnumModalidad mode;
         private String projectManagerEmail;
         private String projectCoManagerEmail;
-        private LocalDate date;
+        public LocalDate date;
         private String generalObjetive;
         private String specificObjetives;
         private String archivoPDF;

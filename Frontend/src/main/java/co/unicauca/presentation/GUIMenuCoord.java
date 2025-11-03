@@ -7,6 +7,7 @@ package co.unicauca.presentation;
 
 import co.unicauca.entity.Persona;
 import co.unicauca.presentation.views.Principal;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -20,6 +21,7 @@ public class GUIMenuCoord extends javax.swing.JFrame {
     /**
      * Creates new form GUIMenuCoord
      */
+    EvaluacionService service = new EvaluacionService();
     private static Persona personaLogueado;
      
     public GUIMenuCoord(Persona logueado) {
@@ -220,7 +222,7 @@ public class GUIMenuCoord extends javax.swing.JFrame {
     private void btEvaluarFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEvaluarFormatoAMouseClicked
      GUIEvaluarFormato ventanaEvaluar = null;
     
-             ventanaEvaluar = new GUIEvaluarFormato(personaLogueado);  
+     ventanaEvaluar = new GUIEvaluarFormato(personaLogueado, service);
         ventanaEvaluar.setVisible(true);        
         this.dispose(); 
     }//GEN-LAST:event_btEvaluarFormatoAMouseClicked

@@ -7,6 +7,7 @@ package co.unicauca.presentation.views;
 import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.service.EvaluacionService;
 
 import java.util.List;
@@ -272,11 +273,11 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         lblUTitulo.setText(anteproyecto.getTitulo() != null ? anteproyecto.getTitulo() : "Sin título");
 
         // 🔍 Buscar el FormatoA correspondiente según el título
-        List<FormatoA> formatos = evaluacionService.listFormatoA();
-        FormatoA formatoRelacionado = null;
+        List<DtoFormatoA> formatos = evaluacionService.listFormatoA();
+        DtoFormatoA formatoRelacionado = null;
 
         if (formatos != null && !formatos.isEmpty()) {
-            for (FormatoA formato : formatos) {
+            for (DtoFormatoA formato : formatos) {
                 if (formato.getTitle() != null && formato.getTitle().equalsIgnoreCase(anteproyecto.getTitulo())) {
                     formatoRelacionado = formato;
                     break;
@@ -287,8 +288,8 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         // 🎓 Si se encontró un formato A con ese título, extraer sus datos
         if (formatoRelacionado != null) {
             // Director
-            if (formatoRelacionado.getProjectManagerEmail() != null) {
-                Persona director = evaluacionService.findPersonaByEmail(formatoRelacionado.getProjectManagerEmail());
+            if (formatoRelacionado.getProjectManager().getEmail() != null) {
+                Persona director = evaluacionService.findPersonaByEmail(formatoRelacionado.getProjectManager().getEmail());
                 lblUDirector.setText(
                         director != null
                                 ? director.getName() + " " + director.getLastname()
@@ -301,27 +302,20 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
                 // Llenar combo boxes con docentes disponibles
                 cargarEvaluadoresDisponibles(formatoRelacionado.getId());
             }
+            // 👩‍🎓 Estudiantes del formato relacionado
+            List<Persona> estudiantes = formatoRelacionado.getEstudiantes();
 
-            // 👩‍🎓 Estudiantes
-            List<String> correosEstudiantes = formatoRelacionado.getEstudianteEmails();
-            if (correosEstudiantes != null && !correosEstudiantes.isEmpty()) {
-                Persona est1 = evaluacionService.findPersonaByEmail(correosEstudiantes.get(0));
-                lblUEstudiante.setText(
-                        est1 != null
-                                ? est1.getName() + " " + est1.getLastname()
-                                : "Estudiante no encontrado"
-                );
+            if (estudiantes != null && !estudiantes.isEmpty()) {
+                Persona est1 = estudiantes.get(0);
+                lblUEstudiante.setText(est1.getName() + " " + est1.getLastname());
 
-                if (correosEstudiantes.size() > 1) {
-                    Persona est2 = evaluacionService.findPersonaByEmail(correosEstudiantes.get(1));
-                    lblUEstudiante2.setText(
-                            est2 != null
-                                    ? est2.getName() + " " + est2.getLastname()
-                                    : "Sin segundo estudiante"
-                    );
+                if (estudiantes.size() > 1) {
+                    Persona est2 = estudiantes.get(1);
+                    lblUEstudiante2.setText(est2.getName() + " " + est2.getLastname());
                 } else {
                     lblUEstudiante2.setText("Sin segundo estudiante");
                 }
+
             } else {
                 lblUEstudiante.setText("Sin estudiantes");
                 lblUEstudiante2.setText("Sin segundo estudiante");
