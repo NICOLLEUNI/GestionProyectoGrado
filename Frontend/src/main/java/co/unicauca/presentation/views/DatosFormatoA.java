@@ -5,6 +5,8 @@
 package co.unicauca.presentation.views;
 
 
+import co.unicauca.entity.EnumModalidad;
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
@@ -32,7 +34,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
         initComponents();
         this.persona=persona;
         
-        boxModalidad.setModel(new javax.swing.DefaultComboBoxModel<>(enumModalidad.values()));
+        boxModalidad.setModel(new javax.swing.DefaultComboBoxModel<>(EnumModalidad.values()));
           boxModalidad.setSelectedIndex(-1);
         initStyles();
         cargarDocentesEnCombos();
@@ -46,18 +48,18 @@ public class DatosFormatoA extends javax.swing.JPanel {
 
             //preguntarle a Nicolle sobre el uso del repo
 
-            List<Docente> docentes = repo.list();
+           // List<Docente> docentes = repo.list();
 
             // Limpiar los combos
             boxDirector.removeAllItems();
             boxCodirector.removeAllItems();
 
-            if (docentes != null) {
+            /*if (docentes != null) {
                 for (Docente d : docentes) {
                     boxDirector.addItem(d);
                     boxCodirector.addItem(d);
                 }
-            }
+            }*/
             boxDirector.setSelectedIndex(-1);
                 boxCodirector.setSelectedIndex(-1);
         } catch (Exception e) {
@@ -69,17 +71,17 @@ public class DatosFormatoA extends javax.swing.JPanel {
         try {
             // Obtener lista de estudiantes del repositorio
             // ✅ Obtener solo los estudiantes libres
-        List<Estudiante> estudiantes = obtenerEstudiantesSinFormatoA();
+       // List<Estudiante> estudiantes = obtenerEstudiantesSinFormatoA();
             // Limpiar combos
             boxEstudiante1.removeAllItems();
             boxEstudiante2.removeAllItems();
 
-            if (estudiantes != null) {
+            /*if (estudiantes != null) {
                 for (Estudiante e : estudiantes) {
                     boxEstudiante1.addItem(e);
                     boxEstudiante2.addItem(e);
                 }
-            }
+            }*/
            boxEstudiante1.setSelectedIndex(-1);
            boxEstudiante2.setSelectedIndex(-1);
             // Inicialmente, estudiante2 deshabilitado
@@ -89,7 +91,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    public List<Estudiante> obtenerEstudiantesSinFormatoA() {
+    /*public List<Estudiante> obtenerEstudiantesSinFormatoA() {
     // 🔹 1. Obtener todos los estudiantes
     List<Estudiante> estudiantes = repoEstudiantes.list();
 
@@ -121,11 +123,11 @@ public class DatosFormatoA extends javax.swing.JPanel {
     }
 
     return libres;
-}
+}*/
     private void configurarModalidadListener() {
         boxModalidad.addActionListener(e -> {
-            enumModalidad modalidad = (enumModalidad) boxModalidad.getSelectedItem();
-             if (modalidad != null && modalidad == enumModalidad.INVESTIGACION) {
+            EnumModalidad modalidad = (EnumModalidad) boxModalidad.getSelectedItem();
+             if (modalidad != null && modalidad == EnumModalidad.INVESTIGACION) {
         boxEstudiante2.setEnabled(true);
           boxEstudiante2.setSelectedIndex(-1);
     } else {
@@ -397,7 +399,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
         // Si todo es válido, recién construyes FormatoA
         FormatoA formato = new FormatoA();
         formato.setTitle(txtTitulo.getText());
-        formato.setMode((enumModalidad) boxModalidad.getSelectedItem());
+        formato.setMode((EnumModalidad) boxModalidad.getSelectedItem());
         formato.setDate(LocalDate.now()); 
         formato.setGeneralObjetive(txtObjGen.getText());
         formato.setSpecificObjetives(txtObjEspecificos.getText());
@@ -405,7 +407,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
         formato.setArchivoPDF("pendiente.pdf"); 
         formato.setCounter(0);
 
-        Docente manager = (Docente) boxDirector.getSelectedItem();
+        /*Docente manager = (Docente) boxDirector.getSelectedItem();
         formato.setProjectManager(manager);
 
         Docente coManager = (Docente) boxCodirector.getSelectedItem();
@@ -422,7 +424,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
 
         AdjuntarDocumentos panelDocs = new AdjuntarDocumentos(formato,persona);
         showJPanel(panelDocs);
-
+*/
     } catch (Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Error al continuar: " + e.getMessage());
@@ -518,11 +520,11 @@ private boolean validarCampos() {
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
-    private javax.swing.JComboBox<Docente> boxCodirector;
-    private javax.swing.JComboBox<Docente> boxDirector;
-    private javax.swing.JComboBox<Estudiante> boxEstudiante1;
-    private javax.swing.JComboBox<Estudiante> boxEstudiante2;
-    private javax.swing.JComboBox<enumModalidad> boxModalidad;
+    private javax.swing.JComboBox<Persona> boxCodirector;
+    private javax.swing.JComboBox<Persona> boxDirector;
+    private javax.swing.JComboBox<Persona> boxEstudiante1;
+    private javax.swing.JComboBox<Persona> boxEstudiante2;
+    private javax.swing.JComboBox<EnumModalidad> boxModalidad;
     private javax.swing.JButton btContinuar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

@@ -5,6 +5,8 @@
 package co.unicauca.presentation.views;
 
 
+import co.unicauca.entity.EnumModalidad;
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
@@ -45,11 +47,11 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
 
         initStyles();
 
-        dateChooser.setMinSelectableDate(java.sql.Date.valueOf(LocalDate.now()));
+      //  dateChooser.setMinSelectableDate(java.sql.Date.valueOf(LocalDate.now()));
        
         
         // Habilitar carta laboral solo si es práctica laboral
-        if (formatoA.getMode() != enumModalidad.PRACTICA_PROFESIONAL) {
+        if (formatoA.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
             btCarta.setEnabled(false);
         }
         
@@ -70,14 +72,14 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
     btnGuardar.putClientProperty("JButton.buttonType", "roundRect");
 
     // Estilo para el calendario: botón
-    dateChooser.getCalendarButton().putClientProperty("JButton.buttonType", "roundRect");
+    //dateChooser.getCalendarButton().putClientProperty("JButton.buttonType", "roundRect");
 
     // Campo de texto del calendario
       // Campo de texto del calendario
-    ((JTextField) dateChooser.getDateEditor().getUiComponent())
-            .setBackground(Color.WHITE);
-    ((JTextField) dateChooser.getDateEditor().getUiComponent())
-            .setBorder(javax.swing.BorderFactory.createLineBorder(new Color(30, 144, 255)));
+    //((JTextField) dateChooser.getDateEditor().getUiComponent())
+        //    .setBackground(Color.WHITE);
+   // ((JTextField) dateChooser.getDateEditor().getUiComponent())
+          //  .setBorder(javax.swing.BorderFactory.createLineBorder(new Color(30, 144, 255)));
 
     // 🔹 Colores del popup del calendario (JXMonthView)
     UIManager.put("JXMonthView.background", Color.WHITE);               // Fondo
@@ -258,7 +260,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseClicked
-        if (dateChooser.getDate() == null) {
+       /* if (dateChooser.getDate() == null) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fecha.");
             return;
         }
@@ -273,7 +275,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
               showJPanel(new Principal(persona));
         } else {
             JOptionPane.showMessageDialog(this, "Error al guardar el Formato A.");
-        }
+      } */
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void btPDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btPDFMousePressed
@@ -284,9 +286,9 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
             FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
             fileChooser.setFileFilter(filtro);
 
-            int resultado = fileChooser.showOpenDialog(this);
+          //  int resultado = fileChooser.showOpenDialog(this);
 
-            if (resultado == JFileChooser.APPROVE_OPTION) {
+            /*if (resultado == JFileChooser.APPROVE_OPTION) {
                 File archivoSeleccionado = fileChooser.getSelectedFile();
 
                 try {
@@ -310,13 +312,13 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
 
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage());
-                }
-        }
+               } }*/
+
     }//GEN-LAST:event_btPDFMousePressed
 
     private void btCartaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btCartaMouseClicked
        
-            if (formatoA.getMode() != enumModalidad.PRACTICA_PROFESIONAL) {
+            if (formatoA.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
         JOptionPane.showMessageDialog(this,
             "Solo la modalidad 'Práctica Profesional' permite adjuntar carta laboral.");
         return;

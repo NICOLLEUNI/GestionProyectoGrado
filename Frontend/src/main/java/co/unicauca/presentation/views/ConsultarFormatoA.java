@@ -5,6 +5,8 @@
 package co.unicauca.presentation.views;
 
 
+import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.FormatoAVersion;
 import co.unicauca.entity.Persona;
 
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class ConsultarFormatoA extends javax.swing.JPanel {
         cargarDatos();;
     }
 private void cargarDatos() {
-
+/*
 
     // 1️⃣ Traer todos los FormatoA donde el usuario logueado sea estudiante
     List<FormatoA> todos = repoA.list();
@@ -39,7 +41,7 @@ private void cargarDatos() {
                 listaFiltrada.add(f);
                 break;
             }
-        }
+
     }
 
     // 2️⃣ Traer todas las versiones de esos formatos
@@ -63,7 +65,7 @@ private void cargarDatos() {
         modelo.addRow(fila);
     }
 
-    jTable1.setModel(modelo);
+    jTable1.setModel(modelo);*/
 }
      private void initStyles(){
          // Ajustes de tabla para que combine con FlatLaf

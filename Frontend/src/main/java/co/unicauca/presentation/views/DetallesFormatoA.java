@@ -5,10 +5,7 @@
 package co.unicauca.presentation.views;
 
 
-import co.unicauca.entity.EnumEstado;
-import co.unicauca.entity.EnumModalidad;
-import co.unicauca.entity.FormatoA;
-import co.unicauca.entity.Persona;
+import co.unicauca.entity.*;
 
 import java.awt.BorderLayout;
 
@@ -27,14 +24,14 @@ import java.util.List;
 public class DetallesFormatoA extends javax.swing.JPanel {
 
     private FormatoA formato;
-    private Docente docente;
+    //private Docente docente;
     private Persona persona;
 
     // Constructor "temporal"
-    public DetallesFormatoA(FormatoA formato, Docente docente,Persona persona) {
+    public DetallesFormatoA(FormatoA formato,Persona persona) {
         initComponents();
         this.formato = formato;
-        this.docente = docente;
+
         this.persona=persona;
         
         cargarDatos();
@@ -48,10 +45,10 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         // ✅ SIEMPRE mostrar datos del FormatoA PRINCIPAL
         lbMostrarTitulo.setText(formato.getTitle() != null ? formato.getTitle() : "");
         lbMostrarModalidad.setText(formato.getMode() != null ? formato.getMode().toString() : "No definida");
-        lbMostrarDirector.setText(formato.getProjectManager() != null
+       /* lbMostrarDirector.setText(formato.getProjectManager() != null
             ? formato.getProjectManager().getName() + " " + formato.getProjectManager().getLastname()
             : "Sin director");
-
+*/
         txObjGeneral.setText(formato.getGeneralObjetive() != null ? formato.getGeneralObjetive() : "");
         jTextArea1.setText(formato.getSpecificObjetives() != null ? formato.getSpecificObjetives() : "");
 
@@ -451,7 +448,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         }
 
         // Validar modalidad para carta laboral
-        if (formato.getMode() != enumModalidad.PRACTICA_PROFESIONAL) {
+        if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
             JOptionPane.showMessageDialog(this, "La carta laboral solo es requerida para práctica profesional.");
             return;
         }
@@ -490,7 +487,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
     }//GEN-LAST:event_btCartaMouseClicked
 
     private void btActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btActualizarMouseClicked
-        try {
+     /*   try {
             // VALIDACIÓN CRÍTICA: Verificar si está en estado editable ANTES de procesar
             if (!esEditable()) {
                 JOptionPane.showMessageDialog(this, "No puede actualizar el formato en el estado actual.");
@@ -521,7 +518,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             }
 
             // Validar carta laboral si es práctica profesional
-            if (formato.getMode() == enumModalidad.PRACTICA_PROFESIONAL && 
+            if (formato.getMode() == EnumModalidad.PRACTICA_PROFESIONAL &&
                 (formato.getCartaLaboral() == null || formato.getCartaLaboral().trim().isEmpty())) {
                 JOptionPane.showMessageDialog(this, "Para práctica profesional debe adjuntar la carta laboral.");
                 return;
@@ -533,7 +530,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
 
             // 2. Determinar número de la nueva versión
             
-            List<FormatoAVersion> versiones = repoVersion.listByFormatoA(formato.getId());
+          //  List<FormatoAVersion> versiones = repoVersion.listByFormatoA(formato.getId());
 
             int ultimaNum = 0;
             for (FormatoAVersion v : versiones) {
@@ -542,7 +539,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             int nuevaNum = ultimaNum + 1;
 
             // 3. Construir la nueva versión
-            FormatoAVersion nuevaVersion = new FormatoAVersion(
+    /*        FormatoAVersion nuevaVersion = new FormatoAVersion(
                 0,
                 nuevaNum,
                 LocalDate.now(),
@@ -552,7 +549,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
                 formato.getSpecificObjetives(),
                 formato.getArchivoPDF(),
                 formato.getCartaLaboral(),
-                enumEstado.ENTREGADO,
+                EnumEstado.ENTREGADO,
                 null,
                 formato
             );
@@ -565,7 +562,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             }
 
             // 5. Actualizar el FormatoA principal:cambiar estado
-            formato.setState(enumEstado.ENTREGADO);
+            formato.setState(EnumEstado.ENTREGADO);
 
             // 6. Guardar los cambios del FormatoA
             IFormatoARepository repoA = Factory.getFormatoARepository("default");
@@ -586,7 +583,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage());
-        }
+        }*/
     }//GEN-LAST:event_btActualizarMouseClicked
     
     private void showJPanel(JPanel pl){
@@ -607,11 +604,11 @@ public class DetallesFormatoA extends javax.swing.JPanel {
     private boolean esEditable() {
        if (formato == null) return false;
 
-       enumEstado estado = formato.getState();
+       EnumEstado estado = formato.getState();
        int counter = formato.getCounter();
 
        //Permitir solo si está RECHAZADO y tiene menos de 3 rechazos
-       return (estado == enumEstado.RECHAZADO && counter < 3);
+       return (estado == EnumEstado.RECHAZADO && counter < 3);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

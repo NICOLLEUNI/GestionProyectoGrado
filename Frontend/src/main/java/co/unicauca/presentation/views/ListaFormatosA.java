@@ -30,7 +30,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
         initComponents();
         this.personaLogueada = personaLogueada;
         initStyles();
-        cargarDatos();
+        //cargarDatos();
         initListeners();
     } 
     
@@ -38,6 +38,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
     /**
      * Carga solo los FormatoA subidos por el docente logueado.
      */
+    /*
     private void cargarDatos() {
 
 
@@ -65,8 +66,8 @@ public class ListaFormatosA extends javax.swing.JPanel {
         // Rellenamos filas - SOLO DATOS DEL FORMATOA PRINCIPAL
         for (FormatoA f : formatosDocente) {
             // DEBUG
-            System.out.println("DEBUG - Formato: " + f.getTitle() + 
-                              ", Estado: " + f.getState() + 
+            System.out.println("DEBUG - Formato: " + f.getTitle() +
+                              ", Estado: " + f.getState() +
                               ", Observaciones: " + f.getObservations() +
                               ", Counter: " + f.getCounter());
 
@@ -99,7 +100,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(4).setPreferredWidth(60);
             jTable1.getColumnModel().getColumn(5).setPreferredWidth(60);
         }
-    }
+    }*/
     /**
      * Inicializa listeners para acciones en la tabla.
      * Ahora se abre DetallesFormatoA cuando se selecciona una fila (clic simple).
@@ -130,7 +131,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
      * Si personaLogueada no es Docente, intentamos obtenerlo del repositorio.
      */
   private void abrirDetalleConSeguridad(FormatoA seleccionado) {
-    try {
+/*    try {
         // 🔹 Primero revisamos el contador del formato
         if (seleccionado.getCounter() >= 3) { // o el número que quieras
             int opcion = JOptionPane.showConfirmDialog(
@@ -191,7 +192,7 @@ public class ListaFormatosA extends javax.swing.JPanel {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(this, "Error abriendo detalle: " + ex.getMessage(),
                 "Error", JOptionPane.ERROR_MESSAGE);
-    }
+    }*/
 }
     
     private void initStyles() {

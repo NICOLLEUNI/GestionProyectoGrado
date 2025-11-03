@@ -307,7 +307,7 @@ public class GUIMenuDocente extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUIMenuDocente().setVisible(true);
+              //  new GUIMenuDocente().setVisible(true);
             }
         });
     }
