@@ -18,33 +18,34 @@ public class PersonaService {
         this.personaRepository = personaRepository;
     }
 
-
-    /**
-     * Guarda o actualiza la información de una Persona en la base de datos.
-     * Si la persona ya existe, se actualizan sus datos.
-     */
     public Persona guardarPersona(PersonaRequest request) {
-        Optional<Persona> existente = personaRepository.findById((long) request.id());
+        Persona persona;
 
-        Persona persona = existente.orElseGet(Persona::new);
+        // ✅ SIEMPRE usar el ID del request (no generado automáticamente)
+        if (request.id() != null) {
+            // Buscar por ID primero
+            Optional<Persona> existente = personaRepository.findById(request.id());
+            persona = existente.orElse(new Persona());
+            // ✅ ASIGNAR MANUALMENTE el ID
+            persona.setIdUsuario(request.id());
+        } else {
+            // Si no viene ID, crear nueva pero necesitamos un ID
+            persona = new Persona();
+            // ⚠️ NECESITAS PROVEER UN ID - usar algún generador o lanzar error
+            throw new IllegalArgumentException("El ID es requerido para crear una Persona");
+        }
 
-        persona.setIdUsuario((long) request.id());
+        // Actualizar datos
         persona.setName(request.name());
         persona.setLastname(request.lastname());
         persona.setEmail(request.email());
         persona.setDepartment(request.department());
         persona.setPrograma(request.programa());
-
-        // Convertir los roles del request (Set<String>) a EnumSet<EnumRol>
         persona.setRoles(convertirRoles(request.roles()));
 
         return personaRepository.save(persona);
     }
 
-
-    /**
-     * Convierte una lista de strings en un EnumSet<EnumRol>.
-     */
     private EnumSet<EnumRol> convertirRoles(Set<String> rolesString) {
         if (rolesString == null || rolesString.isEmpty()) {
             return EnumSet.noneOf(EnumRol.class);
@@ -61,10 +62,11 @@ public class PersonaService {
         return roles;
     }
 
-    /**
-     * Obtiene todos las personas  registradas.
-     */
     public List<Persona> findAll() {
         return personaRepository.findAll();
-}
+    }
+
+    public Optional<Persona> findByEmail(String email) {
+        return personaRepository.findByEmail(email);
+    }
 }

@@ -276,32 +276,13 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btRegresarMouseClicked
-    
+        GUIMenuEstudiante menuEstudiante = new GUIMenuEstudiante(personaLogueado);
+        menuEstudiante.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btRegresarMouseClicked
 
     private void btConsultarFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btConsultarFormatoAMouseClicked
-        try {
-            // 1. Obtener el proyecto del estudiante
-            ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
-            if (proyecto != null) {
-                // 2. Obtener el FormatoA asociado al proyecto
-                FormatoA formatoA = estudianteService.findFormatoAByProyectoId(proyecto.getId());
-
-                if (formatoA != null) {
-                    // 3. Obtener las versiones de ese FormatoA
-                    List<FormatoAVersion> versiones = estudianteService.listFormatosAVersion(formatoA.getId());
-
-                    if (versiones != null && !versiones.isEmpty()) {
-                        // 4. Pasar las versiones a la vista
-                        ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versiones);
-                        showJPanel(listaFormatosA);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }//GEN-LAST:event_btConsultarFormatoAMouseClicked
 
     private void JButtonCloseSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButtonCloseSesionActionPerformed
@@ -312,24 +293,51 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
 
     private void btConsultarFormatoAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarFormatoAActionPerformed
         try {
-            // ✅ Misma lógica que en btConsultarFormatoAMouseClicked
+            // 1. Obtener el proyecto del estudiante
             ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
             if (proyecto != null) {
-                FormatoA formatoA = estudianteService.findFormatoAByProyectoId(proyecto.getId());
+                System.out.println("📦 Proyecto encontrado - ID: " + proyecto.getId() +
+                        " | FormatoA ID: " + proyecto.getIdFormatoA() + // ✅ USAR idFormatoA
+                        " | FormatoA Actual: " + (proyecto.getFormatoAActual() != null ?
+                        proyecto.getFormatoAActual().getId() : "null"));
 
-                if (formatoA != null) {
-                    List<FormatoAVersion> versiones = estudianteService.listFormatosAVersion(formatoA.getId());
+                // 2. Obtener FormatoAVersion actual
+                FormatoAVersion formatoActual = estudianteService.findFormatoAVersionByProyectoId(proyecto.getId());
 
-                    if (versiones != null && !versiones.isEmpty()) {
-                        ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versiones);
-                        showJPanel(listaFormatosA);
+                if (formatoActual != null) {
+                    System.out.println("✅ FormatoAVersion encontrado - ID: " + formatoActual.getId() +
+                            " | Versión: " + formatoActual.getNumeroVersion());
+
+                    // 3. Obtener todas las versiones usando idFormatoA
+                    if (proyecto.getIdFormatoA() != null) {
+                        List<FormatoAVersion> versiones = estudianteService.listFormatosAVersion(proyecto.getIdFormatoA());
+
+                        if (versiones != null && !versiones.isEmpty()) {
+                            System.out.println("📚 Versiones encontradas: " + versiones.size());
+                            ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versiones);
+                            showJPanel(listaFormatosA);
+                        } else {
+                            System.out.println("⚠️ No se encontraron versiones para FormatoA ID: " + proyecto.getIdFormatoA());
+                            // Mostrar solo la versión actual
+                            List<FormatoAVersion> versionUnica = List.of(formatoActual);
+                            ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versionUnica);
+                            showJPanel(listaFormatosA);
+                        }
+                    } else {
+                        System.out.println("⚠️ El proyecto no tiene FormatoA asociado");
                     }
+                } else {
+                    System.out.println("⚠️ No se encontró FormatoAVersion para el proyecto");
                 }
+            } else {
+                System.out.println("⚠️ No se encontró proyecto para el estudiante");
             }
         } catch (Exception e) {
+            System.err.println("❌ Error al consultar FormatoA: " + e.getMessage());
             e.printStackTrace();
         }
+
       
     }//GEN-LAST:event_btConsultarFormatoAActionPerformed
 
@@ -339,17 +347,30 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
 
     private void btConsultarAnteproyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarAnteproyectoActionPerformed
         try {
+            // 1. Obtener el proyecto del estudiante
             ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
             if (proyecto != null) {
+                System.out.println("🔍 Buscando anteproyecto para proyecto ID: " + proyecto.getId());
+
+                // 2. ✅ CORREGIDO: Buscar anteproyecto por ID del proyecto
                 Anteproyecto anteproyecto = estudianteService.findAnteproyectoByProyectoId(proyecto.getId());
 
                 if (anteproyecto != null) {
+                    System.out.println("✅ Anteproyecto encontrado - ID: " + anteproyecto.getId());
+
+                    // 3. Mostrar el anteproyecto (necesitarás crear una vista para esto)
                     ListarAnteproyectos listaAnteproyectos = new ListarAnteproyectos(anteproyecto);
                     showJPanel(listaAnteproyectos);
+                } else {
+                    System.out.println("⚠️ No se encontró anteproyecto para el proyecto ID: " + proyecto.getId());
+                    // Mostrar mensaje al usuario
                 }
+            } else {
+                System.out.println("⚠️ No se encontró proyecto para el estudiante");
             }
         } catch (Exception e) {
+            System.err.println("❌ Error al consultar anteproyecto: " + e.getMessage());
             e.printStackTrace();
         }
     }//GEN-LAST:event_btConsultarAnteproyectoActionPerformed

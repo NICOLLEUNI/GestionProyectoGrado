@@ -1,5 +1,6 @@
 package co.unicauca.entity;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ public class Anteproyecto {
 
     private Long id;
     private String titulo;
-    private LocalDate fechaCreacion;
+    public LocalDate fecha;
     private String archivoPDF;
     private String estado;
     private Long idProyectoGrado;

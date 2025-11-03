@@ -12,5 +12,6 @@ public class GsonFactory {
                 .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>)
                         (src, type, context) -> new JsonPrimitive(src.toString()))
                 .create();
-    }
 }
+}
+
