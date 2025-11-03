@@ -2,6 +2,7 @@ package co.unicauca.service;
 
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.utils.GsonFactory;
 import co.unicauca.utils.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,7 +18,7 @@ import java.util.List;
 public class SubmissionService {
 
     private final String BASE_URL = "http://localhost:8081/api"; // Microservicio Submission
-    private final Gson gson = new Gson();
+    private final Gson gson = GsonFactory.create();
 
     // =====================================================
     // 🔹 MÉTODOS PARA FORMATO A
