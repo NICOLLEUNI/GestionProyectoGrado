@@ -24,7 +24,7 @@ public class ProyectoGrado {
     private String nombre;
 
     @Column(nullable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDateTime fecha;
 
     @ElementCollection
     @CollectionTable(name = "proyecto_estudiantes", joinColumns = @JoinColumn(name = "proyecto_id"))

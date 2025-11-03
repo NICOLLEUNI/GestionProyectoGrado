@@ -52,7 +52,7 @@ public class ListarAnteproyectos extends javax.swing.JPanel {
 
             // Información del proyecto
             String proyectoStr = anteproyecto.getIdProyectoGrado() != null ?
-                    "Id Proyecto" + anteproyecto.getIdProyectoGrado() : "Sin proyecto";
+                    "Id Proyecto " + anteproyecto.getIdProyectoGrado() : "Sin proyecto";
 
             Object[] fila = {
                     anteproyecto.getId(),

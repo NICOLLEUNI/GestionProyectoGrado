@@ -22,7 +22,7 @@ public class Anteproyecto {
     private String titulo;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private LocalDate fechaCreacion;
+    private LocalDate fecha;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
