@@ -19,7 +19,9 @@ public class ProyectoGrado {
 
     private Long id;
     private String nombre;
+
     private LocalDate fecha;
+
     private List<String> estudiantesEmail;
     private FormatoA formatoAActual;
     private Long IdFormatoA;

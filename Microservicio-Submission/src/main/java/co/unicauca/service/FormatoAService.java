@@ -10,8 +10,11 @@ import co.unicauca.repository.FormatoARepository;
 import co.unicauca.repository.PersonaRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FormatoAService {
@@ -21,6 +24,7 @@ public class FormatoAService {
     private final ProyectoService proyectoService;
     private final VersionService versionService;
     private final RabbitMQPublisher rabbitMQPublisher;
+    private final String RUTA_BASE = System.getProperty("user.dir") + "/uploads/";
 
     public FormatoAService(FormatoARepository formatoARepository, PersonaRepository personaRepository, ProyectoService proyectoService, VersionService versionService, RabbitMQPublisher rabbitMQPublisher) {
         this.formatoARepository = formatoARepository;
@@ -29,6 +33,24 @@ public class FormatoAService {
         this.versionService = versionService;
         this.rabbitMQPublisher = rabbitMQPublisher;
     }
+
+    public Optional<FormatoA> findById(Long id) {
+        return formatoARepository.findById(id);
+    }
+
+
+    public List<FormatoA> findByProjectManagerEmailOrProjectCoManagerEmail(String email) {
+        return formatoARepository.findByProjectManagerEmailOrProjectCoManagerEmail(email, email);
+    }
+
+    public boolean eliminarFormatoA(Long id) {
+        if (formatoARepository.existsById(id)) {
+            formatoARepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
 
     //metodo para subir un formatoA
     @Transactional
@@ -56,6 +78,54 @@ public class FormatoAService {
 
         return formatoAGuardado;
     }
+
+    public boolean saveFormatoAPDF(Long id, MultipartFile file) {
+        try {
+            FormatoA formato = formatoARepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("FormatoA no encontrado con id: " + id));
+
+            String carpetaDestino = RUTA_BASE + "formatoA/";
+            File directorio = new File(carpetaDestino);
+            if (!directorio.exists()) directorio.mkdirs();
+
+            String nombreArchivo = "FormatoA_" + id + "_" + file.getOriginalFilename();
+            File archivoDestino = new File(directorio, nombreArchivo);
+            file.transferTo(archivoDestino);
+
+            formato.setArchivoPDF(archivoDestino.getAbsolutePath());
+            formatoARepository.save(formato);
+
+            // ❌ NO se crean versiones ni se publica nada
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean saveCartaLaboral(Long id, MultipartFile file) {
+        try {
+            FormatoA formato = formatoARepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("FormatoA no encontrado con id: " + id));
+
+            String nombreArchivo = "CartaLaboral_" + id + "_" + file.getOriginalFilename();
+            File destino = new File(RUTA_BASE + nombreArchivo);
+            destino.getParentFile().mkdirs();
+            file.transferTo(destino);
+
+            formato.setCartaLaboral(destino.getAbsolutePath());
+            formatoARepository.save(formato);
+
+            // ❌ Tampoco se publican eventos
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     /**
      * Convierte FormatoA entity a FormatoAResponse DTO
@@ -123,8 +193,6 @@ public class FormatoAService {
         return actualizado;
     }
 
-
-
     @Transactional
     public FormatoA actualizarFormatoAEvaluado(FormatoARequest request) {
         // 1. BUSCAR FormatoA existente
@@ -161,8 +229,6 @@ public class FormatoAService {
                 emailDocente, emailDocente);
     }
 
-
-
     private void validarParticipantes(FormatoA formatoA) {
         // Validar director
         Persona director = personaRepository.findByEmail(formatoA.getProjectManagerEmail())
@@ -192,13 +258,5 @@ public class FormatoAService {
             }
         }
     }
-
-
-
-    
-
-
-
-
 
 }

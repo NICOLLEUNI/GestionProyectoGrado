@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ProyectoGrado {
     private String nombre;
 
     @Column(nullable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDate fechaCreacion;
 
     @ElementCollection
     @CollectionTable(name = "proyecto_estudiantes", joinColumns = @JoinColumn(name = "proyecto_id"))
@@ -44,7 +45,7 @@ public class ProyectoGrado {
     private Anteproyecto anteproyecto;
 
 
-    public ProyectoGrado(long id, String nombre, LocalDateTime fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, String estado) {
+    public ProyectoGrado(long id, String nombre, LocalDate fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, String estado) {
         this.id = id;
         this.nombre = nombre;
         this.fechaCreacion = fechaCreacion;
@@ -54,7 +55,7 @@ public class ProyectoGrado {
         this.estado = estado;
     }
 
-    public ProyectoGrado(long id, String nombre, LocalDateTime fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, String estado, Anteproyecto anteproyecto) {
+    public ProyectoGrado(long id, String nombre, LocalDate fechaCreacion, List<String> estudiantesEmail, FormatoA formatoAActual, List<FormatoAVersion> historialFormatosA, String estado, Anteproyecto anteproyecto) {
         this.id = id;
         this.nombre = nombre;
         this.fechaCreacion = fechaCreacion;

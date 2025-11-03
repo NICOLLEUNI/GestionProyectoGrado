@@ -4,17 +4,19 @@
  */
 package co.unicauca.presentation.views;
 
-
 import co.unicauca.entity.EnumModalidad;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.service.SubmissionService;
+
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
-import java.util.List;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -27,113 +29,116 @@ import javax.swing.text.JTextComponent;
  * @author Usuario
  */
 public class DatosFormatoA extends javax.swing.JPanel {
-   
 
-       private Persona persona;
+
+    // ✅ Ahora solo dependemos del microservicio
+    private final SubmissionService submissionService = new SubmissionService();
+    private Persona persona; // usuario logueado
+
     public DatosFormatoA(Persona persona) {
         initComponents();
-        this.persona=persona;
-        
+        this.persona = persona;
+
         boxModalidad.setModel(new javax.swing.DefaultComboBoxModel<>(EnumModalidad.values()));
-          boxModalidad.setSelectedIndex(-1);
+        boxModalidad.setSelectedIndex(-1);
+
+
         initStyles();
-        cargarDocentesEnCombos();
-        cargarEstudiantesEnCombos(); // ✅ cargar estudiantes
         configurarModalidadListener();
-        // Aquí agregas el listener al botón continuar
+
+        // Cargar datos desde el microservicio
+        cargarDocentesEnCombos();
+        cargarEstudiantesEnCombos();
     }
     
+    /**
+     * Carga los docentes desde el microservicio (rol DOCENTE)
+     */
     private void cargarDocentesEnCombos() {
         try {
-
-            //preguntarle a Nicolle sobre el uso del repo
-
-           // List<Docente> docentes = repo.list();
-
-            // Limpiar los combos
+            List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
+            
             boxDirector.removeAllItems();
             boxCodirector.removeAllItems();
 
-            /*if (docentes != null) {
-                for (Docente d : docentes) {
+            if (docentes != null && !docentes.isEmpty()) {
+                for (Persona d : docentes) {
                     boxDirector.addItem(d);
                     boxCodirector.addItem(d);
                 }
-            }*/
+            }
+            
             boxDirector.setSelectedIndex(-1);
-                boxCodirector.setSelectedIndex(-1);
+            boxCodirector.setSelectedIndex(-1);
+
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar docentes desde el microservicio.");
         }
     }
     
+    /**
+     * Carga los estudiantes que no tienen FormatoA asociado.
+     */
     private void cargarEstudiantesEnCombos() {
         try {
-            // Obtener lista de estudiantes del repositorio
-            // ✅ Obtener solo los estudiantes libres
-       // List<Estudiante> estudiantes = obtenerEstudiantesSinFormatoA();
-            // Limpiar combos
+            // 1️⃣ Obtener todos los estudiantes
+            List<Persona> estudiantes = submissionService.listPersonasByRol("ESTUDIANTE");
+
+            // 2️⃣ Obtener todos los formatos existentes
+            List<FormatoA> formatos = submissionService.listFormatoA();
+
+            // 3️⃣ Reunir los correos de estudiantes que ya tienen formato
+            List<String> ocupadosEmails = new ArrayList<>();
+            for (FormatoA f : formatos) {
+                if (f.getEstudianteEmails() != null) {
+                    ocupadosEmails.addAll(f.getEstudianteEmails());
+                }
+            }
+
+            // 4️⃣ Filtrar estudiantes libres
+            List<Persona> libres = new ArrayList<>();
+            for (Persona e : estudiantes) {
+                boolean ocupado = ocupadosEmails.contains(e.getEmail());
+                if (!ocupado) {
+                    libres.add(e);
+                }
+            }
+
+            // 5️⃣ Poblar los combos
             boxEstudiante1.removeAllItems();
             boxEstudiante2.removeAllItems();
 
-            /*if (estudiantes != null) {
-                for (Estudiante e : estudiantes) {
-                    boxEstudiante1.addItem(e);
-                    boxEstudiante2.addItem(e);
-                }
-            }*/
-           boxEstudiante1.setSelectedIndex(-1);
-           boxEstudiante2.setSelectedIndex(-1);
-            // Inicialmente, estudiante2 deshabilitado
+            for (Persona e : libres) {
+                boxEstudiante1.addItem(e);
+                boxEstudiante2.addItem(e);
+            }
+
+            boxEstudiante1.setSelectedIndex(-1);
+            boxEstudiante2.setSelectedIndex(-1);
             boxEstudiante2.setEnabled(false);
 
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar estudiantes desde el microservicio.");
+
         }
     }
-    /*public List<Estudiante> obtenerEstudiantesSinFormatoA() {
-    // 🔹 1. Obtener todos los estudiantes
-    List<Estudiante> estudiantes = repoEstudiantes.list();
-
-    // 🔹 2. Obtener todos los estudiantes que ya tienen FormatoA
-    List<FormatoA> formatos = repoFormato.list();
-    List<Estudiante> ocupados = new ArrayList<>();
-
-    for (FormatoA f : formatos) {
-        if (f.getEstudiantes() != null) {
-            ocupados.addAll(f.getEstudiantes());
-        }
-    }
-
-    // 🔹 3. Filtrar: estudiantes que NO estén en la lista de ocupados
-    List<Estudiante> libres = new ArrayList<>();
-    for (Estudiante e : estudiantes) {
-        boolean yaOcupado = false;
-
-        for (Estudiante o : ocupados) {
-            if (o.getIdUsuario() == e.getIdUsuario()) { // comparar por ID
-                yaOcupado = true;
-                break;
-            }
-        }
-
-        if (!yaOcupado) {
-            libres.add(e);
-        }
-    }
-
-    return libres;
-}*/
+    
+    /**
+     * Activa/desactiva el segundo estudiante según la modalidad
+     */
     private void configurarModalidadListener() {
         boxModalidad.addActionListener(e -> {
             EnumModalidad modalidad = (EnumModalidad) boxModalidad.getSelectedItem();
-             if (modalidad != null && modalidad == EnumModalidad.INVESTIGACION) {
-        boxEstudiante2.setEnabled(true);
-          boxEstudiante2.setSelectedIndex(-1);
-    } else {
-        boxEstudiante2.setEnabled(false);
-        boxEstudiante2.setSelectedIndex(-1);
-    }
+            if (modalidad != null && modalidad == EnumModalidad.INVESTIGACION) {
+                boxEstudiante2.setEnabled(true);
+                boxEstudiante2.setSelectedIndex(-1);
+            } else {
+                boxEstudiante2.setEnabled(false);
+                boxEstudiante2.setSelectedIndex(-1);
+            }
+
         });
     }
     
@@ -199,11 +204,9 @@ public class DatosFormatoA extends javax.swing.JPanel {
         Contenido.setPreferredSize(new java.awt.Dimension(646, 530));
 
         lblTitulo.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        lblTitulo.setForeground(new java.awt.Color(0, 0, 0));
         lblTitulo.setText("Titulo");
         lblTitulo.setToolTipText("");
 
-        txtTitulo.setBackground(new java.awt.Color(255, 255, 255));
         txtTitulo.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         txtTitulo.setForeground(new java.awt.Color(153, 153, 153));
         txtTitulo.setText("Ingrese el Titulo del Proyecto");
@@ -215,7 +218,6 @@ public class DatosFormatoA extends javax.swing.JPanel {
         });
 
         lbModalidad.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lbModalidad.setForeground(new java.awt.Color(0, 0, 0));
         lbModalidad.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbModalidad.setText("Modalidad");
 
@@ -223,31 +225,25 @@ public class DatosFormatoA extends javax.swing.JPanel {
         boxModalidad.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         lblDirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lblDirector.setForeground(new java.awt.Color(0, 0, 0));
         lblDirector.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblDirector.setText("Director de proyecto");
 
         lblCodirector.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lblCodirector.setForeground(new java.awt.Color(0, 0, 0));
         lblCodirector.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCodirector.setText("Codirector de proyecto");
 
         lblEstudiante1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lblEstudiante1.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEstudiante1.setText("Estudiante #1");
 
         lblEstudiante2.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lblEstudiante2.setForeground(new java.awt.Color(0, 0, 0));
         lblEstudiante2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblEstudiante2.setText("Estudiante #2");
 
         lbObjGen.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lbObjGen.setForeground(new java.awt.Color(0, 0, 0));
         lbObjGen.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbObjGen.setText("Objetivo General");
 
-        txtObjGen.setBackground(new java.awt.Color(255, 255, 255));
         txtObjGen.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         txtObjGen.setForeground(new java.awt.Color(153, 153, 153));
         txtObjGen.setText("   Añade el objetivo general");
@@ -258,11 +254,9 @@ public class DatosFormatoA extends javax.swing.JPanel {
         });
 
         lblObjetivosEspecificos.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
-        lblObjetivosEspecificos.setForeground(new java.awt.Color(0, 0, 0));
         lblObjetivosEspecificos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblObjetivosEspecificos.setText("Objetivos especificos");
 
-        txtObjEspecificos.setBackground(new java.awt.Color(255, 255, 255));
         txtObjEspecificos.setColumns(20);
         txtObjEspecificos.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         txtObjEspecificos.setForeground(new java.awt.Color(153, 153, 153));
@@ -280,7 +274,6 @@ public class DatosFormatoA extends javax.swing.JPanel {
 
         btContinuar.setBackground(new java.awt.Color(51, 51, 255));
         btContinuar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        btContinuar.setForeground(new java.awt.Color(0, 0, 0));
         btContinuar.setText("Continuar");
         btContinuar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -390,45 +383,53 @@ public class DatosFormatoA extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btContinuarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btContinuarMouseClicked
-       try {
-        // ✅ Primero validar
-        if (!validarCampos()) {
-            return; // corta aquí si hay algún error
+        try {
+            if (!validarCampos()) return;
+
+            FormatoA formato = new FormatoA();
+
+            // Campos básicos
+            formato.setTitle(txtTitulo.getText());
+            formato.setMode((EnumModalidad) boxModalidad.getSelectedItem());
+            formato.setDate(LocalDate.now());
+            formato.setGeneralObjetive(txtObjGen.getText());
+            formato.setSpecificObjetives(txtObjEspecificos.getText());
+            formato.setArchivoPDF("pendiente.pdf");
+            formato.setCartaLaboral("pendiente.pdf");
+
+            // Director y codirector (guardar su email)
+            Persona director = (Persona) boxDirector.getSelectedItem();
+            Persona codirector = (Persona) boxCodirector.getSelectedItem();
+
+            if (director != null)
+                formato.setProjectManagerEmail(director.getEmail());
+            if (codirector != null)
+                formato.setProjectCoManagerEmail(codirector.getEmail());
+
+            // Estudiantes: se guardan los correos, no los objetos Persona
+            List<String> estudiantes = new ArrayList<>();
+            if (boxEstudiante1.getSelectedItem() != null)
+                estudiantes.add(((Persona) boxEstudiante1.getSelectedItem()).getEmail());
+            if (boxEstudiante2.isEnabled() && boxEstudiante2.getSelectedItem() != null)
+                estudiantes.add(((Persona) boxEstudiante2.getSelectedItem()).getEmail());
+            formato.setEstudianteEmails(estudiantes);
+
+
+            
+
+            if (formato != null) {
+                JOptionPane.showMessageDialog(this, "FormatoA registrado correctamente.");
+                AdjuntarDocumentos panelDocs = new AdjuntarDocumentos(formato, persona);
+                showJPanel(panelDocs);
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al registrar el formato en el microservicio.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al continuar: " + e.getMessage());
         }
 
-        // Si todo es válido, recién construyes FormatoA
-        FormatoA formato = new FormatoA();
-        formato.setTitle(txtTitulo.getText());
-        formato.setMode((EnumModalidad) boxModalidad.getSelectedItem());
-        formato.setDate(LocalDate.now()); 
-        formato.setGeneralObjetive(txtObjGen.getText());
-        formato.setSpecificObjetives(txtObjEspecificos.getText());
-
-        formato.setArchivoPDF("pendiente.pdf"); 
-        formato.setCounter(0);
-
-        /*Docente manager = (Docente) boxDirector.getSelectedItem();
-        formato.setProjectManager(manager);
-
-        Docente coManager = (Docente) boxCodirector.getSelectedItem();
-        formato.setProjectCoManager(coManager);
-
-        List<Estudiante> estudiantes = new ArrayList<>();
-        if (boxEstudiante1.getSelectedItem() != null) {
-            estudiantes.add((Estudiante) boxEstudiante1.getSelectedItem());
-        }
-        if (boxEstudiante2.isEnabled() && boxEstudiante2.getSelectedItem() != null) {
-            estudiantes.add((Estudiante) boxEstudiante2.getSelectedItem());
-        }
-        formato.setEstudiantes(estudiantes);
-
-        AdjuntarDocumentos panelDocs = new AdjuntarDocumentos(formato,persona);
-        showJPanel(panelDocs);
-*/
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Error al continuar: " + e.getMessage());
-    }
     }//GEN-LAST:event_btContinuarMouseClicked
 
     private void txtTituloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtTituloMouseClicked
@@ -457,67 +458,68 @@ public class DatosFormatoA extends javax.swing.JPanel {
         Contenido.repaint();
     }
     
- private void manejarPlaceHolder(JTextComponent campo, String placeholder, JTextComponent... otros) {
-    // Si hago clic en este campo y está en modo placeholder → lo limpio
-    if (campo.getText().equals(placeholder)) {
-        campo.setText("");
-        campo.setForeground(Color.BLACK);
-    }
+    private void manejarPlaceHolder(JTextComponent campo, String placeholder, JTextComponent... otros) {
+       // Si hago clic en este campo y está en modo placeholder → lo limpio
+       if (campo.getText().equals(placeholder)) {
+           campo.setText("");
+           campo.setForeground(Color.BLACK);
+       }
 
-    // Si los otros campos están vacíos → les devuelvo su placeholder
-    for (JTextComponent otro : otros) {
-        if (otro.getText().isEmpty()) {
-            if (otro == txtTitulo) {
-                otro.setText("Ingrese el Título del Proyecto");
-            } else if (otro == txtObjGen) {
-                otro.setText("   Añade el objetivo general");
-            } else if (otro == txtObjEspecificos) {
-                // Para el JTextArea
-                otro.setText("   Añade los objetivos especificos");
-            }
-            otro.setForeground(Color.GRAY);
+       // Si los otros campos están vacíos → les devuelvo su placeholder
+       for (JTextComponent otro : otros) {
+           if (otro.getText().isEmpty()) {
+               if (otro == txtTitulo) {
+                   otro.setText("Ingrese el Título del Proyecto");
+               } else if (otro == txtObjGen) {
+                   otro.setText("   Añade el objetivo general");
+               } else if (otro == txtObjEspecificos) {
+                   // Para el JTextArea
+                   otro.setText("   Añade los objetivos especificos");
+               }
+               otro.setForeground(Color.GRAY);
+           }
+       }
+    }
+    
+    private boolean validarCampos() {
+        // 1️⃣ Textos vacíos o con placeholders
+        if (txtTitulo.getText().equals("Ingrese el Titulo del Proyecto") || txtTitulo.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Ingrese el Título del Proyecto");
+            return false;
         }
+
+        if (txtObjGen.getText().equals("   Añade el objetivo general") || txtObjGen.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Ingrese el Objetivo General");
+            return false;
+        }
+
+        if (txtObjEspecificos.getText().equals("   Añade los objetivos especificos") || txtObjEspecificos.getText().isBlank()) {
+            JOptionPane.showMessageDialog(this, "Ingrese los Objetivos Específicos");
+            return false;
+        }
+
+        // 2️⃣ Combos sin selección
+        if (boxModalidad.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione la Modalidad");
+            return false;
+        }
+
+        if (boxDirector.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un Director de Proyecto");
+            return false;
+        }
+
+        // Codirector opcional: solo validar si no quieres que quede vacío
+        // if (boxCodirector.getSelectedIndex() == -1) { ... }
+
+        if (boxEstudiante1.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione el Estudiante #1");
+            return false;
+        }
+
+
+        return true; // ✅ Todo bien
     }
-}
-private boolean validarCampos() {
-    // 1️⃣ Textos vacíos o con placeholders
-    if (txtTitulo.getText().equals("Ingrese el Titulo del Proyecto") || txtTitulo.getText().isBlank()) {
-        JOptionPane.showMessageDialog(this, "Ingrese el Título del Proyecto");
-        return false;
-    }
-
-    if (txtObjGen.getText().equals("   Añade el objetivo general") || txtObjGen.getText().isBlank()) {
-        JOptionPane.showMessageDialog(this, "Ingrese el Objetivo General");
-        return false;
-    }
-
-    if (txtObjEspecificos.getText().equals("   Añade los objetivos especificos") || txtObjEspecificos.getText().isBlank()) {
-        JOptionPane.showMessageDialog(this, "Ingrese los Objetivos Específicos");
-        return false;
-    }
-
-    // 2️⃣ Combos sin selección
-    if (boxModalidad.getSelectedIndex() == -1) {
-        JOptionPane.showMessageDialog(this, "Seleccione la Modalidad");
-        return false;
-    }
-
-    if (boxDirector.getSelectedIndex() == -1) {
-        JOptionPane.showMessageDialog(this, "Seleccione un Director de Proyecto");
-        return false;
-    }
-
-    // Codirector opcional: solo validar si no quieres que quede vacío
-    // if (boxCodirector.getSelectedIndex() == -1) { ... }
-
-    if (boxEstudiante1.getSelectedIndex() == -1) {
-        JOptionPane.showMessageDialog(this, "Seleccione el Estudiante #1");
-        return false;
-    }
-
-
-    return true; // ✅ Todo bien
-}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JComboBox<Persona> boxCodirector;

@@ -4,61 +4,66 @@
  */
 package co.unicauca.presentation.views;
 
-
-import co.unicauca.entity.*;
-
-import java.awt.BorderLayout;
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.EnumModalidad;
+import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.Persona;
+import co.unicauca.service.SubmissionService;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
-import java.util.List;
+
+
 /**
  *
  * @author Usuario
  */
 public class DetallesFormatoA extends javax.swing.JPanel {
 
-    private FormatoA formato;
-    //private Docente docente;
-    private Persona persona;
+    private final FormatoA formato;
+    private final Persona personaLogueada;
+    private final SubmissionService submissionService;
 
-    // Constructor "temporal"
-    public DetallesFormatoA(FormatoA formato,Persona persona) {
+    public DetallesFormatoA(FormatoA formato, Persona personaLogueada) {
         initComponents();
         this.formato = formato;
-
-        this.persona=persona;
-        
+        this.personaLogueada = personaLogueada;
+        this.submissionService = new SubmissionService();
         cargarDatos();
-        configurarSegunEstado();
+        // No necesitas initListeners si usas los listeners generados por NetBeans
     }
-    
-    
+
+
+    /**
+     * Rellena los componentes con los datos del formato recibido.
+     */
     private void cargarDatos() {
         if (formato == null) return;
 
-        // ✅ SIEMPRE mostrar datos del FormatoA PRINCIPAL
+        // Mostrar datos principales
         lbMostrarTitulo.setText(formato.getTitle() != null ? formato.getTitle() : "");
         lbMostrarModalidad.setText(formato.getMode() != null ? formato.getMode().toString() : "No definida");
-       /* lbMostrarDirector.setText(formato.getProjectManager() != null
-            ? formato.getProjectManager().getName() + " " + formato.getProjectManager().getLastname()
-            : "Sin director");
-*/
+        if (formato.getProjectManagerEmail() != null && !formato.getProjectManagerEmail().isEmpty()) {
+            lbMostrarDirector.setText(formato.getProjectManagerEmail());
+        } else {
+            lbMostrarDirector.setText("Sin director asignado");
+        }
+
+
         txObjGeneral.setText(formato.getGeneralObjetive() != null ? formato.getGeneralObjetive() : "");
         jTextArea1.setText(formato.getSpecificObjetives() != null ? formato.getSpecificObjetives() : "");
 
         txtMostrarRutaPDF.setText(formato.getArchivoPDF() != null ? formato.getArchivoPDF() : "Sin archivo");
         txtMostarRutaCarta.setText(formato.getCartaLaboral() != null ? formato.getCartaLaboral() : "Sin carta");
 
-        // Observaciones del coordinador (vienen del FormatoA principal)
         lbMostrarComentarios.setText(formato.getObservations() != null ? formato.getObservations() : "");
 
-        // DEBUG
+        // Debug (puedes quitarlo luego)
         System.out.println("=== DEBUG DetallesFormatoA ===");
         System.out.println("DEBUG - Título: " + formato.getTitle());
         System.out.println("DEBUG - Estado: " + formato.getState());
@@ -66,17 +71,15 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         System.out.println("DEBUG - Obj General: " + formato.getGeneralObjetive());
         System.out.println("DEBUG - Counter: " + formato.getCounter());
 
-        // Asegurar estado inicial de controles
-        btPDF.setEnabled(false);
-        btCarta.setEnabled(false);
-        txObjGeneral.setEditable(false);
-        jTextArea1.setEditable(false);
-        btActualizar.setEnabled(false);
+        // Asegurar estado inicial de controles según estado actual
+        configurarSegunEstado();
     }
-    
 
+    /**
+     * Habilita/deshabilita controles según el estado y contador del formato.
+     */
     private void configurarSegunEstado() {
-        // Bloqueo por defecto (seguridad)
+        // Bloqueo por defecto
         txObjGeneral.setEditable(false);
         jTextArea1.setEditable(false);
         btPDF.setEnabled(false);
@@ -90,13 +93,8 @@ public class DetallesFormatoA extends javax.swing.JPanel {
 
         System.out.println("DEBUG - Estado: " + estado + ", Counter: " + counter + ", Modalidad: " + formato.getMode());
 
-        // ✅ CORRECCIÓN: Permitir editar solo si está RECHAZADO y tiene menos de 3 rechazos
-        // counter = 0 → Puede editar si es rechazado (primer rechazo)
-        // counter = 1 → Puede editar si es rechazado (segundo rechazo)
-        // counter = 2 → Puede editar si es rechazado (tercer rechazo) - ÚLTIMA OPORTUNIDAD
-        // counter = 3 → RECHAZADO_DEFINITIVO (no permitir más)
+        // Permitir editar solo si está RECHAZADO y tiene menos de 3 rechazos
         if (estado == EnumEstado.RECHAZADO && counter < 3) {
-            // habilitar edición
             txObjGeneral.setEditable(true);
             jTextArea1.setEditable(true);
             btPDF.setEnabled(true);
@@ -111,12 +109,10 @@ public class DetallesFormatoA extends javax.swing.JPanel {
                 System.out.println("DEBUG - Carta laboral DESHABILITADA");
             }
 
-            // Mensaje informativo
             int rechazosRestantes = 3 - counter;
             System.out.println("DEBUG - Rechazos restantes: " + rechazosRestantes);
-
         } else {
-            // ENTIENDO: ENTREGADO y APROBADO y RECHAZADO_DEFINITIVO -> solo lectura
+            // Otros estados -> solo lectura
             txObjGeneral.setEditable(false);
             jTextArea1.setEditable(false);
             btPDF.setEnabled(false);
@@ -129,6 +125,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             }
         }
     }
+
 
 
     /**
@@ -396,44 +393,33 @@ public class DetallesFormatoA extends javax.swing.JPanel {
 
     private void btPDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btPDFMousePressed
         try {
-             // VALIDACIÓN INICIAL: Verificar si está en estado editable
             if (!esEditable()) {
-                 JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
-                 return;
+                JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
+                return;
             }
 
-             // Resto del código para seleccionar PDF...
-             JFileChooser fileChooser = new JFileChooser();
-             fileChooser.setDialogTitle("Seleccionar formato A (PDF)");
-             FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
-             fileChooser.setFileFilter(filtro);
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Seleccionar formato A (PDF)");
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+            fileChooser.setFileFilter(filtro);
 
-             int resultado = fileChooser.showOpenDialog(this);
+            int resultado = fileChooser.showOpenDialog(this);
 
             if (resultado == JFileChooser.APPROVE_OPTION) {
-                 File archivoSeleccionado = fileChooser.getSelectedFile();
+                File archivoSeleccionado = fileChooser.getSelectedFile();
 
-                try {
-                     String carpetaDestino = System.getProperty("user.dir") + File.separator + "archivosPDF";
-                     File directorio = new File(carpetaDestino);
-                     if (!directorio.exists()) {
-                         directorio.mkdir();
-                    }
-
-                     File archivoDestino = new File(carpetaDestino, archivoSeleccionado.getName());
-                     Files.copy(archivoSeleccionado.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                     String rutaGuardada = archivoDestino.getAbsolutePath();
-                     formato.setArchivoPDF(rutaGuardada);
-                     txtMostrarRutaPDF.setText(rutaGuardada);
-
-                     JOptionPane.showMessageDialog(this, "Archivo guardado en: " + rutaGuardada);
-
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage());
+                // Subir directamente al microservicio -> ahora devuelve String (ruta o JSON) o null si falló
+                String respuesta = submissionService.subirFormatoAPDF(formato.getId(), archivoSeleccionado);
+                if (respuesta != null && !respuesta.isEmpty()) {
+                    // Si el backend devuelve la ruta, usarla; si devuelve JSON, podrías parsearla
+                    formato.setArchivoPDF(respuesta);
+                    txtMostrarRutaPDF.setText(respuesta);
+                    JOptionPane.showMessageDialog(this, "PDF subido correctamente: " + respuesta);
+                } else {
+                    // fallback: quizá el backend no devolvió ruta, mostrar nombre local
+                    JOptionPane.showMessageDialog(this, "Error subiendo PDF al servidor.");
                 }
-             }
-
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
@@ -441,67 +427,59 @@ public class DetallesFormatoA extends javax.swing.JPanel {
     }//GEN-LAST:event_btPDFMousePressed
 
     private void btCartaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btCartaMouseClicked
-        // VALIDACIÓN INICIAL: Verificar si está en estado editable
-        if (!esEditable()) {
-            JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
-            return;
-        }
+        try {
+            if (!esEditable()) {
+                JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
+                return;
 
-        // Validar modalidad para carta laboral
-        if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
-            JOptionPane.showMessageDialog(this, "La carta laboral solo es requerida para práctica profesional.");
-            return;
-        }
-
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Seleccionar carta laboral (PDF)");
-
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
-        fileChooser.setFileFilter(filtro);
-
-        int resultado = fileChooser.showOpenDialog(this);
-
-        if (resultado == JFileChooser.APPROVE_OPTION) {
-            File archivoSeleccionado = fileChooser.getSelectedFile();
-
-            try {
-                String carpetaDestino = System.getProperty("user.dir") + File.separator + "archivosPDF";
-                File directorio = new File(carpetaDestino);
-                if (!directorio.exists()) {
-                    directorio.mkdir();
-                }
-
-                File archivoDestino = new File(carpetaDestino, archivoSeleccionado.getName());
-                Files.copy(archivoSeleccionado.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                String rutaGuardada = archivoDestino.getAbsolutePath();
-                formato.setCartaLaboral(rutaGuardada);
-                txtMostarRutaCarta.setText(rutaGuardada);
-
-                JOptionPane.showMessageDialog(this, "Archivo guardado en: " + rutaGuardada);
-
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error al guardar el archivo: " + ex.getMessage());
             }
+
+            if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
+                JOptionPane.showMessageDialog(this, "La carta laboral solo es requerida para práctica profesional.");
+                return;
+            }
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Seleccionar carta laboral (PDF)");
+            FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+            fileChooser.setFileFilter(filtro);
+
+            int resultado = fileChooser.showOpenDialog(this);
+
+            if (resultado == JFileChooser.APPROVE_OPTION) {
+                File archivoSeleccionado = fileChooser.getSelectedFile();
+
+                // Subir al servidor -> devuelve String (ruta o JSON) o null si falla
+                String respuesta = submissionService.subirCartaLaboral(formato.getId(), archivoSeleccionado);
+                if (respuesta != null && !respuesta.isEmpty()) {
+                    formato.setCartaLaboral(respuesta);
+                    txtMostarRutaCarta.setText(respuesta);
+                    JOptionPane.showMessageDialog(this, "Carta laboral subida correctamente: " + respuesta);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error subiendo la carta laboral al servidor.");
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
         }
     }//GEN-LAST:event_btCartaMouseClicked
 
     private void btActualizarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btActualizarMouseClicked
-     /*   try {
-            // VALIDACIÓN CRÍTICA: Verificar si está en estado editable ANTES de procesar
+        try {
+
             if (!esEditable()) {
                 JOptionPane.showMessageDialog(this, "No puede actualizar el formato en el estado actual.");
                 return;
             }
-            
+
             if (formato.getCounter() >= 3) {
                 JOptionPane.showMessageDialog(this, "Ha alcanzado el límite máximo de 3 rechazos. No puede enviar más versiones.");
                 configurarSegunEstado();
                 return;
             }
-            
-            // Validaciones básicas
-            if (formato == null || formato.getId() <= 0) {
+
+            if (formato == null || formato.getId() == null || formato.getId() <= 0) {
                 JOptionPane.showMessageDialog(this, "Formato no válido para actualizar.");
                 return;
             }
@@ -517,73 +495,39 @@ public class DetallesFormatoA extends javax.swing.JPanel {
                 return;
             }
 
-            // Validar carta laboral si es práctica profesional
             if (formato.getMode() == EnumModalidad.PRACTICA_PROFESIONAL &&
-                (formato.getCartaLaboral() == null || formato.getCartaLaboral().trim().isEmpty())) {
+                    (formato.getCartaLaboral() == null || formato.getCartaLaboral().trim().isEmpty())) {
+
                 JOptionPane.showMessageDialog(this, "Para práctica profesional debe adjuntar la carta laboral.");
                 return;
             }
 
-            // 1. Actualizar el objeto en memoria con lo editado en la UI
+            // Actualizar objeto local antes de reenviar
             formato.setGeneralObjetive(txObjGeneral.getText());
             formato.setSpecificObjetives(jTextArea1.getText());
 
-            // 2. Determinar número de la nueva versión
-            
-          //  List<FormatoAVersion> versiones = repoVersion.listByFormatoA(formato.getId());
+            // Enviar al backend para reenvío
+            FormatoA actualizado = submissionService.reenviarFormatoA(formato);
+            if (actualizado != null) {
+                formato.setArchivoPDF(actualizado.getArchivoPDF());
+                formato.setCartaLaboral(actualizado.getCartaLaboral());
+                formato.setGeneralObjetive(actualizado.getGeneralObjetive());
+                formato.setSpecificObjetives(actualizado.getSpecificObjetives());
+                formato.setCounter(actualizado.getCounter());
+                formato.setState(actualizado.getState());
 
-            int ultimaNum = 0;
-            for (FormatoAVersion v : versiones) {
-                if (v.getNumeroVersion() > ultimaNum) ultimaNum = v.getNumeroVersion();
-            }
-            int nuevaNum = ultimaNum + 1;
 
-            // 3. Construir la nueva versión
-    /*        FormatoAVersion nuevaVersion = new FormatoAVersion(
-                0,
-                nuevaNum,
-                LocalDate.now(),
-                formato.getTitle(),
-                formato.getMode(),
-                formato.getGeneralObjetive(),
-                formato.getSpecificObjetives(),
-                formato.getArchivoPDF(),
-                formato.getCartaLaboral(),
-                EnumEstado.ENTREGADO,
-                null,
-                formato
-            );
-
-            // 4. Guardar la versión en la tabla de versiones
-            boolean verGuardada = repoVersion.save(nuevaVersion);
-            if (!verGuardada) {
-                JOptionPane.showMessageDialog(this, "No se pudo guardar la nueva versión.");
-                return;
+                cargarDatos();
+                JOptionPane.showMessageDialog(this, "Formato reenviado correctamente.");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se recibió respuesta del servidor. Intente nuevamente.");
             }
 
-            // 5. Actualizar el FormatoA principal:cambiar estado
-            formato.setState(EnumEstado.ENTREGADO);
-
-            // 6. Guardar los cambios del FormatoA
-            IFormatoARepository repoA = Factory.getFormatoARepository("default");
-            boolean actualizado = repoA.update(formato);
-            if (!actualizado) {
-                JOptionPane.showMessageDialog(this, "La versión se guardó, pero falló la actualización del FormatoA principal.");
-                return;
-            }
-
-            // 7. Actualizar memoria local
-            if (formato.getVersiones() != null) {
-                formato.getVersiones().add(nuevaVersion);
-            }
-
-            JOptionPane.showMessageDialog(this, "Formato actualizado y reenviado como versión " + nuevaNum);
-            configurarSegunEstado(); // refresca la UI con los nuevos estados
 
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage());
-        }*/
+        }
     }//GEN-LAST:event_btActualizarMouseClicked
     
     private void showJPanel(JPanel pl){
@@ -597,18 +541,23 @@ public class DetallesFormatoA extends javax.swing.JPanel {
     }
     
     private void btnVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVolverMouseClicked
-        showJPanel(new ListaFormatosA(persona));
+        try {
+            showJPanel(new ListaFormatosA(personaLogueada));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error volviendo a la lista: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnVolverMouseClicked
     
     // MÉTODO AUXILIAR PARA VALIDAR SI ES EDITABLE
     private boolean esEditable() {
-       if (formato == null) return false;
+        if (formato == null) return false;
 
-       EnumEstado estado = formato.getState();
-       int counter = formato.getCounter();
+        EnumEstado estado = formato.getState();
+        int counter = formato.getCounter();
 
-       //Permitir solo si está RECHAZADO y tiene menos de 3 rechazos
-       return (estado == EnumEstado.RECHAZADO && counter < 3);
+        return (estado == EnumEstado.RECHAZADO && counter < 3);
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

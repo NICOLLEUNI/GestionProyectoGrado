@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class GUIAsingarEvaluadores extends javax.swing.JFrame {
 
-    private EvaluacionService evaluacionService;
+    private EvaluacionService evaluacionService= new EvaluacionService();
     private Persona personaLogueado;
     /**
      * Creates new form GUIAsingarEvaluadores
@@ -44,15 +44,12 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
         // Poblar la tabla
         if (lista != null && !lista.isEmpty()) {
             for (Anteproyecto a : lista) {
-                // Si solo quieres mostrar los entregados (opcional, depende de tu lógica)
-                if ("ENTREGADO".equalsIgnoreCase(a.getEstado())) {
-                    Object[] fila = {
-                            a.getId(),
-                            a.getTitulo(),
-                            a.getEstado()
-                    };
-                    modelo.addRow(fila);
-                }
+                Object[] fila = {
+                        a.getId(),
+                        a.getTitulo(),
+                        a.getEstado()
+                };
+                modelo.addRow(fila);
             }
         } else {
             System.err.println("⚠ No se encontraron anteproyectos registrados.");
@@ -61,7 +58,6 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
         // Asignar el modelo a la tabla
         jTable1.setModel(modelo);
     }
-    
     
     private void initContent(){
 
@@ -74,7 +70,7 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
         Anteproyecto anteproyecto = evaluacionService.buscarAnteproyectoPorId(id);
 
         if (anteproyecto != null) {
-        AsignacionEvaluadores panelObs = new AsignacionEvaluadores(personaLogueado);
+        AsignacionEvaluadores panelObs = new AsignacionEvaluadores(personaLogueado,evaluacionService);
             panelObs.setAnteproyecto(anteproyecto);
             showJPanel(panelObs);
         }}
@@ -229,7 +225,7 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btVolverMouseClicked
-        GUIMenuJefe VentanaJefe = new GUIMenuJefe();
+        GUIMenuJefe VentanaJefe = new GUIMenuJefe(personaLogueado);
         VentanaJefe.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btVolverMouseClicked

@@ -3,56 +3,43 @@ package co.unicauca.service;
 import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.infra.Subject;
+import co.unicauca.utils.GsonFactory;
 import co.unicauca.utils.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EvaluacionService extends Subject {
-     private final String BASE_URL = "http://localhost:8080/api/formatoA"; // o tu gateway
-     private final Gson gson = new Gson();
+     private final String BASE_URL = "http://localhost:8082/api/formatoA"; // o tu gateway
+    private final Gson gson = GsonFactory.create();
 
-     /**
-      * Obtiene todos los formatos A desde el microservicio.
-      * @return lista de objetos FormatoA
-      */
-     public List<FormatoA> listFormatoA() {
-         try {
-             // 1️⃣ Petición GET al microservicio
-             String jsonResponse = HttpUtil.get(BASE_URL);
-
-
-             // 2️⃣ Convertir JSON a lista de FormatoA
-             Type listType = new TypeToken<List<FormatoA>>() {}.getType();
-             List<FormatoA> lista = gson.fromJson(jsonResponse, listType);
-
-             // 4️⃣ Retornar la lista para uso adicional
-             return lista;
-
-         } catch (Exception e) {
-             e.printStackTrace();
-             return null;
-         }
-     }
-
-    public FormatoA findById(int id) {
+    public List<DtoFormatoA> listFormatoA() {
         try {
-            // 1️⃣ Armar la URL del microservicio
-            String url = BASE_URL + "/" + id;
+            String jsonResponse = HttpUtil.get(BASE_URL);
 
-            // 2️⃣ Hacer petición GET con HttpUtil
+            Type listType = new TypeToken<List<DtoFormatoA>>() {}.getType();
+            List<DtoFormatoA> lista = gson.fromJson(jsonResponse, listType);
+
+            return lista != null ? lista : new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public DtoFormatoA findById(Long id) {
+        try {
+            String url = BASE_URL + "/" + id;
             String jsonResponse = HttpUtil.get(url);
 
-            // 3️⃣ Convertir JSON a objeto FormatoA
-            FormatoA formato = gson.fromJson(jsonResponse, FormatoA.class);
-
-            // 4️⃣ Retornar el FormatoA obtenido
-            return formato;
-
+            return gson.fromJson(jsonResponse, DtoFormatoA.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -62,7 +49,7 @@ public class EvaluacionService extends Subject {
     public Persona findPersonaByEmail(String email) {
         try {
             // 1️⃣ Construir la URL completa del microservicio o gateway
-            String url = "http://localhost:8080/api/personas/email/" + email;
+            String url = "http://localhost:8082/api/personas/email/" + email;
 
             // 2️⃣ Realizar la petición GET usando tu clase HttpUtil
             String jsonResponse = HttpUtil.get(url);
@@ -81,8 +68,9 @@ public class EvaluacionService extends Subject {
 
     public boolean updateEstadoObservaciones(Long idFormato, String nuevoEstado, String observaciones) {
         try {
+            String obsEncoded = URLEncoder.encode(observaciones, StandardCharsets.UTF_8);
             // 1️⃣ Construir la URL del microservicio (usa tu API Gateway si existe)
-            String url = BASE_URL + "/" + idFormato + "/estado/" + nuevoEstado + "/" + observaciones;
+            String url = BASE_URL + "/" + idFormato + "/estado/" + nuevoEstado + "/" +  obsEncoded;
 
             // 2️⃣ Hacer la petición PUT (sin cuerpo, el backend usa path variables)
             String jsonResponse = HttpUtil.put(url, "");
@@ -110,29 +98,26 @@ public class EvaluacionService extends Subject {
 
     public List<FormatoA> listarFormatosPorPrograma(String programa) {
         try {
-            // 1️⃣ Construir la URL del microservicio con el nombre del programa
             String url = BASE_URL + "/programa/" + programa;
-
-            // 2️⃣ Realizar la petición GET al backend
             String jsonResponse = HttpUtil.get(url);
 
-            // 3️⃣ Convertir la respuesta JSON en una lista de objetos FormatoA
             Type listType = new TypeToken<List<FormatoA>>() {}.getType();
             List<FormatoA> lista = gson.fromJson(jsonResponse, listType);
+            System.out.println("Llamando: " + url);
 
-            // 4️⃣ Retornar la lista de formatos A del programa
-            return lista;
+
+            return lista != null ? lista : new ArrayList<>();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 
     public List<Anteproyecto> listarAnteproyectos() {
         try {
             // 1️⃣ Construir la URL hacia el endpoint del controlador de anteproyectos
-            String url = "http://localhost:8080/api/anteproyectos";
+            String url = "http://localhost:8082/api/anteproyectos";
 
             // 2️⃣ Realizar la petición GET usando HttpUtil
             String jsonResponse = HttpUtil.get(url);
@@ -152,7 +137,7 @@ public class EvaluacionService extends Subject {
     public Anteproyecto buscarAnteproyectoPorId(Long id) {
         try {
             // 1️⃣ Construir la URL hacia el endpoint del microservicio de anteproyectos
-            String url = "http://localhost:8080/api/anteproyectos/" + id;
+            String url = "http://localhost:8082/api/anteproyectos/" + id;
 
             // 2️⃣ Realizar la petición GET al backend
             String jsonResponse = HttpUtil.get(url);
@@ -177,7 +162,7 @@ public class EvaluacionService extends Subject {
     public List<Persona> listarDocentesDisponibles(Long idFormatoA) {
         try {
             // Construir la URL completa hacia el endpoint del microservicio
-            String url = "http://localhost:8080/api/personas/docentesDisponibles/" + idFormatoA;
+            String url = "http://localhost:8082/api/personas/docentesDisponibles/" + idFormatoA;
 
             // Realizar la petición GET
             String jsonResponse = HttpUtil.get(url);

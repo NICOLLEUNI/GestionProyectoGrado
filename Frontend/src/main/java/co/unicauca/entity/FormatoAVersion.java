@@ -6,12 +6,14 @@ import java.time.LocalDate;
 public class FormatoAVersion {
     private Long id;
 
+
     @SerializedName("numVersion")
     private Integer numeroVersion;
 
     private LocalDate fecha;
 
     @SerializedName("titulo")
+
     private String title;
 
     @SerializedName("modalidad")

@@ -7,6 +7,7 @@ package co.unicauca.presentation.views;
 import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.service.EvaluacionService;
 
 import java.util.List;
@@ -23,7 +24,9 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     /**
      * Creates new form AsingnacionEvaluadores
      */
-    public AsignacionEvaluadores(Persona personaLogueado) {
+    public AsignacionEvaluadores(Persona personaLogueado, EvaluacionService evaluacionService) {
+        this.personaLogueado = personaLogueado;
+        this.evaluacionService = evaluacionService;
         initComponents();
     }
 
@@ -104,7 +107,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         lblUModalidad.setForeground(new java.awt.Color(51, 51, 51));
         lblUModalidad.setText("Modalidad");
 
-        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
 
         lblEvaluador1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEvaluador1.setForeground(new java.awt.Color(0, 0, 0));
@@ -146,7 +149,6 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Icon)
                     .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -197,17 +199,22 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             .addGroup(ContenidoLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEvaluador1)
-                    .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCodirector)
-                    .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addComponent(lblEvaluador1)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCodirector))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17))))
         );
         ContenidoLayout.setVerticalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
-                .addComponent(Icon)
-                .addGap(20, 20, 20)
+                .addGap(23, 23, 23)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -242,15 +249,20 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(8, 8, 8)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addComponent(lblEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblCodirector)
-                .addGap(13, 13, 13)
-                .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblCodirector)
+                        .addGap(13, 13, 13)
+                        .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(13, 13, 13))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -272,11 +284,11 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         lblUTitulo.setText(anteproyecto.getTitulo() != null ? anteproyecto.getTitulo() : "Sin título");
 
         // 🔍 Buscar el FormatoA correspondiente según el título
-        List<FormatoA> formatos = evaluacionService.listFormatoA();
-        FormatoA formatoRelacionado = null;
+        List<DtoFormatoA> formatos = evaluacionService.listFormatoA();
+        DtoFormatoA formatoRelacionado = null;
 
         if (formatos != null && !formatos.isEmpty()) {
-            for (FormatoA formato : formatos) {
+            for (DtoFormatoA formato : formatos) {
                 if (formato.getTitle() != null && formato.getTitle().equalsIgnoreCase(anteproyecto.getTitulo())) {
                     formatoRelacionado = formato;
                     break;
@@ -287,8 +299,8 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         // 🎓 Si se encontró un formato A con ese título, extraer sus datos
         if (formatoRelacionado != null) {
             // Director
-            if (formatoRelacionado.getProjectManagerEmail() != null) {
-                Persona director = evaluacionService.findPersonaByEmail(formatoRelacionado.getProjectManagerEmail());
+            if (formatoRelacionado.getProjectManager().getEmail() != null) {
+                Persona director = evaluacionService.findPersonaByEmail(formatoRelacionado.getProjectManager().getEmail());
                 lblUDirector.setText(
                         director != null
                                 ? director.getName() + " " + director.getLastname()
@@ -301,27 +313,20 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
                 // Llenar combo boxes con docentes disponibles
                 cargarEvaluadoresDisponibles(formatoRelacionado.getId());
             }
+            // 👩‍🎓 Estudiantes del formato relacionado
+            List<Persona> estudiantes = formatoRelacionado.getEstudiantes();
 
-            // 👩‍🎓 Estudiantes
-            List<String> correosEstudiantes = formatoRelacionado.getEstudianteEmails();
-            if (correosEstudiantes != null && !correosEstudiantes.isEmpty()) {
-                Persona est1 = evaluacionService.findPersonaByEmail(correosEstudiantes.get(0));
-                lblUEstudiante.setText(
-                        est1 != null
-                                ? est1.getName() + " " + est1.getLastname()
-                                : "Estudiante no encontrado"
-                );
+            if (estudiantes != null && !estudiantes.isEmpty()) {
+                Persona est1 = estudiantes.get(0);
+                lblUEstudiante.setText(est1.getName() + " " + est1.getLastname());
 
-                if (correosEstudiantes.size() > 1) {
-                    Persona est2 = evaluacionService.findPersonaByEmail(correosEstudiantes.get(1));
-                    lblUEstudiante2.setText(
-                            est2 != null
-                                    ? est2.getName() + " " + est2.getLastname()
-                                    : "Sin segundo estudiante"
-                    );
+                if (estudiantes.size() > 1) {
+                    Persona est2 = estudiantes.get(1);
+                    lblUEstudiante2.setText(est2.getName() + " " + est2.getLastname());
                 } else {
                     lblUEstudiante2.setText("Sin segundo estudiante");
                 }
+
             } else {
                 lblUEstudiante.setText("Sin estudiantes");
                 lblUEstudiante2.setText("Sin segundo estudiante");

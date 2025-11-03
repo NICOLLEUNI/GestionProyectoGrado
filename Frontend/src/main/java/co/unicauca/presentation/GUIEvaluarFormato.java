@@ -10,6 +10,7 @@ package co.unicauca.presentation;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.presentation.views.GraficoBarras;
 import co.unicauca.presentation.views.GraficoPastel;
 import co.unicauca.presentation.views.Observaciones;
@@ -39,8 +40,9 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
     
     //private List<FormatoA> listaFormateada = new ArrayList<>();
     
-   public GUIEvaluarFormato(Persona logueado)  {
+   public GUIEvaluarFormato(Persona logueado,EvaluacionService evaluacionService)  {
 
+        this.evaluacionService = evaluacionService;
         this.personaLogueado=logueado;
         initComponents();
         initContent();
@@ -49,8 +51,8 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
          }
 
    private void inicializarObservadores() {
-    GraficoPastel graficoPastel = new GraficoPastel();
-    GraficoBarras graficoBarras = new GraficoBarras();
+    GraficoPastel graficoPastel = new GraficoPastel(evaluacionService);
+    GraficoBarras graficoBarras = new GraficoBarras(evaluacionService);
 
        evaluacionService.addObserver(graficoPastel);
        evaluacionService.addObserver(graficoBarras);
@@ -86,6 +88,7 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
 
         // Llamar al servicio para traer solo los formatos de ese programa
         List<FormatoA> lista = evaluacionService.listarFormatosPorPrograma(programa);
+        System.out.println("DEBUG -> Programa usuario logueado: " + personaLogueado.getPrograma());
 
         // Encabezados de la tabla
         String[] columnas = {"ID", "Título", "Estado"};
@@ -138,10 +141,10 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
      jTable1.getSelectionModel().addListSelectionListener(e -> {
        if (!e.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
         int fila = jTable1.getSelectedRow();
-        int id = (int) jTable1.getValueAt(fila, 0); // ID está en la columna 0
+        Long id = (Long) jTable1.getValueAt(fila, 0); // ID está en la columna 0
 
         // Buscar el FormatoA desde repo
-        FormatoA formato = evaluacionService.findById(id);
+        DtoFormatoA formato = evaluacionService.findById(id);
 
         if (formato != null) {
             Observaciones panelObs = new Observaciones(evaluacionService);
@@ -300,7 +303,7 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
               
-                    new GUIEvaluarFormato(personaLogueado).setVisible(true);
+                   // new GUIEvaluarFormato(personaLogueado, evaluacionService).setVisible(true);
                 
             }
         });
