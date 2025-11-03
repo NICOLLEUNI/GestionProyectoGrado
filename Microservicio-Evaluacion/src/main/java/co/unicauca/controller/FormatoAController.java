@@ -53,7 +53,11 @@ public class FormatoAController {
         FormatoA response = formatoAFacade.obtenerFormatoAPorId(id);
         return ResponseEntity.ok(response);
     }
-
+    @GetMapping("/programa/{programa}")
+    public ResponseEntity<List<FormatoA>> listarFormatosPorPrograma(@PathVariable String programa) {
+        List<FormatoA> formatos = formatoAFacade.listarFormatosPorPrograma(programa);
+        return ResponseEntity.ok(formatos);
+    }
 
     /**
      * Actualiza el estado (por ejemplo: APROBADO o RECHAZADO) de un FormatoA.

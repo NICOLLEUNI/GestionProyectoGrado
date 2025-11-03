@@ -474,50 +474,9 @@ try {
         formatoActual.setObservations(observaciones);
 
         // Llamar al servicio para actualizar el FormatoA principal
-        boolean actualizado = formatoAService.updateEstadoObservacionesYContador(
-           idFormato, estado, observaciones, nuevoContador);
+        boolean actualizado =  evaluacionService.updateEstadoObservaciones(
+           idFormato, estado, observaciones);
 
-        // 🔹 PASO 2: Actualizar la última versión con los mismos datos
-        if (actualizado) {
-            try {
-                // Obtener el repositorio de versiones
-
-                
-                // Obtener todas las versiones de este formato
-
-                
-                if (versiones != null && !versiones.isEmpty()) {
-                    // Obtener la última versión (la más reciente)
-                    co.unicauca.workflow.domain.entities.FormatoAVersion ultimaVersion = 
-                        versiones.get(versiones.size() - 1);
-                    
-                    // Actualizar la última versión con el estado y observaciones de la evaluación
-                    ultimaVersion.setState(co.unicauca.workflow.domain.entities.enumEstado.valueOf(estado));
-                    ultimaVersion.setObservations(observaciones);
-                    
-                    // Guardar los cambios en la versión
-                    boolean versionActualizada = versionRepo.update(ultimaVersion);
-                    
-                    if (versionActualizada) {
-                        System.out.println("DEBUG - Última versión actualizada correctamente");
-                    } else {
-                        System.out.println("DEBUG - Error al actualizar la última versión");
-                    }
-                } else {
-                    System.out.println("DEBUG - No se encontraron versiones para actualizar");
-                }
-                
-            } catch (Exception e) {
-                System.out.println("DEBUG - Error al actualizar versión: " + e.getMessage());
-                e.printStackTrace();
-                // No mostrar error al usuario para no confundirlo, solo log
-            }
-            
-            JOptionPane.showMessageDialog(this, "Formato evaluado correctamente.");
-            this.setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo actualizar el formato.");
-        }
 
     } catch (Exception ex) {
         JOptionPane.showMessageDialog(this, "Error al evaluar: " + ex.getMessage());

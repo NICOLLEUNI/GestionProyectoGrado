@@ -20,7 +20,8 @@ public class GUIMenuDocente extends javax.swing.JFrame {
     /**
      * Creates new form GUIMenuDocente
      */private static Persona personaLogueado;
-    public GUIMenuDocente() {
+    public GUIMenuDocente(Persona personaLogueado) {
+        this.personaLogueado = personaLogueado;
         initComponents();
     }
 

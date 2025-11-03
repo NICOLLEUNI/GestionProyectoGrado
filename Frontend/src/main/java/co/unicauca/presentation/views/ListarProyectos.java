@@ -7,6 +7,7 @@ package co.unicauca.presentation.views;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.entity.ProyectoGrado;
 
 import java.awt.BorderLayout;
 import java.util.List;
@@ -22,61 +23,39 @@ import javax.swing.JOptionPane;
  */
 public class ListarProyectos extends javax.swing.JPanel {
 
-     
-  
- private Persona personaLogueada;
-    private List<FormatoA> formatosUsuario;
 
-    public ListarProyectos(Persona personaLogueada) {
-       
+
+    private ProyectoGrado proyecto;
+
+    // ✅ Constructor que recibe ProyectoGrado
+    public ListarProyectos(ProyectoGrado proyecto) {
+        initComponents();
+        this.proyecto = proyecto;
+        initStyles();
+        cargarDatos();
     }
-
     private void cargarDatos() {
 
-
-        // Traemos todos los formatos
-        List<FormatoA> todos = repo.list();
-        formatosUsuario = new ArrayList<>();
-
-        // Filtramos solo los formatos donde el usuario logueado esté como estudiante
-        for (FormatoA f : todos) {
-            if (f.getEstudiantes() != null) {
-                f.getEstudiantes().stream()
-                 .filter(e -> e.getIdUsuario() == personaLogueada.getIdUsuario())
-                 .findFirst()
-                 .ifPresent(e -> formatosUsuario.add(f));
-            }
-        }
-
-        // Columnas de la tabla
-        String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Versión"};
+        // ✅ Columnas de la tabla para proyectos
+        String[] columnas = {"ID", "Título", "Estado"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 0 ? Long.class : String.class;
+            }
         };
 
-        // Llenamos la tabla
-        for (FormatoA f : formatosUsuario) {
-            EnumEstado estado = f.getState() != null ? f.getState() : EnumEstado.ENTREGADO;
-            String observaciones = f.getObservations() != null ? f.getObservations() : "";
-            int version = 1;
-
-            // Si hay versiones, tomamos la última
-            if (f.getVersiones() != null && !f.getVersiones().isEmpty()) {
-                FormatoAVersion ultima = f.getVersiones().get(f.getVersiones().size() - 1);
-                estado = ultima.getState();
-                observaciones = ultima.getObservations() != null ? ultima.getObservations() : "";
-                version = ultima.getNumeroVersion();
-            }
-
+        // ✅ Llenamos la tabla con el proyecto recibido
+        if (proyecto != null) {
             Object[] fila = {
-                f.getTitle() != null ? f.getTitle() : "",
-                f.getMode() != null ? f.getMode().name() : "N/A",
-                estado.name(),
-                observaciones,
-                version
+                    proyecto.getId(),
+                    proyecto.getNombre() != null ? proyecto.getNombre() : "",
+                    proyecto.getEstado() != null ? proyecto.getEstado() : "N/A"
             };
             modelo.addRow(fila);
         }

@@ -11,14 +11,17 @@ package co.unicauca.presentation;
 
 
 
-import co.unicauca.entity.Persona;
+
+import co.unicauca.entity.*;
+import co.unicauca.entity.ProyectoGrado;
 import co.unicauca.presentation.views.ConsultarFormatoA;
 import co.unicauca.presentation.views.ListaFormatosAestudiantes;
 import co.unicauca.presentation.views.Principal;
+import co.unicauca.service.EstudianteService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
-import javax.swing.JPanel;
-
+import java.util.List;
+import javax.swing.*;
 
 
 /**
@@ -27,19 +30,17 @@ import javax.swing.JPanel;
  */
 public class GUIMenuEstudiante extends javax.swing.JFrame {
 
-    
-
-
     private static Persona personaLogueado;
+    private EstudianteService estudianteService; // ✅ SERVICIO para microservicios
 
     public GUIMenuEstudiante(Persona logueado) {
         this.personaLogueado = logueado;
-        FlatMTMaterialLighterIJTheme.setup(); // aplicar tema
+        this.estudianteService = new EstudianteService(); // ✅ Inicializar servicio
+        FlatMTMaterialLighterIJTheme.setup();
         initComponents();
-        initContent(); // cargar panel principal
-        setLocationRelativeTo(null); // centrar ventana
+        initContent();
+        setLocationRelativeTo(null);
     }
-
     // Método genérico para mostrar un JPanel en el panel central
     private void showJPanel(JPanel pl) {
         pl.setSize(641, 498);
@@ -56,6 +57,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
     private void initContent() {
         showJPanel(new Principal(personaLogueado));
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,7 +73,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
         btRegresar = new javax.swing.JButton();
         Titulo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btConsultarFormatoA = new javax.swing.JButton();
+        btProyecto = new javax.swing.JButton();
         JButtonCloseSesion = new javax.swing.JButton();
         Contenido = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -120,23 +122,23 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
         );
 
-        btConsultarFormatoA.setBackground(new java.awt.Color(65, 55, 171));
-        btConsultarFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
-        btConsultarFormatoA.setForeground(new java.awt.Color(255, 255, 255));
-        btConsultarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
-        btConsultarFormatoA.setText("Consultar Proyecto");
-        btConsultarFormatoA.setToolTipText("");
-        btConsultarFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        btConsultarFormatoA.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btConsultarFormatoA.setIconTextGap(7);
-        btConsultarFormatoA.addMouseListener(new java.awt.event.MouseAdapter() {
+        btProyecto.setBackground(new java.awt.Color(65, 55, 171));
+        btProyecto.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        btProyecto.setForeground(new java.awt.Color(255, 255, 255));
+        btProyecto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
+        btProyecto.setText("Consultar Proyecto");
+        btProyecto.setToolTipText("");
+        btProyecto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        btProyecto.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btProyecto.setIconTextGap(7);
+        btProyecto.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btConsultarFormatoAMouseClicked(evt);
+                btProyectoMouseClicked(evt);
             }
         });
-        btConsultarFormatoA.addActionListener(new java.awt.event.ActionListener() {
+        btProyecto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btConsultarFormatoAActionPerformed(evt);
+                btProyectoActionPerformed(evt);
             }
         });
 
@@ -159,7 +161,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
             .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -175,7 +177,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(56, 56, 56)
-                .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(109, 109, 109)
@@ -239,45 +241,60 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btRegresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btRegresarMouseClicked
-     GUIMenuPrincipal ventanaPrincipal = new GUIMenuPrincipal(personaLogueado);
-    ventanaPrincipal.setVisible(true);
-    this.dispose(); 
+        GUIMenuPrincipal ventanaPrincipal = new GUIMenuPrincipal(personaLogueado);
+        ventanaPrincipal.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btRegresarMouseClicked
 
-    private void btConsultarFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btConsultarFormatoAMouseClicked
+    private void btProyectoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btProyectoMouseClicked
+        try {
+            // ✅ MISMA FUNCIONALIDAD - Abrir GUIMenuProyecto
+            GUIMenuProyecto menuProyecto = new GUIMenuProyecto(personaLogueado);
+            menuProyecto.setVisible(true);
+            this.dispose();
 
-        showJPanel(new ConsultarFormatoA(personaLogueado));
-    }//GEN-LAST:event_btConsultarFormatoAMouseClicked
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al abrir menú de proyectos");
+        }
+    }
+//GEN-LAST:event_btProyectoMouseClicked
 
     private void JButtonCloseSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButtonCloseSesionActionPerformed
         GUILogin login = new GUILogin();
         login.setVisible(true);
-        this.setVisible(false);
+        this.dispose();
     }//GEN-LAST:event_JButtonCloseSesionActionPerformed
 
-    private void btConsultarFormatoAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarFormatoAActionPerformed
-        
-      ListaFormatosAestudiantes vistaEstudiante = new ListaFormatosAestudiantes(personaLogueado);
-        showJPanel(vistaEstudiante);
+    private void btProyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btProyectoActionPerformed
 
-    }//GEN-LAST:event_btConsultarFormatoAActionPerformed
+        try {
+            // ✅ ABRIR GUIMenuProyecto pasando la Persona completa
+            GUIMenuProyecto menuProyecto = new GUIMenuProyecto(personaLogueado);
+            menuProyecto.setVisible(true);
+            this.dispose(); // Cerrar menú actual
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al abrir menú de proyectos");
+        }
+
+    }
+
+
+//GEN-LAST:event_btProyectoActionPerformed
 
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-       FlatMTMaterialLighterIJTheme.setup();
-       
-      
+        FlatMTMaterialLighterIJTheme.setup();
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-
+                // ⚠️ Esto necesita que personaLogueado venga del login
                 new GUIMenuEstudiante(personaLogueado).setVisible(true);
-
             }
         });
     }
@@ -288,7 +305,7 @@ public class GUIMenuEstudiante extends javax.swing.JFrame {
     private javax.swing.JButton JButtonCloseSesion;
     private javax.swing.JPanel Menu;
     private javax.swing.JPanel Titulo;
-    private javax.swing.JButton btConsultarFormatoA;
+    private javax.swing.JButton btProyecto;
     private javax.swing.JButton btRegresar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;

@@ -75,27 +75,40 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
                             yPrincipal + framePastel.getHeight() + 30);
     frameBarras.setVisible(true);
 }
-private void cargarDatos() {
-    List<FormatoA> lista = evaluacionService.listFormatoA();
-
-    String[] columnas = {"ID", "Título", "Estado"};
-    DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
-
-    for (FormatoA f : lista) {
-        // Si getState() devuelve enumEstado
-        if (f.getState() == EnumEstado.ENTREGADO) {
-            Object[] fila = {
-                f.getId(),
-                f.getTitle(),
-                f.getState().getDescripcion() // Mostramos la descripción legible
-            };
-            modelo.addRow(fila);
+    private void cargarDatos() {
+        if (personaLogueado == null || personaLogueado.getPrograma() == null) {
+            System.err.println("⚠ No se pudo cargar el programa del usuario logueado.");
+            return;
         }
 
-    }
+        // Obtener el nombre del programa desde la persona logueada
+        String programa = personaLogueado.getPrograma();
 
-    jTable1.setModel(modelo);
-}
+        // Llamar al servicio para traer solo los formatos de ese programa
+        List<FormatoA> lista = evaluacionService.listarFormatosPorPrograma(programa);
+
+        // Encabezados de la tabla
+        String[] columnas = {"ID", "Título", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+
+        // Poblar la tabla con los formatos entregados
+        if (lista != null) {
+            for (FormatoA f : lista) {
+                if (f.getState() == EnumEstado.ENTREGADO) {
+                    Object[] fila = {
+                            f.getId(),
+                            f.getTitle(),
+                            f.getState().getDescripcion() // descripción legible del estado
+                    };
+                    modelo.addRow(fila);
+                }
+            }
+        } else {
+            System.err.println("⚠ No se encontraron formatos para el programa: " + programa);
+        }
+
+        jTable1.setModel(modelo);
+    }
 
     private void cerrarGraficas() {
     if (framePastel != null) {

@@ -7,6 +7,7 @@ package co.unicauca.presentation.views;
 
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.FormatoAVersion;
 import co.unicauca.entity.Persona;
 
 import java.awt.BorderLayout;
@@ -23,35 +24,19 @@ import javax.swing.JOptionPane;
  */
 public class ListaFormatosAestudiantes extends javax.swing.JPanel {
 
-     
-    private Persona personaLogueada;
-    private List<FormatoA> formatosUsuario;
 
-    public ListaFormatosAestudiantes(Persona personaLogueada) {
+    private List<FormatoAVersion> versionesFormatoA;
+
+    // ✅ Constructor que recibe List<FormatoAVersion>
+    public ListaFormatosAestudiantes(List<FormatoAVersion> versionesFormatoA) {
         initComponents();
-        this.personaLogueada = personaLogueada;
+        this.versionesFormatoA = versionesFormatoA;
         initStyles();
         cargarDatos();
     }
 
     private void cargarDatos() {
-        IFormatoARepository repo = Factory.getFormatoARepository("default");
-
-        // Traemos todos los formatos
-        List<FormatoA> todos = repo.list();
-        formatosUsuario = new ArrayList<>();
-
-        // Filtramos solo los formatos donde el usuario logueado esté como estudiante
-        for (FormatoA f : todos) {
-            if (f.getEstudiantes() != null) {
-                f.getEstudiantes().stream()
-                 .filter(e -> e.getIdUsuario() == personaLogueada.getIdUsuario())
-                 .findFirst()
-                 .ifPresent(e -> formatosUsuario.add(f));
-            }
-        }
-
-        // Columnas de la tabla
+        // ✅ Columnas de la tabla
         String[] columnas = {"Título", "Modalidad", "Estado actual", "Observaciones", "Versión"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
@@ -60,28 +45,24 @@ public class ListaFormatosAestudiantes extends javax.swing.JPanel {
             }
         };
 
-        // Llenamos la tabla
-        for (FormatoA f : formatosUsuario) {
-            EnumEstado estado = f.getState() != null ? f.getState() : EnumEstado.ENTREGADO;
-            String observaciones = f.getObservations() != null ? f.getObservations() : "";
-            int version = 1;
+        // ✅ Llenamos la tabla con las versiones recibidas
+        if (versionesFormatoA != null) {
+            for (FormatoAVersion version : versionesFormatoA) {
+                EnumEstado estado = version.getState() != null ? version.getState() : EnumEstado.ENTREGADO;
+                String observaciones = version.getObservations() != null ? version.getObservations() : "";
+                int numeroVersion = version.getNumeroVersion();
+                String titulo = version.getTitle() != null ? version.getTitle() : "";
+                String modalidad = version.getMode() != null ? version.getMode().name() : "N/A";
 
-            // Si hay versiones, tomamos la última
-            if (f.getVersiones() != null && !f.getVersiones().isEmpty()) {
-                FormatoAVersion ultima = f.getVersiones().get(f.getVersiones().size() - 1);
-                estado = ultima.getState();
-                observaciones = ultima.getObservations() != null ? ultima.getObservations() : "";
-                version = ultima.getNumeroVersion();
+                Object[] fila = {
+                        titulo,
+                        modalidad,
+                        estado.name(),
+                        observaciones,
+                        numeroVersion
+                };
+                modelo.addRow(fila);
             }
-
-            Object[] fila = {
-                f.getTitle() != null ? f.getTitle() : "",
-                f.getMode() != null ? f.getMode().name() : "N/A",
-                estado.name(),
-                observaciones,
-                version
-            };
-            modelo.addRow(fila);
         }
 
         jTable1.setModel(modelo);

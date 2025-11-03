@@ -2,13 +2,10 @@
 package co.unicauca.presentation;
 
 import co.unicauca.service.AuthService;
-import co.unicauca.model.Persona;
+import co.unicauca.entity.Persona;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import javax.swing.JOptionPane;
-import java.util.HashSet;
-import java.util.Set;
+import java.awt.Color;
 
 
 public class GUILogin extends javax.swing.JFrame {
@@ -17,10 +14,6 @@ public class GUILogin extends javax.swing.JFrame {
 private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
     private final AuthService authService;
     private final Gson gson;
-
-
-
-
     /**
      * Creates new form GUILogin
      */
@@ -322,7 +315,8 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
         String password = String.valueOf(tfContrasenia.getPassword()).trim();
 
         // ✅ SOLO validar campos vacíos en el frontend
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() ||
+                email.equals("Ingrese su email") || password.equals("**********")) {
             JOptionPane.showMessageDialog(this,
                     "Por favor ingresa email y contraseña",
                     "Campos incompletos",
@@ -340,7 +334,7 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
                     "Inicio de sesión exitoso",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Pasar al menú principal
+            // ✅ CORREGIDO: Pasar Persona del paquete entity
             GUIMenuPrincipal guiPrincipal = new GUIMenuPrincipal(personaLogueada);
             guiPrincipal.setVisible(true);
             this.dispose();
@@ -357,7 +351,8 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
 
 
 
-    
+
+
     private void lblLoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLoginMouseEntered
         pnlBttLogin.setBackground(new Color(0,64,128));
     }//GEN-LAST:event_lblLoginMouseEntered
@@ -371,8 +366,8 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
     }//GEN-LAST:event_lblRegistrarseMouseExited
 
     private void lblRegistrarseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRegistrarseMouseClicked
-        GUISingIn ventanaSingIn = new GUISingIn(); // crear la nueva ventana
-        ventanaSingIn.setVisible(true);            // mostrarla
+        //GUISingIn ventanaSingIn = new GUISingIn(); // crear la nueva ventana
+        //ventanaSingIn.setVisible(true);            // mostrarla
         this.dispose();       
     }//GEN-LAST:event_lblRegistrarseMouseClicked
 

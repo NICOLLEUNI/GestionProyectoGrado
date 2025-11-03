@@ -30,4 +30,8 @@ public class Persona {
     @CollectionTable(name = "persona_roles", joinColumns = @JoinColumn(name = "idUsuario"))
     @Enumerated(EnumType.STRING)
     private Set<EnumRol> roles;
+
+    public boolean tieneRol(EnumRol rol) {
+        return roles != null && roles.contains(rol);
+    }
 }

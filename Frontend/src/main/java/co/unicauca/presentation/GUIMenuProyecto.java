@@ -7,10 +7,14 @@ package co.unicauca.presentation;
 
 
 import java.awt.BorderLayout;
+import java.util.List;
+
+import co.unicauca.entity.*;
 import co.unicauca.presentation.views.ListaFormatosAestudiantes;
 import javax.swing.JPanel;
 import co.unicauca.presentation.views.ListarAnteproyectos;
 import co.unicauca.presentation.views.ListarProyectos;
+import co.unicauca.service.EstudianteService;
 
 /**
  *
@@ -18,9 +22,27 @@ import co.unicauca.presentation.views.ListarProyectos;
  */
 public class GUIMenuProyecto extends javax.swing.JFrame {
 
-    public GUIMenuProyecto() {
-      
+    private Persona personaLogueado;
+    private EstudianteService estudianteService;
+
+    public GUIMenuProyecto(Persona logueado) {
+        this.personaLogueado = logueado;
+        this.estudianteService = new EstudianteService();
+        initComponents();
+        setLocationRelativeTo(null);
     }
+
+    private void showJPanel(JPanel pl) {
+        pl.setSize(641, 498);
+        pl.setLocation(0, 0);
+
+        Contenido.removeAll();
+        Contenido.setLayout(new BorderLayout());
+        Contenido.add(pl, BorderLayout.CENTER);
+        Contenido.revalidate();
+        Contenido.repaint();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,12 +55,13 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
         Background = new javax.swing.JPanel();
         Menu = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
-        btRegresar = new javax.swing.JButton();
         Titulo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btConsultarFormatoA = new javax.swing.JButton();
         JButtonCloseSesion = new javax.swing.JButton();
         btConsultarAnteproyecto = new javax.swing.JButton();
+        btProyecto = new javax.swing.JButton();
+        btRegresar = new javax.swing.JButton();
         Contenido = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
 
@@ -51,22 +74,6 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
 
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         lblLogo.setText("jLabel2");
-
-        btRegresar.setBackground(new java.awt.Color(65, 55, 171));
-        btRegresar.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
-        btRegresar.setForeground(new java.awt.Color(255, 255, 255));
-        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
-        btRegresar.setText("Volver");
-        btRegresar.setToolTipText("");
-        btRegresar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        btRegresar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btRegresar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btRegresar.setIconTextGap(7);
-        btRegresar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btRegresarMouseClicked(evt);
-            }
-        });
 
         Titulo.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -90,11 +97,13 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
         btConsultarFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btConsultarFormatoA.setForeground(new java.awt.Color(255, 255, 255));
         btConsultarFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
-        btConsultarFormatoA.setText("Consular FormatoA");
+        btConsultarFormatoA.setText("FormatoA");
         btConsultarFormatoA.setToolTipText("");
         btConsultarFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
         btConsultarFormatoA.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btConsultarFormatoA.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btConsultarFormatoA.setIconTextGap(7);
+        btConsultarFormatoA.setVerifyInputWhenFocusTarget(false);
         btConsultarFormatoA.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btConsultarFormatoAMouseClicked(evt);
@@ -119,10 +128,11 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
         btConsultarAnteproyecto.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btConsultarAnteproyecto.setForeground(new java.awt.Color(255, 255, 255));
         btConsultarAnteproyecto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
-        btConsultarAnteproyecto.setText("Consultar Anteproyecto");
+        btConsultarAnteproyecto.setText("Anteproyecto");
         btConsultarAnteproyecto.setToolTipText("");
         btConsultarAnteproyecto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
         btConsultarAnteproyecto.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btConsultarAnteproyecto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btConsultarAnteproyecto.setIconTextGap(7);
         btConsultarAnteproyecto.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -135,6 +145,38 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
             }
         });
 
+        btProyecto.setBackground(new java.awt.Color(65, 55, 171));
+        btProyecto.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        btProyecto.setForeground(new java.awt.Color(255, 255, 255));
+        btProyecto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
+        btProyecto.setText("Proyecto");
+        btProyecto.setToolTipText("");
+        btProyecto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        btProyecto.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btProyecto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btProyecto.setIconTextGap(7);
+        btProyecto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btProyectoMouseClicked(evt);
+            }
+        });
+
+        btRegresar.setBackground(new java.awt.Color(65, 55, 171));
+        btRegresar.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        btRegresar.setForeground(new java.awt.Color(255, 255, 255));
+        btRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
+        btRegresar.setText("Volver");
+        btRegresar.setToolTipText("");
+        btRegresar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        btRegresar.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btRegresar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btRegresar.setIconTextGap(7);
+        btRegresar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btRegresarMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
         Menu.setLayout(MenuLayout);
         MenuLayout.setHorizontalGroup(
@@ -142,13 +184,14 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(Titulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btConsultarAnteproyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(btConsultarAnteproyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(80, 80, 80)
                 .addComponent(JButtonCloseSesion))
@@ -160,15 +203,18 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
                 .addComponent(lblLogo)
                 .addGap(32, 32, 32)
                 .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(73, 73, 73)
+                .addGap(13, 13, 13)
                 .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btProyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(MenuLayout.createSequentialGroup()
+                        .addGap(180, 180, 180)
+                        .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(MenuLayout.createSequentialGroup()
                         .addGap(60, 60, 60)
-                        .addComponent(btConsultarAnteproyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btConsultarFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(MenuLayout.createSequentialGroup()
                         .addGap(120, 120, 120)
-                        .addComponent(btRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btConsultarAnteproyecto, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(36, 36, 36)
                 .addComponent(JButtonCloseSesion))
         );
@@ -183,7 +229,7 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
             .addGroup(ContenidoLayout.createSequentialGroup()
                 .addGap(35, 35, 35)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(195, Short.MAX_VALUE))
+                .addContainerGap(203, Short.MAX_VALUE))
         );
         ContenidoLayout.setVerticalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -199,8 +245,8 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
             BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(BackgroundLayout.createSequentialGroup()
                 .addComponent(Menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Contenido, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         BackgroundLayout.setVerticalGroup(
@@ -234,20 +280,56 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
     }//GEN-LAST:event_btRegresarMouseClicked
 
     private void btConsultarFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btConsultarFormatoAMouseClicked
-       
+        try {
+            // 1. Obtener el proyecto del estudiante
+            ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
+
+            if (proyecto != null) {
+                // 2. Obtener el FormatoA asociado al proyecto
+                FormatoA formatoA = estudianteService.findFormatoAByProyectoId(proyecto.getId());
+
+                if (formatoA != null) {
+                    // 3. Obtener las versiones de ese FormatoA
+                    List<FormatoAVersion> versiones = estudianteService.listFormatosAVersion(formatoA.getId());
+
+                    if (versiones != null && !versiones.isEmpty()) {
+                        // 4. Pasar las versiones a la vista
+                        ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versiones);
+                        showJPanel(listaFormatosA);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btConsultarFormatoAMouseClicked
 
     private void JButtonCloseSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButtonCloseSesionActionPerformed
-       
+        GUILogin login = new GUILogin();
+        login.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_JButtonCloseSesionActionPerformed
 
     private void btConsultarFormatoAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarFormatoAActionPerformed
-        ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes();
+        try {
+            // ✅ Misma lógica que en btConsultarFormatoAMouseClicked
+            ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
-        Contenido.removeAll();
-        Contenido.add(listaFormatosA, BorderLayout.CENTER);
-        Contenido.revalidate();
-        Contenido.repaint();
+            if (proyecto != null) {
+                FormatoA formatoA = estudianteService.findFormatoAByProyectoId(proyecto.getId());
+
+                if (formatoA != null) {
+                    List<FormatoAVersion> versiones = estudianteService.listFormatosAVersion(formatoA.getId());
+
+                    if (versiones != null && !versiones.isEmpty()) {
+                        ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versiones);
+                        showJPanel(listaFormatosA);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
       
     }//GEN-LAST:event_btConsultarFormatoAActionPerformed
 
@@ -256,15 +338,36 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
     }//GEN-LAST:event_btConsultarAnteproyectoMouseClicked
 
     private void btConsultarAnteproyectoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btConsultarAnteproyectoActionPerformed
-        ListarAnteproyectos listaAnteproyectos = new ListarAnteproyectos();
+        try {
+            ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
-        Contenido.removeAll();
-        Contenido.add(listaAnteproyectos, BorderLayout.CENTER);
-        Contenido.revalidate();
-        Contenido.repaint();
+            if (proyecto != null) {
+                Anteproyecto anteproyecto = estudianteService.findAnteproyectoByProyectoId(proyecto.getId());
+
+                if (anteproyecto != null) {
+                    ListarAnteproyectos listaAnteproyectos = new ListarAnteproyectos(anteproyecto);
+                    showJPanel(listaAnteproyectos);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btConsultarAnteproyectoActionPerformed
 
+    private void btProyectoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btProyectoMouseClicked
+        try {
+            // ✅ Obtener el proyecto del estudiante
+            ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
+            if (proyecto != null) {
+                // ✅ Mostrar la información del proyecto
+                ListarProyectos listaProyectos = new ListarProyectos(proyecto);
+                showJPanel(listaProyectos);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btProyectoMouseClicked
     /**
      * @param args the command line arguments
      */
@@ -309,6 +412,7 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
     private javax.swing.JPanel Titulo;
     private javax.swing.JButton btConsultarAnteproyecto;
     private javax.swing.JButton btConsultarFormatoA;
+    private javax.swing.JButton btProyecto;
     private javax.swing.JButton btRegresar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JSeparator jSeparator1;

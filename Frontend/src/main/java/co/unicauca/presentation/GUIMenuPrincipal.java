@@ -35,10 +35,7 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         initContent();
     }
     
-    public GUIMenuPrincipal()
-    {
-        
-    }
+    public GUIMenuPrincipal() {}
 
      private void initStyles(){
      
@@ -305,7 +302,17 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonCloseSesionActionPerformed
 
     private void btJefeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btJefeMouseClicked
-        // TODO add your handling code here:
+        if(personaLogueado.tieneRol(EnumRol.JEFE_DEPARTAMENTO))
+        {
+            GUIMenuJefe ventanaJefe = new GUIMenuJefe(personaLogueado); // crear la nueva ventana
+            ventanaJefe.setVisible(true);            // mostrarla
+            this.dispose();
+        }else{
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Acceso denegado: No tienes permisos para ingresar al menú de Coordinador",
+                    "Error de autorización",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btJefeMouseClicked
 
     /**

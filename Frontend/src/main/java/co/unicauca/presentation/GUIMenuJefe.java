@@ -4,18 +4,23 @@
  */
 package co.unicauca.presentation;
 
+import co.unicauca.entity.Persona;
+
 /**
  *
  * @author User
  */
 public class GUIMenuJefe extends javax.swing.JFrame {
 
+    private Persona personaLogueado;
     /**
      * Creates new form GUIMenuJefe
      */
-    public GUIMenuJefe() {
+    public GUIMenuJefe(Persona personaLogueado) {
+        this.personaLogueado = personaLogueado;
         initComponents();
     }
+    public GUIMenuJefe() {}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,7 +36,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
         Icon = new javax.swing.JLabel();
         Titulo = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btSubirFormatoA = new javax.swing.JButton();
+        btAnteproyectos = new javax.swing.JButton();
         btnCloseSesion = new javax.swing.JButton();
         Contenido = new javax.swing.JPanel();
 
@@ -66,19 +71,19 @@ public class GUIMenuJefe extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        btSubirFormatoA.setBackground(new java.awt.Color(65, 55, 171));
-        btSubirFormatoA.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
-        btSubirFormatoA.setForeground(new java.awt.Color(255, 255, 255));
-        btSubirFormatoA.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
-        btSubirFormatoA.setText("Anteproyectos");
-        btSubirFormatoA.setToolTipText("");
-        btSubirFormatoA.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        btSubirFormatoA.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        btSubirFormatoA.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btSubirFormatoA.setIconTextGap(7);
-        btSubirFormatoA.addMouseListener(new java.awt.event.MouseAdapter() {
+        btAnteproyectos.setBackground(new java.awt.Color(65, 55, 171));
+        btAnteproyectos.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        btAnteproyectos.setForeground(new java.awt.Color(255, 255, 255));
+        btAnteproyectos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/file-chart.png"))); // NOI18N
+        btAnteproyectos.setText("Anteproyectos");
+        btAnteproyectos.setToolTipText("");
+        btAnteproyectos.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        btAnteproyectos.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btAnteproyectos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btAnteproyectos.setIconTextGap(7);
+        btAnteproyectos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btSubirFormatoAMouseClicked(evt);
+                btAnteproyectosMouseClicked(evt);
             }
         });
 
@@ -101,7 +106,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
                     .addGroup(MenuLayout.createSequentialGroup()
                         .addGap(57, 57, 57)
                         .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btSubirFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btAnteproyectos, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(MenuLayout.createSequentialGroup()
                 .addGap(81, 81, 81)
@@ -116,7 +121,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(Titulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
-                .addComponent(btSubirFormatoA, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btAnteproyectos, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCloseSesion)
                 .addGap(33, 33, 33))
@@ -169,9 +174,11 @@ public class GUIMenuJefe extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btSubirFormatoAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btSubirFormatoAMouseClicked
-       
-    }//GEN-LAST:event_btSubirFormatoAMouseClicked
+    private void btAnteproyectosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAnteproyectosMouseClicked
+        GUIAsingarEvaluadores ventanaEval = new GUIAsingarEvaluadores(personaLogueado);
+        ventanaEval.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btAnteproyectosMouseClicked
 
     private void btnCloseSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseSesionActionPerformed
         GUILogin login = new GUILogin();
@@ -220,7 +227,7 @@ public class GUIMenuJefe extends javax.swing.JFrame {
     private javax.swing.JLabel Icon;
     private javax.swing.JPanel Menu;
     private javax.swing.JPanel Titulo;
-    private javax.swing.JButton btSubirFormatoA;
+    private javax.swing.JButton btAnteproyectos;
     private javax.swing.JButton btnCloseSesion;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

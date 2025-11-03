@@ -5,8 +5,10 @@
 package co.unicauca.presentation.views;
 
 
+import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.infra.Observer;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,13 +27,13 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
     private DefaultPieDataset dataset;
     private JFreeChart chart;
     private ChartPanel chartPanel;
+    private EvaluacionService evaluacionService;
 
-    private FormatoAService formatoAService;
+
 
     public GraficoPastel() {
         // Inicializamos el theme
         FlatMTMaterialLighterIJTheme.setup();
-        this.formatoAService = formatoAService;
 
         initComponents();
         initGrafico();
@@ -51,7 +53,7 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
 
     private void cargarDatosIniciales() {
         // Cargamos datos iniciales desde el servicio
-        List<FormatoA> lista = formatoAService.listFormatoA();
+        List<FormatoA> lista =  evaluacionService.listFormatoA();
         actualizarDataset(lista);
     }
 
@@ -62,7 +64,7 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
 
     for (FormatoA f : lista) {
         // Aseguramos que el estado no sea null
-        co.unicauca.workflow.domain.entities.enumEstado estado = f.getState();
+        EnumEstado estado = f.getState();
 
         if (estado == null) {
             entregados++;
@@ -136,7 +138,7 @@ public class GraficoPastel extends javax.swing.JPanel implements Observer {
             }
         } else {
             // Si no pasan lista, la cargamos directamente del service
-            List<FormatoA> lista = formatoAService.listFormatoA();
+            List<FormatoA> lista =  evaluacionService.listFormatoA();
             actualizarDataset(lista);
         }
     }

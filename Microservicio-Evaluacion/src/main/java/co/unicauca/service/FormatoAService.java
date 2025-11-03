@@ -143,6 +143,21 @@ public class FormatoAService {
     public FormatoA findById(Long id) {
         return formatoARepository.findById(id).orElse(null);
     }
+
+    public List<FormatoA> listarFormatosPorPrograma(String programa) {
+        // Obtener todos los formatos registrados
+        List<FormatoA> todosFormatos = formatoARepository.findAll();
+
+        // Filtrar solo los que tengan al menos un estudiante
+        return todosFormatos.stream()
+                .filter(formato -> !formato.getEstudiantes().isEmpty()) // debe tener estudiantes
+                .filter(formato -> {
+                    Persona primerEstudiante = formato.getEstudiantes().get(0);
+                    return primerEstudiante.getPrograma() != null &&
+                            primerEstudiante.getPrograma().equalsIgnoreCase(programa);
+                })
+                .collect(Collectors.toList());
+    }
 }
 
 

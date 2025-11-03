@@ -46,6 +46,28 @@ public class ProyectoGradoController {
         }
     }
 
+    @GetMapping("/estudiante/{email}")
+    public ResponseEntity<?> obtenerProyectoPorEstudiante(@PathVariable String email) {
+        try {
+            System.out.println("🔍 [CONTROLLER] Buscando proyecto de grado del estudiante: " + email);
+
+            ProyectoGradoResponse proyecto = proyectoGradoService.buscarPorEmailEstudiante(email);
+            return ResponseEntity.ok(proyecto);
+
+        } catch (RuntimeException e) {
+            System.err.println("❌ [CONTROLLER] No se encontró proyecto para el estudiante: " + email);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR buscando proyecto del estudiante: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error interno al buscar proyecto del estudiante")
+            );
+        }
+    }
+
+
+
+
     /**
      * ✅ OBTENER PROYECTO POR ID
      */

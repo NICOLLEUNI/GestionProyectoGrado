@@ -8,6 +8,7 @@ package co.unicauca.presentation.views;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.infra.Observer;
+import co.unicauca.service.EvaluacionService;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTMaterialLighterIJTheme;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,11 +27,10 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer {
     private DefaultCategoryDataset dataset;
     private JFreeChart chart;
     private ChartPanel chartPanel;
-    private FormatoAService formatoAService;
+    private EvaluacionService evaluacionService;
 
     public GraficoBarras() {
         FlatMTMaterialLighterIJTheme.setup();
-        this.formatoAService = formatoAService;
         initComponents();
         initGrafico();
         cargarDatosIniciales();
@@ -52,7 +52,7 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer {
     }
 
     private void cargarDatosIniciales() {
-        List<FormatoA> lista = formatoAService.listFormatoA();
+        List<FormatoA> lista =  evaluacionService.listFormatoA();
         actualizarDataset(lista);
     }
 
@@ -133,7 +133,7 @@ public class GraficoBarras extends javax.swing.JPanel implements Observer {
                 actualizarDataset((List<FormatoA>) lista);
             }
         } else {
-            List<FormatoA> lista = formatoAService.listFormatoA();
+            List<FormatoA> lista =  evaluacionService.listFormatoA();
             actualizarDataset(lista);
         }
     }

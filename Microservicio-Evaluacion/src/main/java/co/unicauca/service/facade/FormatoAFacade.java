@@ -88,5 +88,14 @@ public class FormatoAFacade {
         return formatoAOpt.get();
     }
 
+    public List<FormatoA> listarFormatosPorPrograma(String programa) {
+        List<FormatoA> formatos = formatoAService.listarFormatosPorPrograma(programa);
+
+        if (formatos.isEmpty()) {
+            throw new RuntimeException("⚠️ No se encontraron formatos para el programa: " + programa);
+        }
+
+        return formatos;
+    }
 
 }

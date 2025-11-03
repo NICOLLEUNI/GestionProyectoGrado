@@ -2,20 +2,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package co.unicauca.workflow.presentation.views;
+package co.unicauca.presentation.views;
 
+import co.unicauca.entity.Anteproyecto;
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.service.EvaluacionService;
+
+import java.util.List;
 
 /**
  *
  * @author User
  */
-public class AsingnacionEvaluadores extends javax.swing.JPanel {
+public class AsignacionEvaluadores extends javax.swing.JPanel {
 
+    Anteproyecto anteproyectoActual;
+    private EvaluacionService evaluacionService;
+    private Persona personaLogueado;
     /**
      * Creates new form AsingnacionEvaluadores
      */
-    public AsingnacionEvaluadores() {
+    public AsignacionEvaluadores(Persona personaLogueado) {
         initComponents();
     }
 
@@ -46,10 +54,12 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
         jSeparator12 = new javax.swing.JSeparator();
         Icon = new javax.swing.JLabel();
         lblEvaluador1 = new javax.swing.JLabel();
-        boxDirector = new javax.swing.JComboBox<>();
+        boxEvaluador1 = new javax.swing.JComboBox<>();
         lblCodirector = new javax.swing.JLabel();
-        boxCodirector = new javax.swing.JComboBox<>();
+        boxEvaluador2 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        lblPDF = new javax.swing.JLabel();
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setForeground(new java.awt.Color(255, 255, 255));
@@ -112,12 +122,31 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
         jLabel1.setText("EVALUADORES");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+
+        lblPDF.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        lblPDF.setForeground(new java.awt.Color(102, 102, 255));
+        lblPDF.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPDF.setText("RUTA PDF");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
         Contenido.setLayout(ContenidoLayout);
         ContenidoLayout.setHorizontalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Icon)
                     .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -127,49 +156,57 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
                         .addGap(126, 126, 126)
                         .addComponent(jSeparator9, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(lblEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(6, 6, 6)
+                        .addComponent(lblUEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(126, 126, 126)
                         .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(ContenidoLayout.createSequentialGroup()
-                                .addComponent(lblEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(8, 8, 8)
-                                .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ContenidoLayout.createSequentialGroup()
-                                .addComponent(lblDirector)
-                                .addGap(18, 18, 18)
-                                .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ContenidoLayout.createSequentialGroup()
-                                .addComponent(lblEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(6, 6, 6)
-                                .addComponent(lblUEstudiante, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ContenidoLayout.createSequentialGroup()
-                                .addComponent(lblModalidad)
-                                .addGap(29, 29, 29)
-                                .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ContenidoLayout.createSequentialGroup()
-                                .addGap(100, 100, 100)
-                                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(boxDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblCodirector)
-                            .addComponent(boxCodirector, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEvaluador1)))
+                        .addComponent(lblEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addComponent(lblUEstudiante2, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ContenidoLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(Icon)))
-                .addContainerGap(175, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContenidoLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(161, 161, 161))
+                        .addGap(125, 125, 125)
+                        .addComponent(jSeparator13, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(lblDirector)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblUDirector, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(125, 125, 125)
+                        .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(lblModalidad)
+                        .addGap(29, 29, 29)
+                        .addComponent(lblUModalidad, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(125, 125, 125)
+                        .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(ContenidoLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblEvaluador1)
+                    .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblCodirector)
+                    .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ContenidoLayout.setVerticalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
+                .addComponent(Icon)
                 .addGap(20, 20, 20)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ContenidoLayout.createSequentialGroup()
@@ -183,7 +220,7 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
                     .addComponent(lblUEstudiante))
                 .addGap(3, 3, 3)
                 .addComponent(jSeparator10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblEstudiante2)
                     .addComponent(lblUEstudiante2))
@@ -195,25 +232,25 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
                     .addComponent(lblUDirector))
                 .addGap(3, 3, 3)
                 .addComponent(jSeparator11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblModalidad)
                     .addComponent(lblUModalidad))
                 .addGap(3, 3, 3)
                 .addComponent(jSeparator12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(10, 10, 10)
+                .addGap(24, 24, 24)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addComponent(lblEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(boxDirector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(4, 4, 4)
+                .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblCodirector)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(boxCodirector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(Icon)
-                .addGap(19, 19, 19))
+                .addGap(13, 13, 13)
+                .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -227,14 +264,113 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
             .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+    public void setAnteproyecto(Anteproyecto anteproyecto) {
+        if (anteproyecto == null) return;
+        this.anteproyectoActual = anteproyecto;
 
+        // 🏷️ Datos generales
+        lblUTitulo.setText(anteproyecto.getTitulo() != null ? anteproyecto.getTitulo() : "Sin título");
+
+        // 🔍 Buscar el FormatoA correspondiente según el título
+        List<FormatoA> formatos = evaluacionService.listFormatoA();
+        FormatoA formatoRelacionado = null;
+
+        if (formatos != null && !formatos.isEmpty()) {
+            for (FormatoA formato : formatos) {
+                if (formato.getTitle() != null && formato.getTitle().equalsIgnoreCase(anteproyecto.getTitulo())) {
+                    formatoRelacionado = formato;
+                    break;
+                }
+            }
+        }
+
+        // 🎓 Si se encontró un formato A con ese título, extraer sus datos
+        if (formatoRelacionado != null) {
+            // Director
+            if (formatoRelacionado.getProjectManagerEmail() != null) {
+                Persona director = evaluacionService.findPersonaByEmail(formatoRelacionado.getProjectManagerEmail());
+                lblUDirector.setText(
+                        director != null
+                                ? director.getName() + " " + director.getLastname()
+                                : "Sin director"
+                );
+            } else {
+                lblUDirector.setText("Sin director");
+            }
+            if (formatoRelacionado != null) {
+                // Llenar combo boxes con docentes disponibles
+                cargarEvaluadoresDisponibles(formatoRelacionado.getId());
+            }
+
+            // 👩‍🎓 Estudiantes
+            List<String> correosEstudiantes = formatoRelacionado.getEstudianteEmails();
+            if (correosEstudiantes != null && !correosEstudiantes.isEmpty()) {
+                Persona est1 = evaluacionService.findPersonaByEmail(correosEstudiantes.get(0));
+                lblUEstudiante.setText(
+                        est1 != null
+                                ? est1.getName() + " " + est1.getLastname()
+                                : "Estudiante no encontrado"
+                );
+
+                if (correosEstudiantes.size() > 1) {
+                    Persona est2 = evaluacionService.findPersonaByEmail(correosEstudiantes.get(1));
+                    lblUEstudiante2.setText(
+                            est2 != null
+                                    ? est2.getName() + " " + est2.getLastname()
+                                    : "Sin segundo estudiante"
+                    );
+                } else {
+                    lblUEstudiante2.setText("Sin segundo estudiante");
+                }
+            } else {
+                lblUEstudiante.setText("Sin estudiantes");
+                lblUEstudiante2.setText("Sin segundo estudiante");
+            }
+
+        } else {
+            // ❌ Si no se encontró FormatoA correspondiente
+            lblUDirector.setText("Sin director (no se encontró formato A)");
+            lblUEstudiante.setText("Sin estudiantes");
+            lblUEstudiante2.setText("Sin segundo estudiante");
+        }
+
+        // 📄 Documento asociado
+        String rutaArchivo = anteproyecto.getArchivoPDF();
+        if (rutaArchivo != null && !rutaArchivo.trim().isEmpty()) {
+            if (!rutaArchivo.toLowerCase().endsWith(".pdf")) {
+                rutaArchivo += ".pdf";
+            }
+            lblPDF.setText(rutaArchivo);
+        } else {
+            lblPDF.setText("Sin archivo");
+        }
+    }
+    private void cargarEvaluadoresDisponibles(Long idFormatoA) {
+        if (idFormatoA == null) return;
+
+        // 1️⃣ Obtener la lista de docentes disponibles para evaluar desde el microservicio
+        List<Persona> docentesDisponibles = evaluacionService.listarDocentesDisponibles(idFormatoA);
+
+        // 2️⃣ Limpiar los combo boxes antes de llenarlos
+        boxEvaluador1.removeAllItems();
+        boxEvaluador2.removeAllItems();
+
+        // 3️⃣ Agregar cada docente al combo box usando su correo como identificador
+        if (docentesDisponibles != null && !docentesDisponibles.isEmpty()) {
+            for (Persona docente : docentesDisponibles) {
+                boxEvaluador1.addItem(docente.getEmail());
+                boxEvaluador2.addItem(docente.getEmail());
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JLabel Icon;
-    private javax.swing.JComboBox<Persona> boxCodirector;
-    private javax.swing.JComboBox<Persona> boxDirector;
+    private javax.swing.JComboBox<String> boxEvaluador1;
+    private javax.swing.JComboBox<String> boxEvaluador2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator10;
     private javax.swing.JSeparator jSeparator11;
     private javax.swing.JSeparator jSeparator12;
@@ -246,6 +382,7 @@ public class AsingnacionEvaluadores extends javax.swing.JPanel {
     private javax.swing.JLabel lblEstudiante2;
     private javax.swing.JLabel lblEvaluador1;
     private javax.swing.JLabel lblModalidad;
+    private javax.swing.JLabel lblPDF;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUDirector;
     private javax.swing.JLabel lblUEstudiante;
