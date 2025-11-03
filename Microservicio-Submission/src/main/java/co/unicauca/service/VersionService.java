@@ -53,6 +53,32 @@ public class VersionService {
         return versionGuardada;
     }
 
+    /**
+     * Actualiza los campos de archivoPDF o cartaLaboral de la última versión del FormatoA.
+     */
+    public void actualizarRutasArchivos(FormatoA formatoA) {
+        try {
+            // Buscar la última versión asociada a este FormatoA
+            FormatoAVersion ultimaVersion = formatoVersionRepository.findTopByFormatoAOrderByNumeroVersionDesc(formatoA);
+            if (ultimaVersion == null) {
+                System.err.println("⚠️ No se encontró versión para el FormatoA con ID: " + formatoA.getId());
+                return;
+            }
+
+            // Actualizar las rutas
+            ultimaVersion.setArchivoPDF(formatoA.getArchivoPDF());
+            ultimaVersion.setCartaLaboral(formatoA.getCartaLaboral());
+
+            // Guardar cambios
+            formatoVersionRepository.save(ultimaVersion);
+
+            System.out.println("✅ Versión actualizada con nuevas rutas de archivos para FormatoA ID " + formatoA.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error al actualizar rutas en versión de FormatoA ID: " + formatoA.getId());
+        }
+    }
+
     public FormatoAVersion crearVersionConEvaluacion(FormatoA formatoAActualizado, FormatoARequest request) {
         FormatoAVersion version = new FormatoAVersion();
         version.setNumeroVersion(obtenerProximaVersion(formatoAActualizado));

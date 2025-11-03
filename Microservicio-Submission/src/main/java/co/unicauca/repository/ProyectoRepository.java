@@ -31,4 +31,6 @@ public interface ProyectoRepository extends JpaRepository<ProyectoGrado, Long> {
     // En ProyectoRepository.java - AGREGAR ESTE MÉTODO
     Optional<ProyectoGrado> findByFormatoAActualTitle(String title);
 
+
+
 }

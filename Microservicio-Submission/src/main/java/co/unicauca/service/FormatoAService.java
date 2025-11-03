@@ -74,23 +74,35 @@ public class FormatoAService {
     }
 
 
+// Dentro de tu servicio (FormatoAService) — asegúrate de que versionService esté inyectado
+// @Service
+// public class FormatoAService { ... @Autowired private VersionService versionService; ... }
+
+    @Transactional
     public boolean saveFormatoAPDF(Long id, MultipartFile file) {
         try {
             FormatoA formato = formatoARepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("FormatoA no encontrado con id: " + id));
 
-            String carpetaDestino = RUTA_BASE + "formatoA/";
+            // Carpeta relativa bajo RUTA_BASE
+            String carpetaDestino = RUTA_BASE + File.separator + "formatoA" + File.separator;
             File directorio = new File(carpetaDestino);
             if (!directorio.exists()) directorio.mkdirs();
 
-            String nombreArchivo = "FormatoA_" + id + "_" + file.getOriginalFilename();
+            // Construir nombre seguro
+            String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "archivo.pdf";
+            String nombreArchivo = "FormatoA_" + id + "_" + original;
             File archivoDestino = new File(directorio, nombreArchivo);
             file.transferTo(archivoDestino);
 
-            formato.setArchivoPDF(archivoDestino.getAbsolutePath());
+            // Guardar ruta RELATIVA en la entidad (mejor para portabilidad)
+            String rutaRelativa = "formatoA/" + nombreArchivo;
+            formato.setArchivoPDF(rutaRelativa);
             formatoARepository.save(formato);
 
-            // ❌ NO se crean versiones ni se publica nada
+            // Actualizar la última versión asociada para que tenga la ruta nueva
+            versionService.actualizarRutasArchivos(formato);
+
             return true;
 
         } catch (Exception e) {
@@ -99,20 +111,28 @@ public class FormatoAService {
         }
     }
 
+    @Transactional
     public boolean saveCartaLaboral(Long id, MultipartFile file) {
         try {
             FormatoA formato = formatoARepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("FormatoA no encontrado con id: " + id));
 
-            String nombreArchivo = "CartaLaboral_" + id + "_" + file.getOriginalFilename();
-            File destino = new File(RUTA_BASE + nombreArchivo);
-            destino.getParentFile().mkdirs();
-            file.transferTo(destino);
+            String carpetaDestino = RUTA_BASE + File.separator + "cartaLaboral" + File.separator;
+            File directorio = new File(carpetaDestino);
+            if (!directorio.exists()) directorio.mkdirs();
 
-            formato.setCartaLaboral(destino.getAbsolutePath());
+            String original = file.getOriginalFilename() != null ? file.getOriginalFilename() : "carta.pdf";
+            String nombreArchivo = "CartaLaboral_" + id + "_" + original;
+            File archivoDestino = new File(directorio, nombreArchivo);
+            file.transferTo(archivoDestino);
+
+            String rutaRelativa = "cartaLaboral/" + nombreArchivo;
+            formato.setCartaLaboral(rutaRelativa);
             formatoARepository.save(formato);
 
-            // ❌ Tampoco se publican eventos
+            // Actualizar la última versión asociada
+            versionService.actualizarRutasArchivos(formato);
+
             return true;
 
         } catch (Exception e) {
@@ -120,6 +140,7 @@ public class FormatoAService {
             return false;
         }
     }
+
 
 
     /**

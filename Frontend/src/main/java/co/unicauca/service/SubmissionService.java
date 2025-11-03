@@ -1,6 +1,5 @@
 package co.unicauca.service;
 
-import co.unicauca.entity.EnumModalidad;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.utils.GsonFactory;
@@ -64,20 +63,13 @@ public class SubmissionService {
     }
 
     /**
+     * Crea un nuevo FormatoA en el microservicio submission.
+     */
+    /**
      * Crea un nuevo FormatoA en el microservicio submission con logs de depuración
      */
     public FormatoA createFormatoA(FormatoA formato) {
         try {
-
-            // 🔹 Inicializar campos que podrían ser null
-            if (formato.getArchivoPDF() == null) {
-                formato.setArchivoPDF("pendiente.pdf");
-            }
-
-            if (formato.getMode() == EnumModalidad.PRACTICA_PROFESIONAL && formato.getCartaLaboral() == null) {
-                formato.setCartaLaboral("pendiente.pdf");
-            }
-
             String url = BASE_URL + "/formatoA";
             String jsonRequest = gson.toJson(formato);
 
