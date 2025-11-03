@@ -31,7 +31,7 @@ public class ProyectoService {
 
         ProyectoGrado proyectoGrado = new ProyectoGrado();
         proyectoGrado.setNombre(formatoA.getTitle());
-        proyectoGrado.setFechaCreacion(java.time.LocalDateTime.now());
+        proyectoGrado.setFechaCreacion(java.time.LocalDate.now());
 
         // ⭐⭐ CREAR NUEVA LISTA - NO COMPARTIR LA REFERENCIA ⭐⭐
         proyectoGrado.setEstudiantesEmail(new ArrayList<>(formatoA.getEstudianteEmails()));
@@ -57,7 +57,7 @@ public class ProyectoService {
         return new ProyectoGradoResponse(
                 proyectoGrado.getId(),
                 proyectoGrado.getNombre(),
-                proyectoGrado.getFechaCreacion().toLocalDate(), // ← Convertir LocalDateTime a LocalDate
+                proyectoGrado.getFechaCreacion(), // ← Convertir LocalDateTime a LocalDate
                 proyectoGrado.getEstudiantesEmail(),
                 proyectoGrado.getFormatoAActual().getId()
         );
