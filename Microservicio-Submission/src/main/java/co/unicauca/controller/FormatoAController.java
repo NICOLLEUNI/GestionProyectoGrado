@@ -58,6 +58,7 @@ public class FormatoAController {
     @PostMapping
     public ResponseEntity<FormatoA> subirFormatoA(@Valid @RequestBody FormatoA formatoA) {
         FormatoA formatoCreado = formatoAService.subirFormatoA(formatoA);
+        System.out.println("🟢 FormatoA devuelto al frontend: " + formatoCreado);
         return ResponseEntity.status(HttpStatus.CREATED).body(formatoCreado);
     }
 
