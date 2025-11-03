@@ -24,7 +24,9 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     /**
      * Creates new form AsingnacionEvaluadores
      */
-    public AsignacionEvaluadores(Persona personaLogueado) {
+    public AsignacionEvaluadores(Persona personaLogueado, EvaluacionService evaluacionService) {
+        this.personaLogueado = personaLogueado;
+        this.evaluacionService = evaluacionService;
         initComponents();
     }
 
@@ -105,7 +107,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         lblUModalidad.setForeground(new java.awt.Color(51, 51, 51));
         lblUModalidad.setText("Modalidad");
 
-        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/workflow/presentation/images/LogoPequeño.png"))); // NOI18N
+        Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
 
         lblEvaluador1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEvaluador1.setForeground(new java.awt.Color(0, 0, 0));
@@ -147,7 +149,6 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Icon)
                     .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -198,17 +199,22 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             .addGroup(ContenidoLayout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEvaluador1)
-                    .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblCodirector)
-                    .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addComponent(lblEvaluador1)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblCodirector))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17))))
         );
         ContenidoLayout.setVerticalGroup(
             ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ContenidoLayout.createSequentialGroup()
-                .addComponent(Icon)
-                .addGap(20, 20, 20)
+                .addGap(23, 23, 23)
                 .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ContenidoLayout.createSequentialGroup()
                         .addGap(3, 3, 3)
@@ -243,15 +249,20 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(8, 8, 8)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addComponent(lblEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(4, 4, 4)
-                .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblCodirector)
-                .addGap(13, 13, 13)
-                .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addGroup(ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(4, 4, 4)
+                        .addComponent(boxEvaluador1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblCodirector)
+                        .addGap(13, 13, 13)
+                        .addComponent(boxEvaluador2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ContenidoLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(Icon, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(13, 13, 13))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

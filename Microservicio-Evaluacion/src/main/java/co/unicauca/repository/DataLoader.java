@@ -35,7 +35,7 @@ public class DataLoader implements CommandLineRunner {
         director.setName("Carlos Arteaga");
         director.setLastname("López");
         director.setEmail("carlos.arteaga@unicauca.edu.co");
-        director.setDepartment("Ingeniería Electrónica");
+        director.setDepartment("SISTEMAS");
         director.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
         Persona codirector = new Persona();
@@ -43,7 +43,7 @@ public class DataLoader implements CommandLineRunner {
         codirector.setName("María Soto");
         codirector.setLastname("Pérez");
         codirector.setEmail("maria.soto@unicauca.edu.co");
-        codirector.setDepartment("INGENIERIA_DE_SISTEMAS");
+        codirector.setDepartment("SISTEMAS");
         codirector.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
         Persona estudiante1 = new Persona();

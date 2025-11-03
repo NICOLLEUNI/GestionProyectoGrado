@@ -476,7 +476,13 @@ try {
         boolean actualizado =  evaluacionService.updateEstadoObservaciones(
            idFormato, estado, observaciones);
 
-        
+    if (actualizado) {
+        JOptionPane.showMessageDialog(this, "Formato evaluado correctamente.");
+        this.setVisible(false);
+    } else {
+        JOptionPane.showMessageDialog(this, "No se pudo actualizar el formato.");
+    }
+
 
 
     } catch (Exception ex) {
