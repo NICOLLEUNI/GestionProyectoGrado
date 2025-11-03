@@ -7,6 +7,9 @@ import co.unicauca.service.FormatoAVersionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
+import co.unicauca.infra.dto.FormatoAVersionResponse;
 
 import java.util.Map;
 
@@ -199,4 +202,53 @@ public class FormatoAController {
             );
         }
     }
+
+    /**
+     * ✅ OBTENER TODAS LAS VERSIONES DE UN FORMATO A
+     */
+    @GetMapping("/versiones/formato/{formatoAId}")
+    public ResponseEntity<?> getVersionesByFormatoA(@PathVariable Long formatoAId) {
+        try {
+            System.out.println("🔍 [CONTROLLER] Buscando versiones por FormatoA ID: " + formatoAId);
+
+            List<FormatoAVersion> versiones = formatoAVersionService.buscarPorFormatoA(formatoAId);
+
+            if (versiones != null && !versiones.isEmpty()) {
+                System.out.println("✅ [CONTROLLER] Versiones encontradas: " + versiones.size());
+
+                // Convertir a Response
+                List<FormatoAVersionResponse> responses = versiones.stream()
+                        .map(this::convertirAResponse)
+                        .collect(Collectors.toList());
+
+                return ResponseEntity.ok(responses);
+            } else {
+                System.out.println("⚠️ [CONTROLLER] No hay versiones para FormatoA: " + formatoAId);
+                return ResponseEntity.ok(List.of()); // Devolver array vacío
+            }
+        } catch (Exception e) {
+            System.err.println("❌ [CONTROLLER] ERROR buscando versiones: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(
+                    Map.of("error", "Error al obtener versiones del formato A")
+            );
+        }
+    }
+
+    // ✅ AGREGAR ESTE MÉTODO DE CONVERSIÓN
+    private FormatoAVersionResponse convertirAResponse(FormatoAVersion version) {
+        return new FormatoAVersionResponse(
+                version.getId(),
+                version.getNumeroVersion(),
+                version.getFecha(),
+                version.getTitle(),
+                version.getMode().name(),
+                version.getState().name(),
+                version.getObservations(),
+                version.getCounter(),
+                version.getIdFormatoA()
+        );
+    }
+
+
+
 }

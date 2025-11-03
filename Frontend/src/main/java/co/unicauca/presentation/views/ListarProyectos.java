@@ -36,26 +36,38 @@ public class ListarProyectos extends javax.swing.JPanel {
     }
     private void cargarDatos() {
 
-        // ✅ Columnas de la tabla para proyectos
-        String[] columnas = {"ID", "Título", "Estado"};
+        // ✅ Columnas compactas pero informativas
+        String[] columnas = {"ID", "Título del Proyecto", "Fecha", "Estudiantes", "FormatoA ID"};
         DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return columnIndex == 0 ? Long.class : String.class;
-            }
         };
 
-        // ✅ Llenamos la tabla con el proyecto recibido
         if (proyecto != null) {
+            // ✅ Ahora funciona con LocalDate
+            String fechaStr = proyecto.getFecha() != null ?
+                    proyecto.getFecha().toString() : "N/A";
+
+            String estudiantesStr = "N/A";
+            if (proyecto.getEstudiantesEmail() != null && !proyecto.getEstudiantesEmail().isEmpty()) {
+                if (proyecto.getEstudiantesEmail().size() <= 2) {
+                    estudiantesStr = String.join(", ", proyecto.getEstudiantesEmail());
+                } else {
+                    estudiantesStr = proyecto.getEstudiantesEmail().size() + " estudiantes";
+                }
+            }
+
+            String formatoAIdStr = proyecto.getIdFormatoA() != null ?
+                    proyecto.getIdFormatoA().toString() : "No asignado";
+
             Object[] fila = {
                     proyecto.getId(),
-                    proyecto.getNombre() != null ? proyecto.getNombre() : "",
-                    proyecto.getEstado() != null ? proyecto.getEstado() : "N/A"
+                    proyecto.getNombre() != null ? proyecto.getNombre() : "Sin título",
+                    fechaStr,
+                    estudiantesStr,
+                    formatoAIdStr
             };
             modelo.addRow(fila);
         }

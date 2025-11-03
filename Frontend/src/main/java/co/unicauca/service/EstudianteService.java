@@ -3,14 +3,15 @@ package co.unicauca.service;
 import co.unicauca.entity.Persona;
 import co.unicauca.entity.ProyectoGrado;
 import co.unicauca.entity.Anteproyecto;
-import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.FormatoAVersion;
 import co.unicauca.infra.Subject;
 import co.unicauca.utils.HttpUtil;
+import co.unicauca.utils.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,94 +19,177 @@ import java.util.List;
  */
 public class EstudianteService extends Subject {
 
-    private final Gson gson = new Gson();
-
-    private final String PERSONA_URL = "http://localhost:8081/api/personas";
-    private final String PROYECTO_URL = "http://localhost:8082/api/proyectos-grado";
-    private final String ANTEPROYECTO_URL = "http://localhost:8083/api/anteproyectos";
-    private final String FORMATO_A_URL = "http://localhost:8084/api/formatos-a";
+    private final Gson gson = GsonFactory.create();
+    private final String BASE_URL = "http://localhost:8083/api";
 
     /**
-     * Obtiene la información de una persona (estudiante) por su email.
+     * ✅ CORREGIDO: Obtiene el FormatoAVersion actual de un proyecto
      */
-    public Persona findPersonaByEmail(String email) {
+    public FormatoAVersion findFormatoAVersionByProyectoId(Long proyectoId) {
         try {
-            String url = PERSONA_URL + "/email/" + email;
+            // 🔹 USAR EL ENDPOINT CORRECTO: desde ProyectoController, no FormatoAController
+            String url = BASE_URL + "/proyectos-grado/" + proyectoId + "/formato-a";
+            System.out.println("🔗 Buscando FormatoAVersion por proyecto: " + url);
+
             String jsonResponse = HttpUtil.get(url);
-            return gson.fromJson(jsonResponse, Persona.class);
+            System.out.println("📦 Respuesta FormatoAVersion: " + jsonResponse);
+
+            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
+                System.out.println("⚠️ No se encontró FormatoAVersion para el proyecto: " + proyectoId);
+                return null;
+            }
+
+            return gson.fromJson(jsonResponse, FormatoAVersion.class);
+
         } catch (Exception e) {
+            System.err.println("❌ Error buscando FormatoAVersion: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Obtiene el proyecto de grado de un estudiante por su email.
+     * ✅ NUEVO MÉTODO: Obtiene FormatoAVersion por email del estudiante
      */
-    public ProyectoGrado findProyectoByEstudiante(String email) {
+    public FormatoAVersion findFormatoAVersionByEstudiante(String email) {
         try {
-            String url = PROYECTO_URL + "/estudiante/" + email;
+            // 🔹 USAR ENDPOINT POR ESTUDIANTE
+            String url = BASE_URL + "/proyectos-grado/estudiante/" + email + "/formato-a";
+            System.out.println("🔗 Buscando FormatoAVersion por estudiante: " + url);
+
             String jsonResponse = HttpUtil.get(url);
-            return gson.fromJson(jsonResponse, ProyectoGrado.class);
+            System.out.println("📦 Respuesta FormatoAVersion: " + jsonResponse);
+
+            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
+                System.out.println("⚠️ No se encontró FormatoAVersion para el estudiante: " + email);
+                return null;
+            }
+
+            return gson.fromJson(jsonResponse, FormatoAVersion.class);
+
         } catch (Exception e) {
+            System.err.println("❌ Error buscando FormatoAVersion por estudiante: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Obtiene el anteproyecto asociado a un proyecto de grado por su ID.
-     */
-    public Anteproyecto findAnteproyectoByProyectoId(Long proyectoId) {
-        try {
-            String url = ANTEPROYECTO_URL + "/proyecto/" + proyectoId;
-            String jsonResponse = HttpUtil.get(url);
-            return gson.fromJson(jsonResponse, Anteproyecto.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Obtiene todas las versiones del Formato A de un FormatoA dado por ID.
+     * ✅ MÉTODO EXISTENTE - Ya está correcto
      */
     public List<FormatoAVersion> listFormatosAVersion(Long formatoAId) {
         try {
-            String url = FORMATO_A_URL + "/versiones/formato/" + formatoAId;
+            String url = BASE_URL + "/formatos-a/versiones/formato/" + formatoAId;
+            System.out.println("🔗 Llamando a: " + url);
+
             String jsonResponse = HttpUtil.get(url);
-            Type listType = new TypeToken<List<FormatoAVersion>>() {}.getType();
-            return gson.fromJson(jsonResponse, listType);
+            System.out.println("📦 JSON recibido: " + jsonResponse);
+
+            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
+                System.out.println("⚠️ Respuesta vacía");
+                return new ArrayList<>();
+            }
+
+            if (jsonResponse.trim().startsWith("[")) {
+                Type listType = new TypeToken<List<FormatoAVersion>>() {}.getType();
+                List<FormatoAVersion> versiones = gson.fromJson(jsonResponse, listType);
+                System.out.println("✅ Array parseado - Versiones: " + versiones.size());
+                return versiones;
+            } else {
+                System.out.println("⚠️ Se recibió objeto en lugar de array, intentando parsear como objeto único");
+                try {
+                    FormatoAVersion version = gson.fromJson(jsonResponse, FormatoAVersion.class);
+                    List<FormatoAVersion> lista = new ArrayList<>();
+                    if (version != null) {
+                        lista.add(version);
+                        System.out.println("✅ Objeto único convertido a lista - 1 versión");
+                    }
+                    return lista;
+                } catch (Exception e) {
+                    System.err.println("❌ Error parseando objeto único: " + e.getMessage());
+                    return new ArrayList<>();
+                }
+            }
+
         } catch (Exception e) {
+            System.err.println("❌ Error en listFormatosAVersion: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * ✅ ELIMINAR: Este método ya no es necesario porque no tienes entidad FormatoA
+     */
+    // public FormatoA findFormatoAByProyectoId(Long proyectoId) { ... }
+
+    /**
+     * ✅ ELIMINAR: Este método ya no es necesario
+     */
+    // public List<FormatoA> listFormatosAByEstudiante(String email) { ... }
+
+    // 🔹 MANTENER LOS MÉTODOS QUE SÍ FUNCIONAN:
+
+    public Persona findPersonaByEmail(String email) {
+        try {
+            String url = BASE_URL + "/personas/email/" + email;
+            System.out.println("🔗 Buscando persona: " + url);
+            String jsonResponse = HttpUtil.get(url);
+            System.out.println("📦 Respuesta persona: " + jsonResponse);
+            return gson.fromJson(jsonResponse, Persona.class);
+        } catch (Exception e) {
+            System.err.println("❌ Error buscando persona: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
-    /**
-     * Obtiene directamente el FormatoA actual asociado a un proyecto de grado.
-     */
-    public FormatoA findFormatoAByProyectoId(Long proyectoId) {
+    public ProyectoGrado findProyectoByEstudiante(String email) {
         try {
-            String url = FORMATO_A_URL + "/proyecto/" + proyectoId;
+            String url = BASE_URL + "/proyectos-grado/estudiante/" + email;
+            System.out.println("🔗 Buscando proyecto: " + url);
             String jsonResponse = HttpUtil.get(url);
-            return gson.fromJson(jsonResponse, FormatoA.class);
+            System.out.println("📦 Respuesta proyecto: " + jsonResponse);
+            return gson.fromJson(jsonResponse, ProyectoGrado.class);
         } catch (Exception e) {
+            System.err.println("❌ Error buscando proyecto: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
-    /**
-     * Obtiene todos los FormatoA asociados a un estudiante (por email).
-     */
-    public List<FormatoA> listFormatosAByEstudiante(String email) {
+    public Anteproyecto findAnteproyectoByProyectoId(Long proyectoId) {
         try {
-            String url = FORMATO_A_URL + "/estudiante/" + email;
+            String url = BASE_URL + "/anteproyectos/proyecto/" + proyectoId;
+            System.out.println("🔗 Buscando anteproyecto: " + url);
+
             String jsonResponse = HttpUtil.get(url);
-            Type listType = new TypeToken<List<FormatoA>>() {}.getType();
-            return gson.fromJson(jsonResponse, listType);
+            System.out.println("📦 JSON recibido de anteproyecto: " + jsonResponse);
+
+            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
+                System.out.println("⚠️ Respuesta vacía de anteproyecto");
+                return null;
+            }
+
+            if (jsonResponse.trim().startsWith("[")) {
+                System.out.println("⚠️ Se recibió array en lugar de objeto para anteproyecto");
+                Type listType = new TypeToken<List<Anteproyecto>>() {}.getType();
+                List<Anteproyecto> anteproyectos = gson.fromJson(jsonResponse, listType);
+
+                if (anteproyectos != null && !anteproyectos.isEmpty()) {
+                    System.out.println("✅ Tomando primer anteproyecto del array - Total: " + anteproyectos.size());
+                    return anteproyectos.get(0);
+                } else {
+                    System.out.println("❌ Array de anteproyectos vacío");
+                    return null;
+                }
+            } else {
+                System.out.println("✅ Parseando objeto único de anteproyecto");
+                return gson.fromJson(jsonResponse, Anteproyecto.class);
+            }
+
         } catch (Exception e) {
+            System.err.println("❌ Error en findAnteproyectoByProyectoId: " + e.getMessage());
             e.printStackTrace();
             return null;
         }

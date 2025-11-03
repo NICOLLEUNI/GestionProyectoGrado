@@ -18,4 +18,5 @@ public interface FormatoAVersionRepository extends JpaRepository<FormatoAVersion
     Optional<FormatoAVersion> findByIdFormatoAAndNumeroVersion(Long idFormatoA, Integer numeroVersion);
     @Query("SELECT MAX(f.id) FROM FormatoAVersion f")
     Long findMaxId();
+
 }

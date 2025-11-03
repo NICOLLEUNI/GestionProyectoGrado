@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Table(name = "anteproyecto")
 public class Anteproyecto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

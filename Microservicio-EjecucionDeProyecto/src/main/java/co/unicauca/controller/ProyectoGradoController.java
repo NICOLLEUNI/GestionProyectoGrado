@@ -1,11 +1,15 @@
 package co.unicauca.controller;
 
+import co.unicauca.entity.FormatoAVersion;
+import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.infra.dto.ProyectoGradoRequest;
 import co.unicauca.infra.dto.ProyectoGradoResponse;
 import co.unicauca.service.ProyectoGradoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import co.unicauca.service.FormatoAVersionService;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +21,7 @@ import java.util.Map;
 public class ProyectoGradoController {
 
     private final ProyectoGradoService proyectoGradoService;
+    private final FormatoAVersionService formatoAVersionService;
 
     /**
      * ✅ CREAR NUEVO PROYECTO DE GRADO
@@ -160,4 +165,34 @@ public class ProyectoGradoController {
             );
         }
     }
+
+    // 🔹 ENDPOINT para obtener el FormatoA de un proyecto específico
+    @GetMapping("/{proyectoId}/formato-a")
+    public ResponseEntity<?> getFormatoAByProyecto(@PathVariable Long proyectoId) {
+        try {
+            FormatoAVersion version = formatoAVersionService.findByProyectoId(proyectoId);
+            FormatoAVersionResponse response = convertirFormatoAResponse(version);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // 🔹 Método de conversión para FormatoA (agregar esta clase interna)
+    private FormatoAVersionResponse convertirFormatoAResponse(FormatoAVersion version) {
+        return new FormatoAVersionResponse(
+                version.getId(),
+                version.getNumeroVersion(),
+                version.getFecha(),
+                version.getTitle(),
+                version.getMode().name(),
+                version.getState().name(),
+                version.getObservations(),
+                version.getCounter(),
+                version.getIdFormatoA()
+        );
+    }
+
+
 }
