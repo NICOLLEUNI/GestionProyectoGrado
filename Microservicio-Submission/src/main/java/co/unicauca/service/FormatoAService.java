@@ -70,6 +70,16 @@ public class FormatoAService {
 
         proyectoService.crearProyectoGrado(formatoAGuardado, version1);
 
+        // ⭐⭐ CONVERTIR A RESPONSE Y PUBLICAR ⭐⭐
+        FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
+        rabbitMQPublisher.publicarFormatoACreado(response);
+
+        // 2. Para notificaciones (solo correos)
+        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
+        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
+
+
+
         return formatoAGuardado;
     }
 
