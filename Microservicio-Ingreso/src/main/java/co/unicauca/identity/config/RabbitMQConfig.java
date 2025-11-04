@@ -12,6 +12,9 @@ public class RabbitMQConfig {
 
     // ✅ MISMA COLA que el microservicio de Notificación
     public static final String USUARIO_QUEUE = "usuario.queue";
+    public static final String NOTIFICACION_QUEUE = "notificacion.queue";
+    public static final String REPORTES_QUEUE = "reportes.queue";
+    public static final String AUDITORIA_QUEUE = "auditoria.queue";
 
     /**
      * Declara la MISMA COLA que el microservicio de Notificación
@@ -21,6 +24,25 @@ public class RabbitMQConfig {
     public Queue usuarioQueue() {
         return new Queue(USUARIO_QUEUE, true); // durable: true
     }
+
+    @Bean
+    public Queue notificacionQueue() {
+        return new Queue(NOTIFICACION_QUEUE, true);
+    }
+
+    @Bean
+    public Queue reportesQueue() {
+        return new Queue(REPORTES_QUEUE, true);
+    }
+
+    @Bean
+    public Queue auditoriaQueue() {
+        return new Queue(AUDITORIA_QUEUE, true);
+    }
+
+
+
+
 
     /**
      * Convierte automáticamente los mensajes JSON a objetos Java (y viceversa)
