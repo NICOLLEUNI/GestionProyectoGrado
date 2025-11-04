@@ -141,7 +141,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
      */
     private void cargarEstudiantesEnCombos() {
         try {
-            List<Persona> estudiantes = submissionService.listPersonasByRol("ESTUDIANTE");
+            List<Persona> estudiantes = submissionService.ListarEstudiantesSinProyecto();
             List<FormatoA> formatos = submissionService.listFormatoA();
 
             List<String> ocupadosEmails = new ArrayList<>();
@@ -496,7 +496,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
             formato.setArchivoPDF("pendiente.pdf");
             formato.setCartaLaboral("pendiente.pdf");
 
-            // Director y codirector
+            // Director y codirector (guardar su email)
             Persona director = (Persona) boxDirector.getSelectedItem();
             Persona codirector = (Persona) boxCodirector.getSelectedItem();
 
@@ -505,19 +505,13 @@ public class DatosFormatoA extends javax.swing.JPanel {
             if (codirector != null)
                 formato.setProjectCoManagerEmail(codirector.getEmail());
 
-            // Estudiantes
+            // Estudiantes: se guardan los correos, no los objetos Persona
             List<String> estudiantes = new ArrayList<>();
             if (boxEstudiante1.getSelectedItem() != null)
                 estudiantes.add(((Persona) boxEstudiante1.getSelectedItem()).getEmail());
             if (boxEstudiante2.isEnabled() && boxEstudiante2.getSelectedItem() != null)
                 estudiantes.add(((Persona) boxEstudiante2.getSelectedItem()).getEmail());
             formato.setEstudianteEmails(estudiantes);
-
-            // 🔹 Solo enviar carta laboral si es PRACTICA_PROFESIONAL
-            if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
-                formato.setCartaLaboral(null);
-            }
-
 
 
 

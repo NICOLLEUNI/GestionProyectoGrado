@@ -194,7 +194,7 @@
               <Color blue="0" green="0" red="0" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="EVALUAR ANTEPROYECTO"/>
+            <Property name="text" type="java.lang.String" value="EVALUAR FORMATO A"/>
           </Properties>
         </Component>
         <Container class="javax.swing.JPanel" name="Contenido">

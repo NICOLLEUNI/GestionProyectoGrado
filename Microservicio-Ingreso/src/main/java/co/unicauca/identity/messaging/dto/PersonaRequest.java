@@ -13,7 +13,8 @@ public record PersonaRequest(
         String email,
         Set<String> roles,
         String department,
-        String programa
+        String programa,
+        String phone
 ) {
     /**
      * Constructor desde entidad Persona del microservicio Login/Signin
@@ -31,7 +32,7 @@ public record PersonaRequest(
         // Convertir programa Enum a String (o null)
         String programaString = persona.getPrograma() != null ?
                 persona.getPrograma().name() : null;
-
+        String phoneString = persona.getPhone(); // Puede ser null
         return new PersonaRequest(
                 persona.getIdUsuario(),
                 persona.getName(),
@@ -39,7 +40,8 @@ public record PersonaRequest(
                 persona.getEmail(),
                 rolesString,
                 departmentString,
-                programaString
+                programaString,
+                phoneString
         );
     }
 }

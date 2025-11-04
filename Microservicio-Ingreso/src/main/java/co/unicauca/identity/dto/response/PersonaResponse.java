@@ -13,7 +13,9 @@ public record PersonaResponse(
         String email,
         Set<String> roles,
         String department,
-        String programa
+        String programa,
+        String phone
+
 ) {
     // Builder para construcción fluida
     public static Builder builder() {
@@ -28,6 +30,7 @@ public record PersonaResponse(
         private Set<String> roles;
         private String department;
         private String programa;
+        private String phone;
 
         public Builder id(Long id) {
             this.id = id;
@@ -63,9 +66,14 @@ public record PersonaResponse(
             this.programa = programa;
             return this;
         }
+        // ✅ AGREGAR: Método para phone
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
 
         public PersonaResponse build() {
-            return new PersonaResponse(id, name, lastname, email, roles, department, programa);
+            return new PersonaResponse(id, name, lastname, email, roles, department, programa,phone);
         }
     }
 
@@ -80,10 +88,11 @@ public record PersonaResponse(
             String email,
             Set<String> roles,
             String department,
-            String programa
+            String programa,
+            String phone
     ) {
         // ✅ Para RabbitMQ, enviar TODOS los datos sin filtros
-        return new PersonaResponse(id, name, lastname, email, roles, department, programa);
+        return new PersonaResponse(id, name, lastname, email, roles, department, programa, phone);
     }
 
 
@@ -100,42 +109,28 @@ public record PersonaResponse(
             String email,
             Set<String> roles,
             String department,
-            String programa
+            String programa,
+            String phone
     ) {
-        // ✅ LÓGICA MEJORADA: Determinar qué campos mostrar basado en los roles
-        boolean esSoloEstudiante = roles != null &&
-                roles.contains("ESTUDIANTE") &&
-                roles.size() == 1;
-
-        boolean esSoloRolConDepartamento = roles != null &&
-                (roles.contains("DOCENTE") ||
-                        roles.contains("COORDINADOR") ||
-                        roles.contains("JEFE_DEPARTAMENTO")) &&
-                roles.size() == 1;
-
-        // ✅ NUEVA VALIDACIÓN: Combinación de roles de departamento SIN estudiante
-        boolean esCombinacionRolesDepartamento = roles != null &&
-                (roles.contains("DOCENTE") || roles.contains("COORDINADOR") || roles.contains("JEFE_DEPARTAMENTO")) &&
-                !roles.contains("ESTUDIANTE") &&
-                roles.size() >= 1; // Puede ser 1 o más roles de departamento
-
-        boolean esCombinacionMixta = roles != null &&
-                roles.contains("ESTUDIANTE") &&
-                (roles.contains("DOCENTE") || roles.contains("COORDINADOR") || roles.contains("JEFE_DEPARTAMENTO"));
+        // ✅ LÓGICA MEJORADA: Basada en tipos de roles
+        boolean tieneRolConPrograma = roles != null &&
+                (roles.contains("ESTUDIANTE") || roles.contains("COORDINADOR"));
+        boolean tieneRolConDepartamento = roles != null &&
+                (roles.contains("DOCENTE") || roles.contains("JEFE_DEPARTAMENTO"));
 
         String departamentFinal;
         String programaFinal;
 
-        if (esSoloEstudiante) {
-            // ✅ Solo ESTUDIANTE: muestra programa, oculta departamento
+        if (tieneRolConPrograma && !tieneRolConDepartamento) {
+            // ✅ Solo roles con programa: muestra programa, oculta departamento
             departamentFinal = null;
             programaFinal = programa;
-        } else if (esSoloRolConDepartamento || esCombinacionRolesDepartamento) {
-            // ✅ Solo DOCENTE/COORDINADOR/JEFE (individual o combinados): muestra departamento, oculta programa
+        } else if (!tieneRolConPrograma && tieneRolConDepartamento) {
+            // ✅ Solo roles con departamento: muestra departamento, oculta programa
             departamentFinal = department;
             programaFinal = null;
-        } else if (esCombinacionMixta) {
-            // ✅ COMBINACIÓN ESTUDIANTE + roles departamento: muestra ambos campos
+        } else if (tieneRolConPrograma && tieneRolConDepartamento) {
+            // ✅ COMBINACIÓN: muestra ambos campos
             departamentFinal = department;
             programaFinal = programa;
         } else {
@@ -144,6 +139,6 @@ public record PersonaResponse(
             programaFinal = programa;
         }
 
-        return new PersonaResponse(id, name, lastname, email, roles, departamentFinal, programaFinal);
+        return new PersonaResponse(id, name, lastname, email, roles, departamentFinal, programaFinal,phone);
     }
 }

@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormatoAService {
@@ -37,7 +39,6 @@ public class FormatoAService {
     public Optional<FormatoA> findById(Long id) {
         return formatoARepository.findById(id);
     }
-
 
     public List<FormatoA> findByProjectManagerEmailOrProjectCoManagerEmail(String email) {
         return formatoARepository.findByProjectManagerEmailOrProjectCoManagerEmail(email, email);
@@ -71,22 +72,36 @@ public class FormatoAService {
         proyectoService.crearProyectoGrado(formatoAGuardado, version1);
 
         // ⭐⭐ CONVERTIR A RESPONSE Y PUBLICAR ⭐⭐
-        FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
-        rabbitMQPublisher.publicarFormatoACreado(response);
+        //FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
+        //rabbitMQPublisher.publicarFormatoACreado(response);
 
         // 2. Para notificaciones (solo correos)
-        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
-        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
-
-
+        //FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
+        //rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
 
         return formatoAGuardado;
     }
 
+    @Transactional
+    public FormatoA publicarFormatoA(Long id) {
+        FormatoA formatoA = formatoARepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + id));
 
-// Dentro de tu servicio (FormatoAService) — asegúrate de que versionService esté inyectado
-// @Service
-// public class FormatoAService { ... @Autowired private VersionService versionService; ... }
+        // Validar que tenga los archivos necesarios
+        if (formatoA.getArchivoPDF() == null || formatoA.getArchivoPDF().isBlank()) {
+            throw new RuntimeException("No se puede publicar FormatoA sin PDF");
+        }
+
+        // Publicar en RabbitMQ SOLO AHORA (con archivos ya subidos)
+        FormatoAResponse response = convertirAFormatoAResponse(formatoA);
+        rabbitMQPublisher.publicarFormatoACreado(response);
+
+        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoA);
+        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
+
+        return formatoA;
+    }
+
 
     @Transactional
     public boolean saveFormatoAPDF(Long id, MultipartFile file) {
@@ -109,6 +124,9 @@ public class FormatoAService {
             String rutaRelativa = "formatoA/" + nombreArchivo;
             formato.setArchivoPDF(rutaRelativa);
             formatoARepository.save(formato);
+
+            // ⭐ DEBUG para confirmar
+            System.out.println("🔍 Ruta guardada en BD: " + rutaRelativa);
 
             // Actualizar la última versión asociada para que tenga la ruta nueva
             versionService.actualizarRutasArchivos(formato);
@@ -183,33 +201,22 @@ public class FormatoAService {
 
     @Transactional
     public FormatoA reenviarFormatoARechazado(FormatoAEditRequest request) {
-        // Buscar el FormatoA
         FormatoA formatoA = formatoARepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + request.id()));
 
-        // Validar que esté RECHAZADO
-        if (formatoA.getState() != EnumEstado.RECHAZADO) {
-            throw new RuntimeException("Solo se pueden reenviar los FormatosA RECHAZADOS");
-        }
-
-        // Validar límite de reenvíos
-        if (formatoA.getCounter() >= 3) {
-            throw new RuntimeException("El FormatoA ha sido rechazado más de 3 veces y no puede reenviarse");
-        }
-
-        // Actualizar los campos editables
+        // Actualizar campos editables
         formatoA.setArchivoPDF(request.archivoPDF());
         formatoA.setCartaLaboral(request.cartaLaboral());
         formatoA.setGeneralObjetive(request.generalObjetive());
         formatoA.setSpecificObjetives(request.specificObjetives());
-        formatoA.setState(EnumEstado.ENTREGADO); // vuelve a ENTREGADO
+
+        // ✅ STATE PATTERN - esto reemplaza tus validaciones manuales
+        formatoA.reenviar();
 
         FormatoA actualizado = formatoARepository.save(formatoA);
-
-        // Crear la nueva versión reenviada
         FormatoAVersion nuevaVersion = versionService.crearVersionReenviada(actualizado, request);
 
-        // Publicar los eventos
+        // Publicar eventos (tu código existente)
         FormatoAResponse response = convertirAFormatoAResponse(actualizado);
         rabbitMQPublisher.publicarFormatoACreado(response);
 
@@ -221,21 +228,38 @@ public class FormatoAService {
 
     @Transactional
     public FormatoA actualizarFormatoAEvaluado(FormatoARequest request) {
-        // 1. BUSCAR FormatoA existente
         FormatoA formatoA = formatoARepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + request.id()));
 
-        // 2. ACTUALIZAR FormatoA principal
-        formatoA.setState(EnumEstado.valueOf(request.state()));
-        formatoA.setObservations(request.observations());
-        formatoA.setCounter(Integer.parseInt(request.counter()));
+        try {
+            String estadoSolicitado = request.state();
+
+            switch (EnumEstado.valueOf(estadoSolicitado)) {
+                case APROBADO:
+                    formatoA.aprobar(); // ✅ STATE PATTERN
+                    break;
+                case RECHAZADO:
+                    formatoA.rechazar(request.observations()); // ✅ STATE PATTERN
+                    break;
+                case ENTREGADO:
+                    // Mantener lógica original para ENTREGADO
+                    formatoA.setState(EnumEstado.ENTREGADO);
+                    formatoA.setObservations(request.observations());
+                    formatoA.setCounter(Integer.parseInt(request.counter()));
+                    break;
+                default:
+                    throw new RuntimeException("Estado no soportado: " + estadoSolicitado);
+            }
+        } catch (Exception e) {
+            // FALLBACK si el State Pattern falla
+            System.err.println("⚠️ Fallback a lógica original: " + e.getMessage());
+            formatoA.setState(EnumEstado.valueOf(request.state()));
+            formatoA.setObservations(request.observations());
+            formatoA.setCounter(Integer.parseInt(request.counter()));
+        }
 
         FormatoA formatoAActualizado = formatoARepository.save(formatoA);
-
-        // 3. CREAR NUEVA VERSIÓN (llamando a VersionService)
         FormatoAVersion nuevaVersion = versionService.crearVersionConEvaluacion(formatoAActualizado, request);
-
-        // 4. AGREGAR nueva versión al ProyectoGrado
         proyectoService.agregarVersionAProyectoGrado(formatoAActualizado, nuevaVersion);
 
         return formatoAActualizado;
@@ -284,5 +308,7 @@ public class FormatoAService {
             }
         }
     }
-
+    public List<FormatoA> findAll() {
+        return formatoARepository.findAll();
+    }
 }

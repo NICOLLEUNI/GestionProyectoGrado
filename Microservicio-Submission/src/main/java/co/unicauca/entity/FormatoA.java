@@ -1,6 +1,9 @@
 package co.unicauca.entity;
 
 
+import co.unicauca.entity.state.FormatoAState;
+import co.unicauca.entity.state.FormatoAStateFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +21,11 @@ public class FormatoA {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // ✅ NUEVO: Campo transitorio para el patrón State (no se persiste)
+    @Transient
+    @JsonIgnore
+    private FormatoAState stateObject;
 
     @Column(nullable = false)
     private String title;
@@ -62,6 +70,55 @@ public class FormatoA {
     private String observations;
 
     private int counter;
+
+    // ✅ NUEVO: Método para obtener el state object
+    public FormatoAState getStateObject() {
+        if (stateObject == null) {
+            this.stateObject = FormatoAStateFactory.createState(this.state);
+        }
+        return stateObject;
+    }
+
+    // ✅ NUEVO: Métodos delegados al state object
+    public void evaluar(String observaciones) {
+        FormatoAState nuevoEstado = getStateObject().evaluar(this, observaciones);
+        transitionToState(nuevoEstado);
+    }
+
+    public void aprobar() {
+        FormatoAState nuevoEstado = getStateObject().aprobar(this);
+        transitionToState(nuevoEstado);
+    }
+
+    public void rechazar(String observaciones) {
+        FormatoAState nuevoEstado = getStateObject().rechazar(this, observaciones);
+        transitionToState(nuevoEstado);
+    }
+
+    public void reenviar() {
+        FormatoAState nuevoEstado = getStateObject().reenviar(this);
+        transitionToState(nuevoEstado);
+    }
+
+    // ✅ NUEVO: Métodos de consulta delegados
+    public boolean puedeEditar() {
+        return getStateObject().puedeEditar();
+    }
+
+    public boolean puedeReenviar() {
+        return getStateObject().puedeReenviar();
+    }
+
+    public boolean puedeEvaluar() {
+        return getStateObject().puedeEvaluar();
+    }
+
+    // ✅ NUEVO: Transición de estado interna
+    private void transitionToState(FormatoAState nuevoEstado) {
+        this.stateObject = nuevoEstado;
+        this.state = nuevoEstado.toEnumState();
+        nuevoEstado.onEnterState(this);
+    }
 
     public FormatoA(Long id, String title, EnumModalidad mode, String projectManagerEmail, String projectCoManagerEmail, LocalDate date, String generalObjetive, String specificObjetives, String archivoPDF, String cartaLaboral, List<String> estudianteEmails, EnumEstado state, String observations, int counter) {
         this.id = id;

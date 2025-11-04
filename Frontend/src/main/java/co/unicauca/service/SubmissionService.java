@@ -1,5 +1,6 @@
 package co.unicauca.service;
 
+import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.utils.GsonFactory;
@@ -7,6 +8,7 @@ import co.unicauca.utils.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.invoke.SwitchPoint;
 import java.lang.reflect.Type;
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +56,7 @@ public class SubmissionService {
         try {
             String url = BASE_URL + "/formatoA/docente/" + email;
             String jsonResponse = HttpUtil.get(url);
-
-            System.out.println("📦 JSON recibido: " + jsonResponse); // DEBUG
+            // DEBUG
 
             Type listType = new TypeToken<List<FormatoA>>() {}.getType();
             return gson.fromJson(jsonResponse, listType);
@@ -112,6 +113,20 @@ public class SubmissionService {
         }
     }
 
+    /**
+     * 🔹 NUEVO MÉTODO - Publica un FormatoA existente después de subir archivos
+     */
+    public boolean publicarFormatoA(Long formatoAId) {
+        try {
+            String url = BASE_URL + "/formatoA/" + formatoAId + "/publicar";
+            String jsonResponse = HttpUtil.post(url, ""); // POST vacío
+            return jsonResponse != null && !jsonResponse.trim().isEmpty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     /**
      * Busca un FormatoA por su ID.
@@ -120,7 +135,6 @@ public class SubmissionService {
         try {
             String url = BASE_URL + "/formatoA/" + id;
             String jsonResponse = HttpUtil.get(url);
-
             return gson.fromJson(jsonResponse, FormatoA.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,6 +259,8 @@ public class SubmissionService {
         }
     }
 
+
+
     public Persona findPersonaByEmail(String email) {
         try {
             String url = BASE_URL + "/personas/email/" + email;
@@ -254,6 +270,41 @@ public class SubmissionService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public Anteproyecto subirAnteproyecto(Anteproyecto anteproyecto) {
+        try {
+            String url = BASE_URL + "/anteproyectos";
+            String jsonRequest = gson.toJson(anteproyecto);
+
+
+
+            String jsonResponse = HttpUtil.post(url, jsonRequest);
+
+            System.out.println("📦 Respuesta del backend: " + jsonResponse);
+
+            return gson.fromJson(jsonResponse, Anteproyecto.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error al subir Anteproyecto: " + e.getMessage());
+            return null;
+        }
+    }
+    public List<Persona> ListarEstudiantesSinProyecto() {
+        try {
+            // URL del endpoint que devuelve estudiantes con rol ESTUDIANTE sin FormatoA asociado
+            String url = BASE_URL + "/personas/estudiantes/sin-formatoA";
+            String jsonResponse = HttpUtil.get(url);
+
+            // Convertimos la respuesta JSON en una lista de Personas
+            Type listType = new TypeToken<List<Persona>>() {}.getType();
+            return gson.fromJson(jsonResponse, listType);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of(); // Retorna lista vacía si ocurre un error
         }
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Estrategia de validación para rol COORDINADOR - SINGLE_TABLE optimized
- * Ahora permite que coordinadores también tengan otros roles con programa
+ * ✅ CORREGIDO: Coordinador ahora requiere PROGRAMA, no departamento
  */
 @Component
 @Slf4j
@@ -22,29 +22,30 @@ public class CoordinatorValidationStrategy implements RoleValidationStrategy {
 
     @Override
     public void validate(EnumPrograma programa, EnumDepartamento departamento) throws ValidationException {
-        log.debug("Validando rol COORDINADOR con departamento: {}", departamento);
+        log.debug("Validando rol COORDINADOR con programa: {}", programa);
 
-        // ✅ SINGLE_TABLE: Solo validamos que tenga departamento
-        if (departamento == null) {
-            throw new ValidationException("El departamento es obligatorio para coordinadores");
+        // ✅ CORREGIDO: Coordinador ahora requiere PROGRAMA, no departamento
+        if (programa == null) {
+            throw new ValidationException("El programa es obligatorio para coordinadores");
         }
 
-        // ✅ SINGLE_TABLE: NO validamos que no tenga programa
+        // ✅ CORREGIDO: NO validamos que no tenga departamento
+        // porque el usuario podría tener otros roles que requieran departamento
 
-        validateDepartamentoCoordinador(departamento);
+        validateProgramaCoordinador(programa);
     }
 
     /**
-     * Validaciones específicas para coordinadores de departamento
+     * Validaciones específicas para coordinadores de programa
      */
-    private void validateDepartamentoCoordinador(EnumDepartamento departamento) {
+    private void validateProgramaCoordinador(EnumPrograma programa) {
         // Validaciones específicas para coordinadores
-        // Por ejemplo, que el departamento exista o tenga programas activos
-        log.debug("Departamento válido para coordinador: {}", departamento);
+        // Por ejemplo, que el programa exista o esté activo
+        log.debug("Programa válido para coordinador: {}", programa);
 
         // Ejemplo de validación futura:
-        // if (!departamentoService.tieneProgramasActivos(departamento)) {
-        //     throw new ValidationException("El departamento " + departamento + " no tiene programas activos");
+        // if (!programaService.tieneCoordinadorActivo(programa)) {
+        //     throw new ValidationException("El programa " + programa + " ya tiene un coordinador activo");
         // }
     }
 }

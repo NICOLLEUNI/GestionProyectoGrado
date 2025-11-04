@@ -91,9 +91,10 @@ public class FormatoAService {
         formatoA.setState(newState);
         formatoA.setObservations(observations);
 
-        // Incrementar contador
-        formatoA.setCounter(formatoA.getCounter() + 1);
-
+        // Incrementar contador solo si el nuevo estado es RECHAZADO
+        if (newState == EnumEstado.RECHAZADO) {
+            formatoA.setCounter(formatoA.getCounter() + 1);
+        }
         formatoARepository.save(formatoA);
 
         return Optional.of(formatoA);

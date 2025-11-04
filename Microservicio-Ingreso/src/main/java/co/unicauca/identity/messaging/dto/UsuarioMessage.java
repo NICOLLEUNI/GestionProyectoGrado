@@ -13,7 +13,8 @@ public record UsuarioMessage(
         String email,
         Set<String> roles,
         String department,
-        String programa
+        String programa,
+        String phone
 ) {
 
     public static UsuarioMessage fromEntity(co.unicauca.identity.entity.Persona persona) {
@@ -27,6 +28,9 @@ public record UsuarioMessage(
                 persona.getDepartamento().name() : null;
         String programaOriginal = persona.getPrograma() != null ?
                 persona.getPrograma().name() : null;
+
+        // ✅ AGREGAR: Obtener phone original
+        String phoneOriginal = persona.getPhone(); // Puede ser null
 
         // ✅ APLICAR LA MISMA LÓGICA CONDICIONAL MEJORADA
         boolean esSoloEstudiante = rolesString != null &&
@@ -73,7 +77,8 @@ public record UsuarioMessage(
                 persona.getEmail(),
                 rolesString,
                 departmentFinal,
-                programaFinal
+                programaFinal,
+                phoneOriginal
         );
     }
 }

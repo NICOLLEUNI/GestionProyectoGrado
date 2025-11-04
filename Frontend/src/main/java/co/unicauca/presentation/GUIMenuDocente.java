@@ -262,7 +262,9 @@ public class GUIMenuDocente extends javax.swing.JFrame {
     }//GEN-LAST:event_btSubirFormatoAMouseClicked
 
     private void btSubirAnteproyectoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btSubirAnteproyectoMouseClicked
-        // TODO add your handling code here:
+        GUISubirAnteproyecto ventanaAnte = new GUISubirAnteproyecto(personaLogueado);
+        ventanaAnte.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_btSubirAnteproyectoMouseClicked
 
     private void btRespuestasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btRespuestasMouseClicked

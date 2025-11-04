@@ -34,25 +34,24 @@ public class EventPublisherService {
 
     public void publishUserRegisteredEvent(Persona persona) {
         try {
-            // ✅ USAR NUEVO DTO ESPECÍFICO
+            // ✅ USAR NUEVO DTO ESPECÍFICO CON PHONE
             UsuarioMessage usuarioMessage = UsuarioMessage.fromEntity(persona);
             String json = objectMapper.writeValueAsString(usuarioMessage);
+
             // ✅ CREAR MENSAJE SIN TYPE_ID HEADER
             Message message = createMessageWithoutTypeId(usuarioMessage);
 
             // ✅ ENVIAR A LA COLA COMPARTIDA
             rabbitTemplate.send(RabbitMQConfig.USUARIO_QUEUE, message);
 
-            log.info("✅ USUARIO ENVIADO A COLA (USUARIO_MESSAGE): ID={}, Email={}, Department={}, Programa={}",
-                    persona.getIdUsuario(), persona.getEmail(),
-                    usuarioMessage.department(), usuarioMessage.programa());
+            log.info("✅ USUARIO ENVIADO A COLA (USUARIO_MESSAGE): ID={}, Email={}, Phone={}",
+                    persona.getIdUsuario(), persona.getEmail(), persona.getPhone());
 
         } catch (Exception e) {
             log.error("❌ ERROR enviando usuario a cola compartida: {}", e.getMessage(), e);
             log.warn("📧 FALLBACK - Usuario registrado (sin RabbitMQ): {}", persona.getEmail());
         }
     }
-
 
 
 
@@ -100,7 +99,9 @@ public class EventPublisherService {
                     email,
                     java.util.Set.of(), // Roles vacíos
                     null,
+                    null,
                     null
+
             );
 
             Message message = createMessageWithoutTypeId(failedLogin);

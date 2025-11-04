@@ -61,18 +61,20 @@ public class RoleValidationContext {
      * SINGLE_TABLE: Valida combinaciones permitidas de roles
      */
     private void validateCrossRoleConstraints(Set<enumRol> roles, EnumPrograma programa, EnumDepartamento departamento) {
-        // ✅ CORREGIDO: Validar que si es estudiante (solo o en combinación), tenga programa
-        if (roles.contains(enumRol.ESTUDIANTE) && programa == null) {
-            throw new ValidationException("El programa es obligatorio cuando se selecciona el rol ESTUDIANTE, incluso en combinación con otros roles");
+        // ✅ CORREGIDO: Validar que si es estudiante O coordinador, tenga programa
+        boolean requierePrograma = roles.contains(enumRol.ESTUDIANTE) ||
+                roles.contains(enumRol.COORDINADOR);
+
+        if (requierePrograma && programa == null) {
+            throw new ValidationException("El programa es obligatorio cuando se selecciona el rol ESTUDIANTE o COORDINADOR");
         }
 
-        // ✅ CORREGIDO: Validar que si es docente, coordinador o jefe (solo o en combinación), tenga departamento
+        // ✅ CORREGIDO: Validar que si es docente O jefe, tenga departamento
         boolean requiereDepartamento = roles.contains(enumRol.DOCENTE) ||
-                roles.contains(enumRol.COORDINADOR) ||
                 roles.contains(enumRol.JEFE_DEPARTAMENTO);
 
         if (requiereDepartamento && departamento == null) {
-            throw new ValidationException("El departamento es obligatorio cuando se seleccionan roles de DOCENTE, COORDINADOR o JEFE_DEPARTAMENTO, incluso en combinación con otros roles");
+            throw new ValidationException("El departamento es obligatorio cuando se seleccionan roles de DOCENTE o JEFE_DEPARTAMENTO");
         }
 
         // ✅ CORREGIDO: Validación adicional para combinaciones específicas
@@ -95,9 +97,9 @@ public class RoleValidationContext {
                 throw new ValidationException("Para la combinación de roles seleccionada, ambos campos (programa y departamento) son obligatorios");
             } else if (programa == null) {
                 throw new ValidationException("El programa es obligatorio cuando se combina el rol ESTUDIANTE con otros roles");
-            } else if (departamento == null) {
-                throw new ValidationException("El departamento es obligatorio cuando se combinan roles de docente/coordinador/jefe con otros roles");
-            }
+            } //else if (departamento == null) {
+               // throw new ValidationException("El departamento es obligatorio cuando se combinan roles de docente/coordinador/jefe con otros roles");
+            //}
         }
 
         // Log para debugging

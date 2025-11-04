@@ -391,7 +391,7 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btPDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btPDFMousePressed
+    private void btPDFMousePressed(java.awt.event.MouseEvent evt) {
         try {
             if (!esEditable()) {
                 JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
@@ -408,16 +408,24 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             if (resultado == JFileChooser.APPROVE_OPTION) {
                 File archivoSeleccionado = fileChooser.getSelectedFile();
 
-                // Subir directamente al microservicio -> ahora devuelve String (ruta o JSON) o null si falló
+                // Subir al servidor
                 String respuesta = submissionService.subirFormatoAPDF(formato.getId(), archivoSeleccionado);
-                if (respuesta != null && !respuesta.isEmpty()) {
-                    // Si el backend devuelve la ruta, usarla; si devuelve JSON, podrías parsearla
-                    formato.setArchivoPDF(respuesta);
-                    txtMostrarRutaPDF.setText(respuesta);
-                    JOptionPane.showMessageDialog(this, "PDF subido correctamente: " + respuesta);
+
+                if (respuesta != null && !respuesta.isEmpty() && respuesta.toLowerCase().contains("correctamente")) {
+                    // ⭐ SOLUCIÓN: Construir la ruta que el backend guardó
+                    String nombreArchivo = archivoSeleccionado.getName();
+                    String rutaEsperada = "formatoA/FormatoA_" + formato.getId() + "_" + nombreArchivo;
+
+                    // Actualizar el objeto local
+                    formato.setArchivoPDF(rutaEsperada);
+                    txtMostrarRutaPDF.setText(nombreArchivo); // Mostrar solo el nombre
+
+                    JOptionPane.showMessageDialog(this, "PDF subido correctamente");
+
+                    // Debug
+                    System.out.println("✅ PDF subido. Ruta esperada: " + rutaEsperada);
                 } else {
-                    // fallback: quizá el backend no devolvió ruta, mostrar nombre local
-                    JOptionPane.showMessageDialog(this, "Error subiendo PDF al servidor.");
+                    JOptionPane.showMessageDialog(this, "Error subiendo PDF al servidor: " + respuesta);
                 }
             }
         } catch (Exception ex) {
@@ -426,12 +434,11 @@ public class DetallesFormatoA extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btPDFMousePressed
 
-    private void btCartaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btCartaMouseClicked
+    private void btCartaMouseClicked(java.awt.event.MouseEvent evt) {
         try {
             if (!esEditable()) {
                 JOptionPane.showMessageDialog(this, "No puede modificar el formato en el estado actual.");
                 return;
-
             }
 
             if (formato.getMode() != EnumModalidad.PRACTICA_PROFESIONAL) {
@@ -449,14 +456,24 @@ public class DetallesFormatoA extends javax.swing.JPanel {
             if (resultado == JFileChooser.APPROVE_OPTION) {
                 File archivoSeleccionado = fileChooser.getSelectedFile();
 
-                // Subir al servidor -> devuelve String (ruta o JSON) o null si falla
+                // Subir al servidor
                 String respuesta = submissionService.subirCartaLaboral(formato.getId(), archivoSeleccionado);
-                if (respuesta != null && !respuesta.isEmpty()) {
-                    formato.setCartaLaboral(respuesta);
-                    txtMostarRutaCarta.setText(respuesta);
-                    JOptionPane.showMessageDialog(this, "Carta laboral subida correctamente: " + respuesta);
+
+                if (respuesta != null && !respuesta.isEmpty() && respuesta.toLowerCase().contains("correctamente")) {
+                    // ⭐ SOLUCIÓN: Construir la ruta que el backend guardó
+                    String nombreArchivo = archivoSeleccionado.getName();
+                    String rutaEsperada = "cartaLaboral/CartaLaboral_" + formato.getId() + "_" + nombreArchivo;
+
+                    // Actualizar el objeto local
+                    formato.setCartaLaboral(rutaEsperada);
+                    txtMostarRutaCarta.setText(nombreArchivo); // Mostrar solo el nombre
+
+                    JOptionPane.showMessageDialog(this, "Carta laboral subida correctamente");
+
+                    // Debug
+                    System.out.println("✅ Carta laboral subida. Ruta esperada: " + rutaEsperada);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Error subiendo la carta laboral al servidor.");
+                    JOptionPane.showMessageDialog(this, "Error subiendo la carta laboral: " + respuesta);
                 }
             }
         } catch (Exception ex) {
