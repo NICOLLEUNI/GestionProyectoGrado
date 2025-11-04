@@ -46,6 +46,6 @@ public class RabbitMQPublisher {
     }
 
     public void publishUsuario(Object usuarioResponse) {
-        publish(RabbitMQConfig.USUARIO_QUEUE, usuarioResponse);
+        publish(RabbitMQConfig.AUDITORIA_QUEUE, usuarioResponse);
     }
 }

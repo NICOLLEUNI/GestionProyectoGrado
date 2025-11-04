@@ -60,7 +60,7 @@ public class DataLoader implements CommandLineRunner {
         jefeElectronica.setLastname("Valencia");
         jefeElectronica.setEmail("ricardo.valencia@unicauca.edu.co");
         jefeElectronica.setDepartment("ELECTRONICA");
-        jefeElectronica.setRoles(EnumSet.of(EnumRol.JEFE_DEPARTAMENTO, EnumRol.DOCENTE));
+        jefeElectronica.setRoles(EnumSet.of( EnumRol.DOCENTE));
 
         Persona jefeSistemas = new Persona();
         jefeSistemas.setIdUsuario(6L);
@@ -68,7 +68,7 @@ public class DataLoader implements CommandLineRunner {
         jefeSistemas.setLastname("Ramos");
         jefeSistemas.setEmail("paola.ramos@unicauca.edu.co");
         jefeSistemas.setDepartment("SISTEMAS");
-        jefeSistemas.setRoles(EnumSet.of(EnumRol.JEFE_DEPARTAMENTO, EnumRol.DOCENTE));
+        jefeSistemas.setRoles(EnumSet.of( EnumRol.DOCENTE));
 
         Persona coordSistemas = new Persona();
         coordSistemas.setIdUsuario(7L);
@@ -77,7 +77,7 @@ public class DataLoader implements CommandLineRunner {
         coordSistemas.setEmail("luis.munoz@unicauca.edu.co");
         coordSistemas.setDepartment("SISTEMAS");
         coordSistemas.setPrograma("INGENIERIA_DE_SISTEMAS");
-        coordSistemas.setRoles(EnumSet.of(EnumRol.COORDINADOR));
+        coordSistemas.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
         Persona coordElectronica = new Persona();
         coordElectronica.setIdUsuario(8L);
@@ -86,7 +86,7 @@ public class DataLoader implements CommandLineRunner {
         coordElectronica.setEmail("andrea.gomez@unicauca.edu.co");
         coordElectronica.setDepartment("ELECTRONICA");
         coordElectronica.setPrograma("INGENIERIA_ELECTRONICA_Y_TELECOMUNICACIONES");
-        coordElectronica.setRoles(EnumSet.of(EnumRol.COORDINADOR));
+        coordElectronica.setRoles(EnumSet.of(EnumRol.DOCENTE));
 
         // ✅ 3 nuevos docentes
         Persona docente1 = new Persona();
@@ -149,7 +149,7 @@ public class DataLoader implements CommandLineRunner {
         superUsuario.setEmail("admin.master@unicauca.edu.co");
         superUsuario.setDepartment("SISTEMAS");
         superUsuario.setPrograma("INGENIERIA_DE_SISTEMAS");
-        superUsuario.setRoles(EnumSet.allOf(EnumRol.class)); // ✅ Todos los roles
+        superUsuario.setRoles(EnumSet.of(EnumRol.ESTUDIANTE,EnumRol.DOCENTE)); // ✅ Todos los roles
 
         personaRepository.saveAll(Arrays.asList(
                 director, codirector, estudiante1, estudiante2,
