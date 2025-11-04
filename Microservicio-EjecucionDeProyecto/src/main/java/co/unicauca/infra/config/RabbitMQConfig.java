@@ -24,6 +24,8 @@ public class RabbitMQConfig {
     public static final String PROYECTO_GRADO_CREADO_QUEUE = "proyectogrado.creado.queue";
     public static final String FORMATOA_EVALUADO_QUEUE = "formatoa.evaluado.queue";
     public static final String USUARIO_QUEUE = "usuario.queue";
+    public static final String REPORTES_QUEUE = "reportes.queue";
+
 
     // ================== EXCHANGES (DEBEN COINCIDIR CON QUIEN ENVÍA) ==================
     public static final String ANTEPROYECTO_EXCHANGE = "anteproyecto.exchange";
@@ -104,6 +106,9 @@ public class RabbitMQConfig {
     @Bean
     public Queue usuarioActualizadoQueue() {
         return new Queue(USUARIO_QUEUE, true);
+    }
+    @Bean Queue reportesQueue() {
+        return new Queue(REPORTES_QUEUE, true);
     }
 
     // ================== BINDINGS (LO MÁS IMPORTANTE) ==================

@@ -7,8 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class AuthService {
     private static final String BASE_URL = "http://localhost:8080/api/auth";
@@ -46,6 +45,67 @@ public class AuthService {
         } else {
             // ✅ EL MICROSERVICIO DECIDE EL MENSAJE DE ERROR
             throw new Exception(message);
+        }
+    }
+
+
+    public boolean validateEmail(String email) throws Exception {
+        String url = BASE_URL + "/validate/email?email=" + java.net.URLEncoder.encode(email, "UTF-8");
+        String responseJson = HttpUtil.post(url, "");
+
+        JsonObject response = gson.fromJson(responseJson, JsonObject.class);
+        return response.get("success").getAsBoolean() && response.get("data").getAsBoolean();
+    }
+
+    /**
+     * ✅ NUEVO: Validar contraseña usando el microservicio
+     */
+    public boolean validatePassword(String password) throws Exception {
+        String url = BASE_URL + "/validate/password?password=" + java.net.URLEncoder.encode(password, "UTF-8");
+        String responseJson = HttpUtil.post(url, "");
+
+        JsonObject response = gson.fromJson(responseJson, JsonObject.class);
+        return response.get("success").getAsBoolean() && response.get("data").getAsBoolean();
+    }
+
+    /**
+     * ✅ NUEVO: Validar nombre usando el microservicio
+     */
+    public boolean validateName(String name) throws Exception {
+        String url = BASE_URL + "/validate/name?name=" + java.net.URLEncoder.encode(name, "UTF-8");
+        String responseJson = HttpUtil.post(url, "");
+
+        JsonObject response = gson.fromJson(responseJson, JsonObject.class);
+        return response.get("success").getAsBoolean() && response.get("data").getAsBoolean();
+    }
+
+    /**
+     * ✅ NUEVO: Validación COMPLETA usando el microservicio
+     */
+    public List<String> validateRegistration(Map<String, Object> registrationData) throws Exception {
+        String url = BASE_URL + "/validate/registration";
+        String jsonRequest = gson.toJson(registrationData);
+
+        String responseJson = HttpUtil.post(url, jsonRequest);
+        JsonObject response = gson.fromJson(responseJson, JsonObject.class);
+
+        if (response.get("success").getAsBoolean()) {
+            JsonObject data = response.get("data").getAsJsonObject();
+            boolean isValid = data.get("isValid").getAsBoolean();
+
+            if (isValid) {
+                return new ArrayList<>(); // No hay errores
+            } else {
+                // Extraer lista de errores
+                List<String> errors = new ArrayList<>();
+                JsonArray errorsArray = data.get("errors").getAsJsonArray();
+                for (int i = 0; i < errorsArray.size(); i++) {
+                    errors.add(errorsArray.get(i).getAsString());
+                }
+                return errors;
+            }
+        } else {
+            throw new Exception("Error en la validación: " + response.get("message").getAsString());
         }
     }
 

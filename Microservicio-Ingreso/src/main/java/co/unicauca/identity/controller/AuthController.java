@@ -37,6 +37,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Controlador REST para operaciones de autenticación
  */
@@ -162,6 +168,84 @@ public class AuthController {
                     .body(ApiResponse.error("Error debug: " + e.getMessage()));
         }
     }
+
+// En co.unicauca.identity.controller.AuthController
+
+    @PostMapping("/validate/email")
+    @Operation(summary = "Validar formato de email institucional")
+    public ResponseEntity<ApiResponse<Boolean>> validateEmail(@RequestParam String email) {
+        boolean isValid = email != null && email.toLowerCase().endsWith("@unicauca.edu.co");
+        return ResponseEntity.ok(ApiResponse.success(isValid));
+    }
+
+    @PostMapping("/validate/password")
+    @Operation(summary = "Validar fortaleza de contraseña")
+    public ResponseEntity<ApiResponse<Boolean>> validatePassword(@RequestParam String password) {
+        String passwordRegex = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$";
+        boolean isValid = password != null && password.matches(passwordRegex);
+        return ResponseEntity.ok(ApiResponse.success(isValid));
+    }
+
+    @PostMapping("/validate/name")
+    @Operation(summary = "Validar formato de nombre/apellido")
+    public ResponseEntity<ApiResponse<Boolean>> validateName(@RequestParam String name) {
+        String nameRegex = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$";
+        boolean isValid = name != null && name.matches(nameRegex);
+        return ResponseEntity.ok(ApiResponse.success(isValid));
+    }
+
+    @PostMapping("/validate/phone")
+    @Operation(summary = "Validar formato de teléfono")
+    public ResponseEntity<ApiResponse<Boolean>> validatePhone(@RequestParam String phone) {
+        // Teléfono es opcional, pero si se proporciona debe ser válido
+        if (phone == null || phone.trim().isEmpty()) {
+            return ResponseEntity.ok(ApiResponse.success(true));
+        }
+        String phoneRegex = "^[0-9]{10}$";
+        boolean isValid = phone.matches(phoneRegex);
+        return ResponseEntity.ok(ApiResponse.success(isValid));
+    }
+    @PostMapping("/validate/registration")
+    @Operation(summary = "Validación completa de datos de registro")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> validateRegistration(
+            @RequestBody Map<String, Object> registrationData) {
+
+        List<String> errors = new ArrayList<>();
+
+        // Validaciones (copiar las de arriba)
+        String name = (String) registrationData.get("name");
+        if (name == null || !name.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$")) {
+            errors.add("El nombre debe contener solo letras y tener al menos 2 caracteres");
+        }
+
+        String lastname = (String) registrationData.get("lastname");
+        if (lastname == null || !lastname.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$")) {
+            errors.add("Los apellidos deben contener solo letras y tener al menos 2 caracteres");
+        }
+
+        String email = (String) registrationData.get("email");
+        if (email == null || !email.toLowerCase().endsWith("@unicauca.edu.co")) {
+            errors.add("El email debe ser institucional (@unicauca.edu.co)");
+        }
+
+        String password = (String) registrationData.get("password");
+        if (password == null || !password.matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$")) {
+            errors.add("La contraseña debe tener al menos 6 caracteres, 1 mayúscula, 1 número y 1 carácter especial");
+        }
+
+        String phone = (String) registrationData.get("phone");
+        if (phone != null && !phone.trim().isEmpty() && !phone.matches("^[0-9]{10}$")) {
+            errors.add("El celular debe tener 10 dígitos numéricos");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("isValid", errors.isEmpty());
+        result.put("errors", errors);
+
+        return ResponseEntity.ok(ApiResponse.success(result, "Validación completada"));
+    }
+
+
 
 
 }

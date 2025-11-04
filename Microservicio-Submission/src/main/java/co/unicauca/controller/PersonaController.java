@@ -65,4 +65,5 @@ public class PersonaController {
         List<Persona> estudiantes = personaService.findEstudiantesSinFormatoA();
         return ResponseEntity.ok(estudiantes);
     }
+
 }

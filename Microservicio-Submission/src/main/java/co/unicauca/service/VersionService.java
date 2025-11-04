@@ -9,10 +9,12 @@ import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.infra.dto.notification.VersionNotification;
 import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.FormatoVersionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class VersionService {
@@ -171,5 +173,10 @@ public class VersionService {
         // Buscar la versión más alta para este FormatoA y sumar 1
         Integer maxVersion = formatoVersionRepository.findMaxVersionByFormatoAId(formatoA.getId());
         return (maxVersion != null ? maxVersion : 0) + 1;
+    }
+    @Transactional
+    public void eliminarVersionesPorFormatoA(Long formatoAId) {
+        List<FormatoAVersion> versiones = formatoVersionRepository.findByFormatoAId(formatoAId);
+        formatoVersionRepository.deleteAll(versiones);
     }
 }

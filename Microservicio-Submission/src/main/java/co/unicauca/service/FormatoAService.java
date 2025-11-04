@@ -44,12 +44,32 @@ public class FormatoAService {
         return formatoARepository.findByProjectManagerEmailOrProjectCoManagerEmail(email, email);
     }
 
+    @Transactional
     public boolean eliminarFormatoA(Long id) {
-        if (formatoARepository.existsById(id)) {
-            formatoARepository.deleteById(id);
+        Optional<FormatoA> formatoAOpt = formatoARepository.findById(id);
+
+        if (formatoAOpt.isPresent()) {
+            FormatoA formatoA = formatoAOpt.get();
+
+            try {
+                proyectoService.eliminarProyectoPorFormatoA(id);
+            } catch (Exception e) {
+                System.err.println("⚠️ No se pudo eliminar proyecto asociado: " + e.getMessage());
+            }
+
+            try {
+                versionService.eliminarVersionesPorFormatoA(id);
+            } catch (Exception e) {
+                System.err.println("⚠️ No se pudieron eliminar versiones asociadas: " + e.getMessage());
+            }
+
+            formatoARepository.delete(formatoA);
+
             return true;
+        } else {
+            System.err.println("❌ FormatoA no encontrado con id: " + id);
+            return false;
         }
-        return false;
     }
 
 
