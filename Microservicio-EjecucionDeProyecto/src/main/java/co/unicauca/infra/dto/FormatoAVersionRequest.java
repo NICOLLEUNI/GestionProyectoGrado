@@ -22,7 +22,9 @@
             @JsonAlias({"state", "estado"})
             String estado,
 
+            @JsonAlias("observaciones")
             String observaciones,
+
             @JsonAlias({"counter"})
             Integer counter,
 
