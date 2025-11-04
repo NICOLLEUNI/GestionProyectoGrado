@@ -3,6 +3,7 @@ package co.unicauca.entity;
 
 import co.unicauca.entity.state.FormatoAState;
 import co.unicauca.entity.state.FormatoAStateFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class FormatoA {
 
     // ✅ NUEVO: Campo transitorio para el patrón State (no se persiste)
     @Transient
+    @JsonIgnore
     private FormatoAState stateObject;
 
     @Column(nullable = false)
