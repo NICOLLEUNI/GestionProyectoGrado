@@ -16,21 +16,23 @@ public class RoleSpecificValidationValidator implements ConstraintValidator<Role
         boolean isValid = true;
         context.disableDefaultConstraintViolation();
 
-        // ✅ CORREGIDO: Validar ESTUDIANTE requiere programa (incluso en combinaciones)
-        if (request.roles().contains(enumRol.ESTUDIANTE) && request.programa() == null) {
-            context.buildConstraintViolationWithTemplate("El programa académico es obligatorio para estudiantes")
+        // ✅ CORREGIDO: Validar ESTUDIANTE O COORDINADOR requiere programa
+        boolean requierePrograma = request.roles().contains(enumRol.ESTUDIANTE) ||
+                request.roles().contains(enumRol.COORDINADOR);
+
+        if (requierePrograma && request.programa() == null) {
+            context.buildConstraintViolationWithTemplate("El programa académico es obligatorio para estudiantes y coordinadores")
                     .addPropertyNode("programa")
                     .addConstraintViolation();
             isValid = false;
         }
 
-        // ✅ CORREGIDO: Validar DOCENTE/COORDINADOR/JEFE requiere departamento (incluso en combinaciones)
+        // ✅ CORREGIDO: Validar DOCENTE O JEFE requiere departamento
         boolean requiereDepto = request.roles().contains(enumRol.DOCENTE) ||
-                request.roles().contains(enumRol.COORDINADOR) ||
                 request.roles().contains(enumRol.JEFE_DEPARTAMENTO);
 
         if (requiereDepto && request.departamento() == null) {
-            context.buildConstraintViolationWithTemplate("El departamento es obligatorio para docentes, coordinadores y jefes de departamento")
+            context.buildConstraintViolationWithTemplate("El departamento es obligatorio para docentes y jefes de departamento")
                     .addPropertyNode("departamento")
                     .addConstraintViolation();
             isValid = false;

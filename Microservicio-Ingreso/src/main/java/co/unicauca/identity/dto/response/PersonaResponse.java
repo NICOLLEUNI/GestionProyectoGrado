@@ -14,6 +14,7 @@ public record PersonaResponse(
         Set<String> roles,
         String department,
         String programa
+
 ) {
     // Builder para construcción fluida
     public static Builder builder() {
@@ -102,40 +103,25 @@ public record PersonaResponse(
             String department,
             String programa
     ) {
-        // ✅ LÓGICA MEJORADA: Determinar qué campos mostrar basado en los roles
-        boolean esSoloEstudiante = roles != null &&
-                roles.contains("ESTUDIANTE") &&
-                roles.size() == 1;
-
-        boolean esSoloRolConDepartamento = roles != null &&
-                (roles.contains("DOCENTE") ||
-                        roles.contains("COORDINADOR") ||
-                        roles.contains("JEFE_DEPARTAMENTO")) &&
-                roles.size() == 1;
-
-        // ✅ NUEVA VALIDACIÓN: Combinación de roles de departamento SIN estudiante
-        boolean esCombinacionRolesDepartamento = roles != null &&
-                (roles.contains("DOCENTE") || roles.contains("COORDINADOR") || roles.contains("JEFE_DEPARTAMENTO")) &&
-                !roles.contains("ESTUDIANTE") &&
-                roles.size() >= 1; // Puede ser 1 o más roles de departamento
-
-        boolean esCombinacionMixta = roles != null &&
-                roles.contains("ESTUDIANTE") &&
-                (roles.contains("DOCENTE") || roles.contains("COORDINADOR") || roles.contains("JEFE_DEPARTAMENTO"));
+        // ✅ LÓGICA MEJORADA: Basada en tipos de roles
+        boolean tieneRolConPrograma = roles != null &&
+                (roles.contains("ESTUDIANTE") || roles.contains("COORDINADOR"));
+        boolean tieneRolConDepartamento = roles != null &&
+                (roles.contains("DOCENTE") || roles.contains("JEFE_DEPARTAMENTO"));
 
         String departamentFinal;
         String programaFinal;
 
-        if (esSoloEstudiante) {
-            // ✅ Solo ESTUDIANTE: muestra programa, oculta departamento
+        if (tieneRolConPrograma && !tieneRolConDepartamento) {
+            // ✅ Solo roles con programa: muestra programa, oculta departamento
             departamentFinal = null;
             programaFinal = programa;
-        } else if (esSoloRolConDepartamento || esCombinacionRolesDepartamento) {
-            // ✅ Solo DOCENTE/COORDINADOR/JEFE (individual o combinados): muestra departamento, oculta programa
+        } else if (!tieneRolConPrograma && tieneRolConDepartamento) {
+            // ✅ Solo roles con departamento: muestra departamento, oculta programa
             departamentFinal = department;
             programaFinal = null;
-        } else if (esCombinacionMixta) {
-            // ✅ COMBINACIÓN ESTUDIANTE + roles departamento: muestra ambos campos
+        } else if (tieneRolConPrograma && tieneRolConDepartamento) {
+            // ✅ COMBINACIÓN: muestra ambos campos
             departamentFinal = department;
             programaFinal = programa;
         } else {
