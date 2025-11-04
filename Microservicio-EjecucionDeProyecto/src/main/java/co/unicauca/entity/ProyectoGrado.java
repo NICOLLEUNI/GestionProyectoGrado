@@ -9,18 +9,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "proyecto_grado")
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "proyecto_grado")
 public class ProyectoGrado {
     @Id
     private Long id;
 
-    // ✅ QUITAR unique = true para eliminar la constraint única
-    @Column(nullable = false)  // ← CAMBIADO: sin unique=true
+    @Column(nullable = false)
     private String nombre;
 
     @Column(nullable = false)
@@ -31,34 +30,34 @@ public class ProyectoGrado {
     @Column(name = "email_estudiante")
     private List<String> estudiantesEmail = new ArrayList<>();
 
+    // ✅ SOLO el ID para la relación - COHERENTE con tu DTO
     @Column(name = "id_formato_a")
     private Long idFormatoA;
 
-    // ✅ RELACIÓN OneToOne - VERIFICAR que no cree constraint única automática
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    /*
+    // ✅ RELACIÓN con historial (usa proyecto_grado_id en la otra tabla)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(
-            name = "formato_version_actual_id",
-            unique = false  // ← IMPORTANTE: evitar constraint única
+            name = "proyecto_grado_id",
+            referencedColumnName = "id",
+            insertable = false,
+            updatable = false
     )
-    private FormatoAVersion formatoVersionActual;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "proyecto_grado_id")
     private List<FormatoAVersion> historialFormatos = new ArrayList<>();
-
+*/
     private String estado;
 
+    /*
     // Métodos de negocio
-    public void agregarVersionFormato(FormatoAVersion version) {
+    public void agregarVersionAlHistorial(FormatoAVersion version) {
         if (historialFormatos == null) {
             historialFormatos = new ArrayList<>();
         }
         historialFormatos.add(version);
-        this.formatoVersionActual = version;
     }
-
+*/
     public void establecerIdFormatoA(Long idFormatoA) {
         this.idFormatoA = idFormatoA;
     }
-}
 
+}

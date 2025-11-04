@@ -26,16 +26,13 @@ public class FormatoAVersion {
     @Enumerated(EnumType.STRING)
     private EnumModalidad mode;
 
-    private String generalObjetive;
-    private String specificObjetives;
-    private String archivoPDF;
-    private String cartaLaboral;
-
     @Enumerated(EnumType.STRING)
     private EnumEstado state;
 
     private String observations;
     private int counter;
     private Long idFormatoA;
+
+
 
 }

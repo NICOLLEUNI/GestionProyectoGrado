@@ -14,7 +14,6 @@ public record ProyectoGradoRequest(
    String nombre,
    LocalDate fecha,
    List<String> estudiantesEmail,
-
    Long IdFormatoA
 
 )
