@@ -5,7 +5,7 @@
 package co.unicauca.presentation;
 
 //agregar la funcionalidad en los 3 puntos de "volver a la pestaña anterior"
-//añadir logica observer que se va a manejar con una capa de estadisticas 
+//añadir logica observer que se va a manejar con una capa de estadisticas
 
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
@@ -34,12 +34,12 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
 
     private static Persona personaLogueado;
     private EvaluacionService evaluacionService;
-    
+
     private JFrame frameBarras;
     private JFrame framePastel;
-    
+
     //private List<FormatoA> listaFormateada = new ArrayList<>();
-    
+
    public GUIEvaluarFormato(Persona logueado,EvaluacionService evaluacionService)  {
 
         this.evaluacionService = evaluacionService;
@@ -73,7 +73,7 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
      frameBarras = new JFrame("Gráfico Barras");
     frameBarras.getContentPane().add(graficoBarras);
     frameBarras.pack();
-    frameBarras.setLocation(xPrincipal + anchoPrincipal + 10, 
+    frameBarras.setLocation(xPrincipal + anchoPrincipal + 10,
                             yPrincipal + framePastel.getHeight() + 30);
     frameBarras.setVisible(true);
 }
@@ -125,16 +125,16 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
 }
 
     private void initStyles(){ }
-    
+
     private void showJPanel(JPanel pl){
      pl.setSize(533,456);
      pl.setLocation(0, 0);
-     
+
      Contenido.removeAll();
      Contenido.add(pl,BorderLayout.CENTER);
      Contenido.revalidate();
-     Contenido.repaint(); 
-         
+     Contenido.repaint();
+
      }
     private void initContent(){
 
@@ -153,7 +153,7 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
         }}
          });
          }
-     
+
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -235,7 +235,7 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Roboto Medium", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("EVALUAR ANTEPROYECTO");
+        jLabel1.setText("EVALUAR FORMATO A");
 
         javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
         Contenido.setLayout(ContenidoLayout);
@@ -305,9 +305,9 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-              
+
                    // new GUIEvaluarFormato(personaLogueado, evaluacionService).setVisible(true);
-                
+
             }
         });
     }
@@ -323,5 +323,5 @@ public class GUIEvaluarFormato extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 
-   
+
 }

@@ -1,5 +1,6 @@
 package co.unicauca.service;
 
+import co.unicauca.entity.Anteproyecto;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.utils.GsonFactory;
@@ -7,6 +8,7 @@ import co.unicauca.utils.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.lang.invoke.SwitchPoint;
 import java.lang.reflect.Type;
 import java.io.File;
 import java.util.ArrayList;
@@ -54,8 +56,7 @@ public class SubmissionService {
         try {
             String url = BASE_URL + "/formatoA/docente/" + email;
             String jsonResponse = HttpUtil.get(url);
-
-            System.out.println("📦 JSON recibido: " + jsonResponse); // DEBUG
+            // DEBUG
 
             Type listType = new TypeToken<List<FormatoA>>() {}.getType();
             return gson.fromJson(jsonResponse, listType);
@@ -120,7 +121,6 @@ public class SubmissionService {
         try {
             String url = BASE_URL + "/formatoA/" + id;
             String jsonResponse = HttpUtil.get(url);
-
             return gson.fromJson(jsonResponse, FormatoA.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -253,6 +253,26 @@ public class SubmissionService {
             return gson.fromJson(jsonResponse, Persona.class);
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Anteproyecto subirAnteproyecto(Anteproyecto anteproyecto) {
+        try {
+            String url = BASE_URL + "/anteproyectos";
+            String jsonRequest = gson.toJson(anteproyecto);
+
+
+
+            String jsonResponse = HttpUtil.post(url, jsonRequest);
+
+            System.out.println("📦 Respuesta del backend: " + jsonResponse);
+
+            return gson.fromJson(jsonResponse, Anteproyecto.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error al subir Anteproyecto: " + e.getMessage());
             return null;
         }
     }

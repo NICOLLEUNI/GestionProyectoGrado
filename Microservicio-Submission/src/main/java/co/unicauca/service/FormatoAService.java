@@ -284,5 +284,7 @@ public class FormatoAService {
             }
         }
     }
-
+    public List<FormatoA> findAll() {
+        return formatoARepository.findAll();
+    }
 }

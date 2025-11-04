@@ -52,4 +52,12 @@ public class PersonaController {
         List<Persona> personas = personaService.findByRol(rol);
         return ResponseEntity.ok(personas);
     }
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Persona> findByEmail(@PathVariable String email) {
+        Persona persona = personaService.findPersonaByEmail(email);
+        if (persona == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(persona);
+    }
 }

@@ -4,7 +4,18 @@
  */
 package co.unicauca.presentation;
 
+import co.unicauca.entity.EnumEstado;
+import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
+import co.unicauca.infra.DtoFormatoA;
+import co.unicauca.presentation.views.Observaciones;
+import co.unicauca.presentation.views.SubirAnteproyecto;
+import co.unicauca.service.SubmissionService;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
 
 /**
  *
@@ -13,14 +24,86 @@ import co.unicauca.entity.Persona;
 public class GUISubirAnteproyecto extends javax.swing.JFrame {
 
     Persona personaLogueado;
+    SubmissionService submissionService =new SubmissionService();
     /**
      * Creates new form GUISubirAnteproyecto
      */
     public GUISubirAnteproyecto(Persona personaLogueado) {
         this.personaLogueado = personaLogueado;
         initComponents();
+        cargarDatos();
+        initContent();
+    }
+    private void cargarDatos() {
+        // Llamar al servicio para traer solo los formatos de ese programa
+        List<FormatoA> lista = submissionService.listFormatoA();
+
+
+        // Encabezados de la tabla
+        String[] columnas = {"ID", "Título", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+
+        // Poblar la tabla con los formatos entregados
+        if (lista != null) {
+            for (FormatoA f : lista) {
+                if (f.getState() == EnumEstado.APROBADO) {
+                    Object[] fila = {
+                            f.getId(),
+                            f.getTitle(),
+                            f.getState().getDescripcion() // descripción legible del estado
+                    };
+                    modelo.addRow(fila);
+                }
+            }
+        }
+
+        jTable1.setModel(modelo);
     }
 
+
+
+    private void initStyles(){ }
+
+    private void showJPanel(JPanel pl){
+        pl.setSize(533,456);
+        pl.setLocation(0, 0);
+
+        Contenido.removeAll();
+        Contenido.add(pl, BorderLayout.CENTER);
+        Contenido.revalidate();
+        Contenido.repaint();
+
+    }
+    private void initContent(){
+
+        jTable1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
+                int fila = jTable1.getSelectedRow();
+                Long id = (Long) jTable1.getValueAt(fila, 0); // ID está en la columna 0
+
+                // Buscar el FormatoA desde repo
+                FormatoA formato = submissionService.findFormatoAById(id);
+                System.out.println("Formato recibido: " + formato.getTitle());
+
+                if (formato != null) {
+                    SubirAnteproyecto panelAnte = new SubirAnteproyecto(personaLogueado,submissionService);
+                    panelAnte.setFormatoA(formato);
+                    showJPanel(panelAnte);
+                }}
+        });
+    }
+    public void eliminarFilaTabla(Long idFormato) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Long idTabla = (Long) model.getValueAt(i, 0); // Suponiendo que la columna 0 es el ID
+
+            if (idTabla.equals(idFormato)) {
+                model.removeRow(i); // Eliminar la fila
+                break; // Salimos tras eliminar
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

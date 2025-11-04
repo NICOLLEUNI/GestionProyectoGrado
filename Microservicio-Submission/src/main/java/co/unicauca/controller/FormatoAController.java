@@ -28,6 +28,11 @@ public class FormatoAController {
         this.formatoARepository = formatoARepository;
     }
 
+    @GetMapping
+    public ResponseEntity<List<FormatoA>> listarFormatosA() {
+        List<FormatoA> formatos = formatoAService.findAll();
+        return ResponseEntity.ok(formatos);
+    }
     /**
      * Elimina un FormatoA por ID.
      * Endpoint: DELETE /api/formatoA/{id}
@@ -43,7 +48,7 @@ public class FormatoAController {
         }
     }
 
-    @GetMapping("/formatoA/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<FormatoA> findById(@PathVariable Long id) {
         return formatoAService.findById(id)
                 .map(ResponseEntity::ok)
