@@ -270,8 +270,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
             .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, 590, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseClicked
+    private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt) {
         if (dateChooser.getDate() == null) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fecha.");
             return;
@@ -282,7 +281,7 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
         formatoA.setDate(fechaSeleccionada);
 
         try {
-            // 1️⃣ Subir el FormatoA completo al microservicio
+            // 1️⃣ Crear el FormatoA SIN PUBLICAR
             FormatoA formatoCreado = submissionService.createFormatoA(formatoA);
 
             if (formatoCreado == null || formatoCreado.getId() == null) {
@@ -290,15 +289,15 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
                 return;
             }
 
+            // 2️⃣ Subir archivos PRIMERO
+            boolean archivosSubidos = true;
 
-            // 2️⃣ Subir archivos PDF y carta laboral si existen
             if (archivoPDFSeleccionado != null) {
                 String respuestaPDF = submissionService.subirFormatoAPDF(formatoCreado.getId(), archivoPDFSeleccionado);
                 if (respuestaPDF == null) {
                     JOptionPane.showMessageDialog(this, "Error al subir el PDF del Formato A.");
-                    return;
+                    archivosSubidos = false;
                 } else {
-                    formatoCreado.setArchivoPDF(respuestaPDF);
                     System.out.println("PDF subido correctamente: " + respuestaPDF);
                 }
             }
@@ -307,15 +306,23 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
                 String respuestaCarta = submissionService.subirCartaLaboral(formatoCreado.getId(), archivoCartaSeleccionada);
                 if (respuestaCarta == null) {
                     JOptionPane.showMessageDialog(this, "Error al subir la carta laboral.");
-                    return;
+                    archivosSubidos = false;
                 } else {
-                    formatoCreado.setCartaLaboral(respuestaCarta);
                     System.out.println("Carta laboral subida correctamente: " + respuestaCarta);
                 }
             }
 
-
-            JOptionPane.showMessageDialog(this, "Formato A registrado con éxito.");
+            // 3️⃣ PUBLICAR solo si los archivos se subieron correctamente
+            if (archivosSubidos) {
+                boolean publicado = submissionService.publicarFormatoA(formatoCreado.getId());
+                if (publicado) {
+                    JOptionPane.showMessageDialog(this, "Formato A registrado y publicado con éxito.");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Formato A guardado pero hubo error al publicar.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Formato A guardado pero con errores en archivos.");
+            }
 
             showJPanel(new Principal(persona));
 
@@ -323,7 +330,6 @@ public class AdjuntarDocumentos extends javax.swing.JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error al guardar el Formato A: " + e.getMessage());
         }
-
     }//GEN-LAST:event_btnGuardarMouseClicked
 
 

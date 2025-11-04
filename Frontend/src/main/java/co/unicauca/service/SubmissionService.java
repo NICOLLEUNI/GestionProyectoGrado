@@ -113,6 +113,20 @@ public class SubmissionService {
         }
     }
 
+    /**
+     * 🔹 NUEVO MÉTODO - Publica un FormatoA existente después de subir archivos
+     */
+    public boolean publicarFormatoA(Long formatoAId) {
+        try {
+            String url = BASE_URL + "/formatoA/" + formatoAId + "/publicar";
+            String jsonResponse = HttpUtil.post(url, ""); // POST vacío
+            return jsonResponse != null && !jsonResponse.trim().isEmpty();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     /**
      * Busca un FormatoA por su ID.
@@ -242,6 +256,34 @@ public class SubmissionService {
         } catch (Exception e) {
             e.printStackTrace();
             return List.of();
+        }
+    }
+
+    /**
+     * Obtiene solo los estudiantes que NO tienen proyectos activos
+     */
+    public List<Persona> getEstudiantesSinProyectoActivo() {
+        try {
+            String url = BASE_URL + "/formatoA/estudiantes-sin-proyecto";
+            System.out.println("🔗 Llamando a: " + url);
+
+            String jsonResponse = HttpUtil.get(url);
+
+            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
+                System.err.println("⚠️ Backend devolvió respuesta vacía");
+                return new ArrayList<>();
+            }
+
+            Type listType = new TypeToken<List<Persona>>() {}.getType();
+            List<Persona> resultado = gson.fromJson(jsonResponse, listType);
+
+            // ✅ GARANTIZAR que nunca devolvemos null
+            return resultado != null ? resultado : new ArrayList<>();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error en getEstudiantesSinProyectoActivo: " + e.getMessage());
+            return new ArrayList<>(); // ✅ Lista vacía en caso de error
         }
     }
 

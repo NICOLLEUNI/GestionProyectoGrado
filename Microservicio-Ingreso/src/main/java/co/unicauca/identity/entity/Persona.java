@@ -154,14 +154,15 @@ public class Persona {
 
     public boolean requiereDepartamento() {
         return this.roles.contains(enumRol.DOCENTE) ||
-                this.roles.contains(enumRol.COORDINADOR) ||
                 this.roles.contains(enumRol.JEFE_DEPARTAMENTO);
     }
 
     // ✅ CORREGIDO: Método para verificar si requiere programa
     public boolean requierePrograma() {
-        return this.roles.contains(enumRol.ESTUDIANTE);
+        return this.roles.contains(enumRol.ESTUDIANTE) ||
+                this.roles.contains(enumRol.COORDINADOR);
     }
+
 
     // ✅ CORREGIDO: Método para verificar combinaciones
     public boolean tieneCombinacionRoles() {

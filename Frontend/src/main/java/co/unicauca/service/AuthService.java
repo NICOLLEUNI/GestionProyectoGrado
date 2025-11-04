@@ -62,6 +62,11 @@ public class AuthService {
         persona.setLastname(personaJson.get("lastname").getAsString());
         persona.setEmail(personaJson.get("email").getAsString());
 
+        if (personaJson.has("phone") && !personaJson.get("phone").isJsonNull()) {
+            persona.setPhone(personaJson.get("phone").getAsString());
+        }
+
+
         // Procesar department (puede ser null)
         if (personaJson.has("department") && !personaJson.get("department").isJsonNull()) {
             persona.setDepartment(personaJson.get("department").getAsString());
@@ -100,14 +105,14 @@ public class AuthService {
                 response.get("data").getAsBoolean();
     }
 
-    /**
-     * Obtiene roles y programas disponibles
+
+     //* Obtiene roles y programas disponibles
 
     public JsonObject getAvailableRolesAndPrograms() throws Exception {
         String url = BASE_URL + "/roles";
         String responseJson = HttpUtil.get(url);
         return gson.fromJson(responseJson, JsonObject.class);
-    }*/
+    }
     /**
      * Registra un nuevo usuario en el microservicio
      * ✅ TODA la validación la hace el microservicio

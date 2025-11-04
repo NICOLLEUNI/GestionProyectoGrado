@@ -72,31 +72,56 @@ private void configurarListeners() {
         }
     });
 
-    // Listener para CheckBox Coordinador
-    CBEJefeDepartamento.addItemListener(new ItemListener() {
+    // Listener para CheckBox Coordinador (ambos si existen)
+    CBECoordinador1.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
             actualizarEstadoComboBoxes();
         }
     });
+
+    if (CBECoordinador1 != null) {
+        CBECoordinador1.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                actualizarEstadoComboBoxes();
+            }
+        });
+    }
+
+    // Listener para CheckBox Jefe Departamento (si existe)
+    if (CBEJefeDepartamento != null) {
+        CBEJefeDepartamento.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                actualizarEstadoComboBoxes();
+            }
+        });
+    }
 }
 
 /**
  * Actualiza el estado de los ComboBox según los roles seleccionados
  */
 private void actualizarEstadoComboBoxes() {
-    boolean esEstudiante = CBEstudiante1.isSelected();
-    boolean esDocenteOCoordinador = CBDocente1.isSelected() || CBEJefeDepartamento.isSelected();
+    // ✅ CORREGIDO: Usar ambos checkboxes de coordinador si existen
+    boolean requierePrograma = CBEstudiante1.isSelected() ||
+            CBECoordinador1.isSelected() ||
+            (CBECoordinador1 != null && CBECoordinador1.isSelected());
 
-    // Habilitar ComboBox Programa solo si es estudiante
-    ComBoxPrograma1.setEnabled(esEstudiante);
-    if (!esEstudiante) {
+    // ✅ CORREGIDO: Verificar que CBEJefeDepartamento existe
+    boolean requiereDepartamento = CBDocente1.isSelected() ||
+            (CBEJefeDepartamento != null && CBEJefeDepartamento.isSelected());
+
+    // Habilitar ComboBox Programa si requiere programa
+    ComBoxPrograma1.setEnabled(requierePrograma);
+    if (!requierePrograma) {
         ComBoxPrograma1.setSelectedIndex(0); // Reset a opción por defecto
     }
 
-    // Habilitar ComboBox Departamento solo si es docente o coordinador
-    ComBoxDepartamento.setEnabled(esDocenteOCoordinador);
-    if (!esDocenteOCoordinador) {
+    // Habilitar ComboBox Departamento si requiere departamento
+    ComBoxDepartamento.setEnabled(requiereDepartamento);
+    if (!requiereDepartamento) {
         ComBoxDepartamento.setSelectedIndex(0); // Reset a opción por defecto
     }
 }
@@ -545,6 +570,7 @@ private void lblBttRegistrarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FI
 /**
  * ✅ Cargar programas y departamentos desde el microservicio
  */
+
 private void cargarOpcionesDesdeMicroservicio() {
     try {
         JsonObject opciones = authService.getRegistrationOptions();
@@ -566,13 +592,10 @@ private void cargarOpcionesDesdeMicroservicio() {
         }
 
     } catch (Exception e) {
-        // Fallback: cargar valores hardcodeados si el microservicio no responde
+        // ✅ CORREGIDO: Cargar valores por defecto SIN mostrar advertencia al usuario
         cargarProgramasFallback();
         cargarDepartamentosFallback();
-        JOptionPane.showMessageDialog(this,
-                "No se pudieron cargar las opciones del servidor. Usando valores por defecto.",
-                "Advertencia",
-                JOptionPane.WARNING_MESSAGE);
+        // ❌ ELIMINADO: El mensaje de advertencia que afecta la experiencia
     }
 }
 
@@ -634,22 +657,20 @@ private void lblBttRegistrarMouseClicked(java.awt.event.MouseEvent evt) {
         erroresFrontend.add("• Debe seleccionar al menos un rol");
     }
 
-    // Validar programa si es estudiante
-    if (roles.contains(EnumRol.ESTUDIANTE)) {
+    // ✅ CORREGIDO: Validar programa para Estudiante Y Coordinador
+    if (roles.contains(EnumRol.ESTUDIANTE) || roles.contains(EnumRol.COORDINADOR)) {
         String programa = (String) ComBoxPrograma1.getSelectedItem();
         if (programa == null || programa.equals("Seleccione un programa")) {
-            erroresFrontend.add("• Debe seleccionar un programa para el rol Estudiante");
+            erroresFrontend.add("• Debe seleccionar un programa para los roles Estudiante o Coordinador");
         }
     }
 
-    // Validar departamento si es docente, coordinador o jefe
-    boolean requiereDepto = roles.contains(EnumRol.DOCENTE) ||
-            roles.contains(EnumRol.COORDINADOR) ||
-            roles.contains(EnumRol.JEFE_DEPARTAMENTO);
+// ✅ CORREGIDO: Validar departamento para Docente Y Jefe Departamento
+    boolean requiereDepto = roles.contains(EnumRol.DOCENTE) || roles.contains(EnumRol.JEFE_DEPARTAMENTO);
     if (requiereDepto) {
         String departamento = (String) ComBoxDepartamento.getSelectedItem();
         if (departamento == null || departamento.equals("Seleccione un departamento")) {
-            erroresFrontend.add("• Debe seleccionar un departamento para los roles Docente, Coordinador o Jefe de Departamento");
+            erroresFrontend.add("• Debe seleccionar un departamento para los roles Docente o Jefe de Departamento");
         }
     }
 
@@ -665,10 +686,11 @@ private void lblBttRegistrarMouseClicked(java.awt.event.MouseEvent evt) {
     }
 
     try {
-        // ✅ MICROSERVICIO maneja TODA la validación de negocio
-        String programa = roles.contains(EnumRol.ESTUDIANTE) ?
+        // ✅ AQUÍ VA EL CÓDIGO - JUSTO ANTES DE LLAMAR AL SERVICIO
+        String programa = (roles.contains(EnumRol.ESTUDIANTE) || roles.contains(EnumRol.COORDINADOR)) ?
                 (String) ComBoxPrograma1.getSelectedItem() : null;
-        String departamento = requiereDepto ?
+
+        String departamento = (roles.contains(EnumRol.DOCENTE) || roles.contains(EnumRol.JEFE_DEPARTAMENTO)) ?
                 (String) ComBoxDepartamento.getSelectedItem() : null;
 
         // Procesar celular (opcional)
@@ -717,25 +739,27 @@ private String validarCamposBasicos(String nombre, String apellidos, String emai
 /**
  * Obtener roles seleccionados
  */
-private Set<EnumRol> obtenerRolesSeleccionados() {
-    Set<EnumRol> roles = EnumSet.noneOf(EnumRol.class);
+    /**
+     * ✅ Obtener roles seleccionados - ACTUALIZADO para nuevo flujo
+     */
+    private Set<EnumRol> obtenerRolesSeleccionados() {
+        Set<EnumRol> roles = EnumSet.noneOf(EnumRol.class);
 
-    if (CBEstudiante1.isSelected()) {
-        roles.add(EnumRol.ESTUDIANTE);
-    }
-    if (CBDocente1.isSelected()) {
-        roles.add(EnumRol.DOCENTE);
-    }
-    if (CBECoordinador1.isSelected() || CBECoordinador1.isSelected()) {
-        roles.add(EnumRol.COORDINADOR);
-    }
-    if (CBEJefeDepartamento.isSelected()) {
-        roles.add(EnumRol.JEFE_DEPARTAMENTO);
-    }
+        if (CBEstudiante1.isSelected()) {
+            roles.add(EnumRol.ESTUDIANTE);
+        }
+        if (CBDocente1.isSelected()) {
+            roles.add(EnumRol.DOCENTE);
+        }
+        if (CBECoordinador1.isSelected() || (CBECoordinador1 != null && CBECoordinador1.isSelected())) {
+            roles.add(EnumRol.COORDINADOR);
+        }
+        if (CBEJefeDepartamento != null && CBEJefeDepartamento.isSelected()) {
+            roles.add(EnumRol.JEFE_DEPARTAMENTO);
+        }
 
-    return roles;
-}
-
+        return roles;
+    }
 
 /**
  * Procesar celular (opcional)

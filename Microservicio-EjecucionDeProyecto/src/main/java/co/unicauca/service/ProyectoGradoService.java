@@ -72,14 +72,16 @@ public class ProyectoGradoService {
         System.out.println("PROYECTO - ID request: " + request.id());
 
         // ✅ Crear nueva entidad SIN asignar ID manualmente
+
         ProyectoGrado nuevoProyecto = new ProyectoGrado();
+        nuevoProyecto.setId(request.id());
         nuevoProyecto.setNombre(request.nombre());
         nuevoProyecto.setFecha(request.fecha().atStartOfDay());
         nuevoProyecto.setEstudiantesEmail(request.estudiantesEmail());
         nuevoProyecto.setEstado("ENTREGADO");
         nuevoProyecto.setIdFormatoA(request.IdFormatoA());
 
-        // ❌ NO asignar ID manualmente - dejar que JPA lo genere automáticamente
+
         ProyectoGrado guardado = proyectoRepository.save(nuevoProyecto);
 
         // 💾 GUARDAR EN MEMENTO

@@ -1,6 +1,7 @@
 package co.unicauca.controller;
 
 import co.unicauca.entity.FormatoA;
+import co.unicauca.entity.Persona;
 import co.unicauca.infra.dto.FormatoAEditRequest;
 import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.repository.FormatoARepository;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +70,17 @@ public class FormatoAController {
         return ResponseEntity.status(HttpStatus.CREATED).body(formatoCreado);
     }
 
+    @PostMapping("/{id}/publicar")
+    public ResponseEntity<FormatoA> publicarFormatoA(@PathVariable Long id) {
+        try {
+            FormatoA formatoPublicado = formatoAService.publicarFormatoA(id);
+            return ResponseEntity.ok(formatoPublicado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
     // Lista formatos según docente logueado (por email)
     @GetMapping("/docente/{email}")
@@ -80,6 +93,7 @@ public class FormatoAController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @PostMapping("/{id}/pdf")
     public ResponseEntity<String> subirPDF(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
