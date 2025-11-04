@@ -65,7 +65,7 @@ public class Observaciones extends javax.swing.JPanel {
     private void abrirPDF() {
         try {
             // Obtiene la ruta del proyecto dinámicamente
-            String rutaBase = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "formatoA" + File.separator;
+            String rutaBase = System.getProperty("user.dir") + File.separator + "uploads"  + File.separator;
             String nombreArchivo = lblPDF.getText();
 
             File file = new File(rutaBase + nombreArchivo);
