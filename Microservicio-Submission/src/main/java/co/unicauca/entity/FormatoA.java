@@ -34,8 +34,6 @@ public class FormatoA {
     @Column(nullable = false)
     private EnumModalidad mode;
 
-    // CORREO del docente director
-    //Deberia ser de tipo persona? No, yo no necesito el acoplamiento, solo envio los correos
     @Column(nullable = false)
     private String projectManagerEmail;
 
@@ -71,18 +69,13 @@ public class FormatoA {
 
     private int counter;
 
-    // ✅ NUEVO: Método para obtener el state object
+
+    // Método para obtener el state object
     public FormatoAState getStateObject() {
         if (stateObject == null) {
             this.stateObject = FormatoAStateFactory.createState(this.state);
         }
         return stateObject;
-    }
-
-    // ✅ NUEVO: Métodos delegados al state object
-    public void evaluar(String observaciones) {
-        FormatoAState nuevoEstado = getStateObject().evaluar(this, observaciones);
-        transitionToState(nuevoEstado);
     }
 
     public void aprobar() {
@@ -96,29 +89,21 @@ public class FormatoA {
     }
 
     public void reenviar() {
+        System.out.println("🔍 FormatoA.reenviar() - Estado actual: " + this.state + ", Counter: " + this.counter);
         FormatoAState nuevoEstado = getStateObject().reenviar(this);
         transitionToState(nuevoEstado);
+        System.out.println("🔍 FormatoA.reenviar() - Nuevo estado: " + this.state);
     }
 
-    // ✅ NUEVO: Métodos de consulta delegados
-    public boolean puedeEditar() {
-        return getStateObject().puedeEditar();
-    }
 
-    public boolean puedeReenviar() {
-        return getStateObject().puedeReenviar();
-    }
-
-    public boolean puedeEvaluar() {
-        return getStateObject().puedeEvaluar();
-    }
-
-    // ✅ NUEVO: Transición de estado interna
     private void transitionToState(FormatoAState nuevoEstado) {
         this.stateObject = nuevoEstado;
         this.state = nuevoEstado.toEnumState();
+        System.out.println("🔄 Transición a: " + this.state);
         nuevoEstado.onEnterState(this);
     }
+
+
 
     public FormatoA(Long id, String title, EnumModalidad mode, String projectManagerEmail, String projectCoManagerEmail, LocalDate date, String generalObjetive, String specificObjetives, String archivoPDF, String cartaLaboral, List<String> estudianteEmails, EnumEstado state, String observations, int counter) {
         this.id = id;

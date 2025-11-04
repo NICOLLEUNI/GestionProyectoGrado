@@ -22,11 +22,14 @@ public class RechazadoState implements FormatoAState {
 
     @Override
     public FormatoAState reenviar(FormatoA formato) {
+        System.out.println("🔍 RechazadoState.reenviar() - Counter: " + formato.getCounter());
+
         if (formato.getCounter() >= 3) {
+            System.out.println("🚫 Counter >= 3 - Pasando a RECHAZADO_DEFINITIVAMENTE");
             return new RechazadoDefinitivamenteState();
         }
 
-        // Resetear para nuevo envío
+        System.out.println("✅ Counter < 3 - Reenviando a ENTREGADO");
         formato.setObservations("");
         return new EntregadoState();
     }

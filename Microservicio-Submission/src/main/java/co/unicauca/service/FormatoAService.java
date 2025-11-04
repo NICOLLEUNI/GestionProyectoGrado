@@ -204,19 +204,29 @@ public class FormatoAService {
         FormatoA formatoA = formatoARepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + request.id()));
 
-        // Actualizar campos editables
+        System.out.println("🎭 STATE PATTERN para reenvío");
+        System.out.println("🔍 Estado actual: " + formatoA.getState() + ", Counter: " + formatoA.getCounter());
+
+        // Actualizar campos editables primero
         formatoA.setArchivoPDF(request.archivoPDF());
         formatoA.setCartaLaboral(request.cartaLaboral());
         formatoA.setGeneralObjetive(request.generalObjetive());
         formatoA.setSpecificObjetives(request.specificObjetives());
 
-        // ✅ STATE PATTERN - esto reemplaza tus validaciones manuales
-        formatoA.reenviar();
+        // ✅ USAR STATE PATTERN COMPLETO para el reenvío
+        try {
+            formatoA.reenviar();
+            System.out.println("✅ State Pattern ejecutado exitosamente");
+        } catch (Exception e) {
+            System.err.println("❌ Error en State Pattern: " + e.getMessage());
+            throw new RuntimeException("No se puede reenviar el formato: " + e.getMessage());
+        }
 
         FormatoA actualizado = formatoARepository.save(formatoA);
+
+        // Mantener lógica de versiones y eventos
         FormatoAVersion nuevaVersion = versionService.crearVersionReenviada(actualizado, request);
 
-        // Publicar eventos (tu código existente)
         FormatoAResponse response = convertirAFormatoAResponse(actualizado);
         rabbitMQPublisher.publicarFormatoACreado(response);
 
@@ -231,34 +241,68 @@ public class FormatoAService {
         FormatoA formatoA = formatoARepository.findById(request.id())
                 .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + request.id()));
 
+        System.out.println("🎭 STATE PATTERN HÍBRIDO");
+        System.out.println("🔍 Estado actual: " + formatoA.getState() +
+                ", Estado solicitado: " + request.state() +
+                ", Counter: " + request.counter());
+
         try {
             String estadoSolicitado = request.state();
+            int counterSolicitado = Integer.parseInt(request.counter());
 
+            // ✅ ESTRATEGIA HÍBRIDA:
             switch (EnumEstado.valueOf(estadoSolicitado)) {
                 case APROBADO:
-                    formatoA.aprobar(); // ✅ STATE PATTERN
+                    // ✅ USAR STATE PATTERN (seguro)
+                    System.out.println("✅ Usando State Pattern para APROBADO");
+                    formatoA.aprobar();
                     break;
+
                 case RECHAZADO:
-                    formatoA.rechazar(request.observations()); // ✅ STATE PATTERN
+                    // ✅ LÓGICA HÍBRIDA para RECHAZADO
+                    System.out.println("🎭 Lógica híbrida para RECHAZADO");
+
+                    // 1. Aplicar cambios básicos
+                    formatoA.setObservations(request.observations());
+                    formatoA.setCounter(counterSolicitado);
+
+                    // 2. Decidir estado final
+                    if (counterSolicitado >= 3) {
+                        System.out.println("🚨 Counter >= 3 - RECHAZADO_DEFINITIVAMENTE");
+                        formatoA.setState(EnumEstado.RECHAZADO_DEFINITIVAMENTE);
+                    } else {
+                        System.out.println("✅ Counter < 3 - RECHAZADO normal");
+                        formatoA.setState(EnumEstado.RECHAZADO);
+                    }
                     break;
+
                 case ENTREGADO:
-                    // Mantener lógica original para ENTREGADO
+                    // ✅ LÓGICA ORIGINAL para ENTREGADO
+                    System.out.println("🔧 Lógica original para ENTREGADO");
                     formatoA.setState(EnumEstado.ENTREGADO);
                     formatoA.setObservations(request.observations());
-                    formatoA.setCounter(Integer.parseInt(request.counter()));
+                    formatoA.setCounter(counterSolicitado);
                     break;
+
                 default:
                     throw new RuntimeException("Estado no soportado: " + estadoSolicitado);
             }
+
         } catch (Exception e) {
-            // FALLBACK si el State Pattern falla
-            System.err.println("⚠️ Fallback a lógica original: " + e.getMessage());
+            System.err.println("❌ Error en lógica híbrida: " + e.getMessage());
+            // ✅ FALLBACK SEGURO
+            System.out.println("🔄 Fallback a lógica original");
             formatoA.setState(EnumEstado.valueOf(request.state()));
             formatoA.setObservations(request.observations());
             formatoA.setCounter(Integer.parseInt(request.counter()));
         }
 
         FormatoA formatoAActualizado = formatoARepository.save(formatoA);
+
+        System.out.println("🎯 RESULTADO FINAL - Estado: " + formatoAActualizado.getState() +
+                ", Counter: " + formatoAActualizado.getCounter());
+
+        // Mantener lógica de versiones
         FormatoAVersion nuevaVersion = versionService.crearVersionConEvaluacion(formatoAActualizado, request);
         proyectoService.agregarVersionAProyectoGrado(formatoAActualizado, nuevaVersion);
 
