@@ -56,7 +56,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
      */
     private void cargarDocentesEnCombos() {
         try {
-            List<Persona> docentes = submissionService.ListarEstudiantesSinProyecto();
+            List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
 
             boxDirector.removeAllItems();
             boxCodirector.removeAllItems();
@@ -141,7 +141,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
      */
     private void cargarEstudiantesEnCombos() {
         try {
-            List<Persona> estudiantes = submissionService.listPersonasByRol("ESTUDIANTE");
+            List<Persona> estudiantes = submissionService.ListarEstudiantesSinProyecto();
             List<FormatoA> formatos = submissionService.listFormatoA();
 
             List<String> ocupadosEmails = new ArrayList<>();
