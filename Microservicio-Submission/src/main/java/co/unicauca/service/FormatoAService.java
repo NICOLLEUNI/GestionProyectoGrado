@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormatoAService {
@@ -71,22 +73,36 @@ public class FormatoAService {
         proyectoService.crearProyectoGrado(formatoAGuardado, version1);
 
         // ⭐⭐ CONVERTIR A RESPONSE Y PUBLICAR ⭐⭐
-        FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
-        rabbitMQPublisher.publicarFormatoACreado(response);
+        //FormatoAResponse response = convertirAFormatoAResponse(formatoAGuardado);
+        //rabbitMQPublisher.publicarFormatoACreado(response);
 
         // 2. Para notificaciones (solo correos)
-        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
-        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
-
-
+        //FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoAGuardado);
+        //rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
 
         return formatoAGuardado;
     }
 
+    @Transactional
+    public FormatoA publicarFormatoA(Long id) {
+        FormatoA formatoA = formatoARepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado: " + id));
 
-// Dentro de tu servicio (FormatoAService) — asegúrate de que versionService esté inyectado
-// @Service
-// public class FormatoAService { ... @Autowired private VersionService versionService; ... }
+        // Validar que tenga los archivos necesarios
+        if (formatoA.getArchivoPDF() == null || formatoA.getArchivoPDF().isBlank()) {
+            throw new RuntimeException("No se puede publicar FormatoA sin PDF");
+        }
+
+        // Publicar en RabbitMQ SOLO AHORA (con archivos ya subidos)
+        FormatoAResponse response = convertirAFormatoAResponse(formatoA);
+        rabbitMQPublisher.publicarFormatoACreado(response);
+
+        FormatoAnotification notificacion = convertirAFormatoANotificacionEvent(formatoA);
+        rabbitMQPublisher.publicarNotificacionFormatoACreado(notificacion);
+
+        return formatoA;
+    }
+
 
     @Transactional
     public boolean saveFormatoAPDF(Long id, MultipartFile file) {
@@ -109,6 +125,9 @@ public class FormatoAService {
             String rutaRelativa = "formatoA/" + nombreArchivo;
             formato.setArchivoPDF(rutaRelativa);
             formatoARepository.save(formato);
+
+            // ⭐ DEBUG para confirmar
+            System.out.println("🔍 Ruta guardada en BD: " + rutaRelativa);
 
             // Actualizar la última versión asociada para que tenga la ruta nueva
             versionService.actualizarRutasArchivos(formato);
