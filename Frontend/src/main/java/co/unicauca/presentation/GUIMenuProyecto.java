@@ -11,7 +11,9 @@ import java.util.List;
 
 import co.unicauca.entity.*;
 import co.unicauca.presentation.views.ListaFormatosAestudiantes;
-import javax.swing.JPanel;
+
+import javax.swing.*;
+
 import co.unicauca.presentation.views.ListarAnteproyectos;
 import co.unicauca.presentation.views.ListarProyectos;
 import co.unicauca.service.EstudianteService;
@@ -318,20 +320,35 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
                             ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versiones);
                             showJPanel(listaFormatosA);
                         } else {
-                            System.out.println("⚠️ No se encontraron versiones para FormatoA ID: " + proyecto.getIdFormatoA());
-                            // Mostrar solo la versión actual
-                            List<FormatoAVersion> versionUnica = List.of(formatoActual);
-                            ListaFormatosAestudiantes listaFormatosA = new ListaFormatosAestudiantes(versionUnica);
-                            showJPanel(listaFormatosA);
+                            JOptionPane.showMessageDialog(this,
+                                    "No se encontraron versiones para el FormatoA asociado al proyecto.",
+                                    "Aviso",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
                     } else {
-                        System.out.println("⚠️ El proyecto no tiene FormatoA asociado");
+                        // Si el proyecto no tiene FormatoA asociado, mostramos una ventana de alerta
+                        JOptionPane.showMessageDialog(this,
+                                "No se ha asociado un FormatoA al proyecto de grado.",
+                                "Aviso",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 } else {
+                    JOptionPane.showMessageDialog(this,
+                            "No se encontró FormatoAVersion para el proyecto.",
+                            "Aviso",
+                            JOptionPane.WARNING_MESSAGE);
                     System.out.println("⚠️ No se encontró FormatoAVersion para el proyecto");
                 }
             } else {
+                JOptionPane.showMessageDialog(this,
+                        "No se ha encontrado un proyecto de grado asociado al estudiante.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
                 System.out.println("⚠️ No se encontró proyecto para el estudiante");
+
+                // Mostrar solo la versión actual
+                ListaFormatosAestudiantes listaFormatosAVacia = new ListaFormatosAestudiantes(null);
+                showJPanel(listaFormatosAVacia);
             }
         } catch (Exception e) {
             System.err.println("❌ Error al consultar FormatoA: " + e.getMessage());
@@ -356,20 +373,45 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
                 // 2. ✅ CORREGIDO: Buscar anteproyecto por ID del proyecto
                 Anteproyecto anteproyecto = estudianteService.findAnteproyectoByProyectoId(proyecto.getId());
 
+                ListarAnteproyectos listaAnteproyectos = null;
                 if (anteproyecto != null) {
                     System.out.println("✅ Anteproyecto encontrado - ID: " + anteproyecto.getId());
 
                     // 3. Mostrar el anteproyecto (necesitarás crear una vista para esto)
-                    ListarAnteproyectos listaAnteproyectos = new ListarAnteproyectos(anteproyecto);
+                    listaAnteproyectos = new ListarAnteproyectos(anteproyecto);
                     showJPanel(listaAnteproyectos);
                 } else {
+                    // Mostrar mensaje al usuario si no se encuentra el anteproyecto
+                    JOptionPane.showMessageDialog(this,
+                            "No se encontró anteproyecto para el proyecto de grado con ID: " + proyecto.getId(),
+                            "Aviso",
+                            JOptionPane.WARNING_MESSAGE);
                     System.out.println("⚠️ No se encontró anteproyecto para el proyecto ID: " + proyecto.getId());
-                    // Mostrar mensaje al usuario
+
+                    // 👉 (Opcional) Mostrar panel vacío para mantener consistencia visual
+                    ListarAnteproyectos listarAnteproyectosVacios = new ListarAnteproyectos(null);
+                    showJPanel(listarAnteproyectosVacios);
                 }
             } else {
+                // Mostrar mensaje al usuario si no se encuentra el proyecto
+                JOptionPane.showMessageDialog(this,
+                        "No se ha encontrado un proyecto de grado asociado al estudiante.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
                 System.out.println("⚠️ No se encontró proyecto para el estudiante");
+
+                // 👉 (Opcional) Mostrar panel vacío para mantener consistencia visual
+                ListarAnteproyectos listarAnteproyectosVacios = new ListarAnteproyectos(null);
+                showJPanel(listarAnteproyectosVacios);
+
+
             }
         } catch (Exception e) {
+            // Mostrar mensaje al usuario si ocurre un error
+            JOptionPane.showMessageDialog(this,
+                    "Se ha producido un error al consultar el anteproyecto.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             System.err.println("❌ Error al consultar anteproyecto: " + e.getMessage());
             e.printStackTrace();
         }
@@ -377,16 +419,35 @@ public class GUIMenuProyecto extends javax.swing.JFrame {
 
     private void btProyectoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btProyectoMouseClicked
         try {
-            // ✅ Obtener el proyecto del estudiante
+            // ✅ Obtener el proyecto del estudiante logueado
             ProyectoGrado proyecto = estudianteService.findProyectoByEstudiante(personaLogueado.getEmail());
 
             if (proyecto != null) {
-                // ✅ Mostrar la información del proyecto
+                // ✅ Mostrar la información del proyecto encontrado
                 ListarProyectos listaProyectos = new ListarProyectos(proyecto);
                 showJPanel(listaProyectos);
+            } else {
+                // ⚠️ Si no hay proyecto, mostrar advertencia
+                JOptionPane.showMessageDialog(
+                        null,
+                        "⚠️ No se encontró ningún proyecto asociado a tu cuenta.",
+                        "Sin proyecto",
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                // 👉 (Opcional) Mostrar panel vacío para mantener consistencia visual
+                ListarProyectos listaProyectosVacio = new ListarProyectos(null);
+                showJPanel(listaProyectosVacio);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    null,
+                    "❌ Error al consultar el proyecto: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }//GEN-LAST:event_btProyectoMouseClicked
     /**
