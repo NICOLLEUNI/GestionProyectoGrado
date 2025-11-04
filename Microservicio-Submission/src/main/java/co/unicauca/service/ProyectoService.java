@@ -6,6 +6,7 @@ import co.unicauca.entity.ProyectoGrado;
 import co.unicauca.infra.dto.ProyectoGradoResponse;
 import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.repository.ProyectoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -78,7 +79,12 @@ public class ProyectoService {
             throw new RuntimeException("No se encontró proyecto asociado al FormatoA: " + formatoA.getId());
         }
     }
-
+    @Transactional
+    public void eliminarProyectoPorFormatoA(Long formatoAId) {
+        ProyectoGrado proyecto = proyectoRepository.findByFormatoAActualId(formatoAId)
+                .orElseThrow(() -> new RuntimeException("Proyecto no encontrado para FormatoA id: " + formatoAId));
+        proyectoRepository.delete(proyecto);
+    }
 }
 
 

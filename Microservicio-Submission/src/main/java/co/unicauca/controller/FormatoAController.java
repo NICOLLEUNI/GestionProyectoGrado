@@ -40,13 +40,12 @@ public class FormatoAController {
      * Endpoint: DELETE /api/formatoA/{id}
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarFormatoA(@PathVariable Long id) {
+    public ResponseEntity<String> eliminarFormatoA(@PathVariable Long id) {
         boolean eliminado = formatoAService.eliminarFormatoA(id);
         if (eliminado) {
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.ok("✅ FormatoA con id " + id + " eliminado correctamente, junto con proyecto y versiones asociadas.");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("No se encontró el FormatoA con id " + id);
+            return ResponseEntity.status(404).body("❌ No se encontró FormatoA con id " + id);
         }
     }
 
