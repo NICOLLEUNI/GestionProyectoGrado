@@ -13,7 +13,7 @@ public class RabbitMQConfig {
     public static final String FORMATOA_EVALUADO_NOTIFICATION_QUEUE = "formatoa.evaluado.notification.queue";
     public static final String FORMATOA_NOTIFICACIONES_QUEUE = "formatoa.notificaciones.queue";
     public static final String ANTEPROYECTO_NOTIFICACIONES_QUEUE = "anteproyecto.notificaciones.queue";
-    public static final String USUARIO_QUEUE = "usuario.queue";
+    public static final String NOTIFICACION_QUEUE = "notificacion.queue";
     public static final String FORMATOAVERSION_NOTIFICACIONES_QUEUE = "formatoaversion.notificaciones.queue";
 
     // Declara la cola para que Spring pueda escucharla
@@ -35,7 +35,7 @@ public class RabbitMQConfig {
     }
     @Bean
     public Queue usuarioQueue() {
-        return new Queue(USUARIO_QUEUE, true);
+        return new Queue(NOTIFICACION_QUEUE, true);
     }
 
     // Convierte automáticamente los mensajes JSON a objetos Java (y viceversa)
