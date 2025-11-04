@@ -71,7 +71,8 @@ public interface PersonaMapper {
                 persona.getEmail(),
                 rolesString,
                 departament,
-                programa
+                programa,
+                persona.getPhone()
         );
     }
 }

@@ -13,7 +13,8 @@ public record PersonaResponse(
         String email,
         Set<String> roles,
         String department,
-        String programa
+        String programa,
+        String phone
 
 ) {
     // Builder para construcción fluida
@@ -29,6 +30,7 @@ public record PersonaResponse(
         private Set<String> roles;
         private String department;
         private String programa;
+        private String phone;
 
         public Builder id(Long id) {
             this.id = id;
@@ -64,9 +66,14 @@ public record PersonaResponse(
             this.programa = programa;
             return this;
         }
+        // ✅ AGREGAR: Método para phone
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
 
         public PersonaResponse build() {
-            return new PersonaResponse(id, name, lastname, email, roles, department, programa);
+            return new PersonaResponse(id, name, lastname, email, roles, department, programa,phone);
         }
     }
 
@@ -81,10 +88,11 @@ public record PersonaResponse(
             String email,
             Set<String> roles,
             String department,
-            String programa
+            String programa,
+            String phone
     ) {
         // ✅ Para RabbitMQ, enviar TODOS los datos sin filtros
-        return new PersonaResponse(id, name, lastname, email, roles, department, programa);
+        return new PersonaResponse(id, name, lastname, email, roles, department, programa, phone);
     }
 
 
@@ -101,7 +109,8 @@ public record PersonaResponse(
             String email,
             Set<String> roles,
             String department,
-            String programa
+            String programa,
+            String phone
     ) {
         // ✅ LÓGICA MEJORADA: Basada en tipos de roles
         boolean tieneRolConPrograma = roles != null &&
@@ -130,6 +139,6 @@ public record PersonaResponse(
             programaFinal = programa;
         }
 
-        return new PersonaResponse(id, name, lastname, email, roles, departamentFinal, programaFinal);
+        return new PersonaResponse(id, name, lastname, email, roles, departamentFinal, programaFinal,phone);
     }
 }
