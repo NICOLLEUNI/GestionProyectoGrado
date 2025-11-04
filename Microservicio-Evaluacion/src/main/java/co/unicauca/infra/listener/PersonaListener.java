@@ -21,7 +21,7 @@ public class PersonaListener {
     /**
      * : Recibir PersonaRequest directamente, NO String
      */
-    @RabbitListener(queues = RabbitMQConfig.USUARIO_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.AUDITORIA_QUEUE)
     public void recibirPersona(PersonaRequest personaRequest) {
         try {
             System.out.println("✅ PERSONA RECIBIDA DIRECTAMENTE: " + personaRequest.email());
