@@ -60,4 +60,9 @@ public class PersonaController {
         }
         return ResponseEntity.ok(persona);
     }
+    @GetMapping("/estudiantes/sin-formatoA")
+    public ResponseEntity<List<Persona>> listarEstudiantesSinFormatoA() {
+        List<Persona> estudiantes = personaService.findEstudiantesSinFormatoA();
+        return ResponseEntity.ok(estudiantes);
+    }
 }

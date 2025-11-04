@@ -259,33 +259,7 @@ public class SubmissionService {
         }
     }
 
-    /**
-     * Obtiene solo los estudiantes que NO tienen proyectos activos
-     */
-    public List<Persona> getEstudiantesSinProyectoActivo() {
-        try {
-            String url = BASE_URL + "/formatoA/estudiantes-sin-proyecto";
-            System.out.println("🔗 Llamando a: " + url);
 
-            String jsonResponse = HttpUtil.get(url);
-
-            if (jsonResponse == null || jsonResponse.trim().isEmpty()) {
-                System.err.println("⚠️ Backend devolvió respuesta vacía");
-                return new ArrayList<>();
-            }
-
-            Type listType = new TypeToken<List<Persona>>() {}.getType();
-            List<Persona> resultado = gson.fromJson(jsonResponse, listType);
-
-            // ✅ GARANTIZAR que nunca devolvemos null
-            return resultado != null ? resultado : new ArrayList<>();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("❌ Error en getEstudiantesSinProyectoActivo: " + e.getMessage());
-            return new ArrayList<>(); // ✅ Lista vacía en caso de error
-        }
-    }
 
     public Persona findPersonaByEmail(String email) {
         try {
@@ -316,6 +290,21 @@ public class SubmissionService {
             e.printStackTrace();
             System.err.println("❌ Error al subir Anteproyecto: " + e.getMessage());
             return null;
+        }
+    }
+    public List<Persona> ListarEstudiantesSinProyecto() {
+        try {
+            // URL del endpoint que devuelve estudiantes con rol ESTUDIANTE sin FormatoA asociado
+            String url = BASE_URL + "/personas/estudiantes/sin-formatoA";
+            String jsonResponse = HttpUtil.get(url);
+
+            // Convertimos la respuesta JSON en una lista de Personas
+            Type listType = new TypeToken<List<Persona>>() {}.getType();
+            return gson.fromJson(jsonResponse, listType);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of(); // Retorna lista vacía si ocurre un error
         }
     }
 }

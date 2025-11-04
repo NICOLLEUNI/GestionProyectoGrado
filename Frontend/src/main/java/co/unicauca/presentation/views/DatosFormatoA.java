@@ -56,7 +56,7 @@ public class DatosFormatoA extends javax.swing.JPanel {
      */
     private void cargarDocentesEnCombos() {
         try {
-            List<Persona> docentes = submissionService.listPersonasByRol("DOCENTE");
+            List<Persona> docentes = submissionService.ListarEstudiantesSinProyecto();
 
             boxDirector.removeAllItems();
             boxCodirector.removeAllItems();

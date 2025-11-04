@@ -67,6 +67,7 @@ public class DataLoader implements CommandLineRunner {
         estudiante2.setPrograma("Ingeniería de Sistemas");
         estudiante2.setRoles(Set.of(EnumRol.ESTUDIANTE));
 
+
         personaRepository.saveAll(Arrays.asList(director, codirector, estudiante1, estudiante2));
 
         // ✅ Logs

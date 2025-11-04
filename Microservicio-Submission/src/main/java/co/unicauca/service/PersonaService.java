@@ -78,4 +78,8 @@ public class PersonaService {
         Optional<Persona> personaOpt = personaRepository.findByEmail(email);
         return personaOpt.orElse(null);
     }
+
+    public List<Persona> findEstudiantesSinFormatoA() {
+        return personaRepository.findEstudiantesNoAsociados(EnumRol.ESTUDIANTE);
+    }
 }

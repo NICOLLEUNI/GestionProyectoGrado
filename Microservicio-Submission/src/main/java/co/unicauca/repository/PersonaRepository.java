@@ -16,6 +16,9 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
     Optional<Persona> findByRoles(Set<EnumRol> roles);
 
     List<Persona> findByRolesContaining(EnumRol rol);
+    @Query("SELECT p FROM Persona p WHERE :rol MEMBER OF p.roles " +
+            "AND p.email NOT IN (SELECT e FROM FormatoA f JOIN f.estudianteEmails e)")
+    List<Persona> findEstudiantesNoAsociados(EnumRol rol);
 
 
 }
