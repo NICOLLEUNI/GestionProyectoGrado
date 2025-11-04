@@ -233,6 +233,8 @@ public class AuthServiceImpl implements AuthService {
         String departmentStr = persona.getDepartamento() != null ? persona.getDepartamento().name() : null;
         String programaStr = persona.getPrograma() != null ? persona.getPrograma().name() : null;
 
+        // ✅ AGREGAR: Obtener phone de la entidad
+        String phoneStr = persona.getPhone(); // Puede ser null
         // Usar el factory method create con lógica condicional
         return PersonaResponse.create(
                 persona.getIdUsuario(),
@@ -241,7 +243,8 @@ public class AuthServiceImpl implements AuthService {
                 persona.getEmail(),
                 rolesAsStrings,
                 departmentStr,  // ✅ department (NO departament)
-                programaStr
+                programaStr,
+                phoneStr
         );
     }
 

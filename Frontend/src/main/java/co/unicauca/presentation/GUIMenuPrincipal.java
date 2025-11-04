@@ -4,9 +4,9 @@
  */
 package co.unicauca.presentation;
 
-//implementar el boton cerrar sesion 
+//implementar el boton cerrar sesion
 
-//implementar la ligica que impida acceder a la interfaz 
+//implementar la ligica que impida acceder a la interfaz
 //de un rol que no corresponda
 
 
@@ -22,6 +22,7 @@ import javax.swing.JPanel;
  *
  * @author User
  */
+
 public class GUIMenuPrincipal extends javax.swing.JFrame {
 
     /**
@@ -29,33 +30,33 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
      */
     private Persona personaLogueado;
     public GUIMenuPrincipal(Persona logueado) {
-       this.personaLogueado = logueado;
+        this.personaLogueado = logueado;
         initComponents();
         initStyles();
         initContent();
     }
-    
+
     public GUIMenuPrincipal() {}
 
-     private void initStyles(){
-     
-     }
-     private void showJPanel(JPanel pl){
-     pl.setSize(641,498);
-     pl.setLocation(0, 0);
-     
-     Contenido.removeAll();
-     Contenido.add(pl,BorderLayout.CENTER);
-     Contenido.revalidate();
-     Contenido.repaint(); 
-         
-     }
-     private void initContent(){
-    showJPanel( new Principal(personaLogueado));
-     
-     }
-     
-     
+    private void initStyles(){
+
+    }
+    private void showJPanel(JPanel pl){
+        pl.setSize(641,498);
+        pl.setLocation(0, 0);
+
+        Contenido.removeAll();
+        Contenido.add(pl,BorderLayout.CENTER);
+        Contenido.revalidate();
+        Contenido.repaint();
+
+    }
+    private void initContent(){
+        showJPanel( new Principal(personaLogueado));
+
+    }
+
+
     /**
      * Getter para obtener el usuario logueado
      * @return La persona actualmente logueada
@@ -63,10 +64,10 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
     public Persona getUsuarioLogueado() {
         return personaLogueado;
     }
-     public void setUsuarioLogueado(Persona usuarioLogueado) {
+    public void setUsuarioLogueado(Persona usuarioLogueado) {
         this.personaLogueado = usuarioLogueado;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -183,48 +184,48 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         javax.swing.GroupLayout ContenidoLayout = new javax.swing.GroupLayout(Contenido);
         Contenido.setLayout(ContenidoLayout);
         ContenidoLayout.setHorizontalGroup(
-            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSeparator7, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
-                .addContainerGap())
+                ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ContenidoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jSeparator7, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         ContenidoLayout.setVerticalGroup(
-            ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ContenidoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                ContenidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(ContenidoLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jSeparator7, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout BackgroundLayout = new javax.swing.GroupLayout(Background);
         Background.setLayout(BackgroundLayout);
         BackgroundLayout.setHorizontalGroup(
-            BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BackgroundLayout.createSequentialGroup()
-                .addComponent(Menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2)
-                .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(BackgroundLayout.createSequentialGroup()
+                                .addComponent(Menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(2, 2, 2)
+                                .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         BackgroundLayout.setVerticalGroup(
-            BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BackgroundLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(6, 6, 6))
-            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                BackgroundLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(BackgroundLayout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(6, 6, 6))
+                        .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(Background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(Background, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -232,48 +233,48 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
 
     private void btDocMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btDocMouseClicked
         if(personaLogueado.tieneRol(EnumRol.DOCENTE)){
-        GUIMenuDocente ventanaDocente = new GUIMenuDocente(personaLogueado); // crear la nueva ventana
-        ventanaDocente.setVisible(true);            // mostrarla
-        this.dispose(); 
+            GUIMenuDocente ventanaDocente = new GUIMenuDocente(personaLogueado); // crear la nueva ventana
+            ventanaDocente.setVisible(true);            // mostrarla
+            this.dispose();
         }else{
             javax.swing.JOptionPane.showMessageDialog(this,
-                   "Acceso denegado: No tienes permisos para ingresar al menú de Docente",
-                   "Error de autorización",
-                   javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Acceso denegado: No tienes permisos para ingresar al menú de Docente",
+                    "Error de autorización",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btDocMouseClicked
 
     private void btEstMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEstMouseClicked
         if (personaLogueado.tieneRol(EnumRol.ESTUDIANTE)) {
-        GUIMenuEstudiante ventanaEstudiante = new GUIMenuEstudiante(personaLogueado);
-        ventanaEstudiante.setVisible(true);
-        this.dispose();
-       } else {
-           javax.swing.JOptionPane.showMessageDialog(this,
-                   "Acceso denegado: No tienes permisos para ingresar al menú de Estudiante",
-                   "Error de autorización",
-                   javax.swing.JOptionPane.ERROR_MESSAGE);
-       } 
+            GUIMenuEstudiante ventanaEstudiante = new GUIMenuEstudiante(personaLogueado);
+            ventanaEstudiante.setVisible(true);
+            this.dispose();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Acceso denegado: No tienes permisos para ingresar al menú de Estudiante",
+                    "Error de autorización",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btEstMouseClicked
 
     private void btCoordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btCoordMouseClicked
         if(personaLogueado.tieneRol(EnumRol.COORDINADOR))
         {
-        GUIMenuCoord ventanaCoord = new GUIMenuCoord(personaLogueado); // crear la nueva ventana
-        ventanaCoord.setVisible(true);            // mostrarla
-        this.dispose();   
+            GUIMenuCoord ventanaCoord = new GUIMenuCoord(personaLogueado); // crear la nueva ventana
+            ventanaCoord.setVisible(true);            // mostrarla
+            this.dispose();
         }else{
             javax.swing.JOptionPane.showMessageDialog(this,
-                   "Acceso denegado: No tienes permisos para ingresar al menú de Coordinador",
-                   "Error de autorización",
-                   javax.swing.JOptionPane.ERROR_MESSAGE);
+                    "Acceso denegado: No tienes permisos para ingresar al menú de Coordinador",
+                    "Error de autorización",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btCoordMouseClicked
 
     private void jButtonCloseSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCloseSesionActionPerformed
-       GUILogin login = new GUILogin();
-       login.setVisible(rootPaneCheckingEnabled);
-       this.setVisible(false);
+        GUILogin login = new GUILogin();
+        login.setVisible(rootPaneCheckingEnabled);
+        this.setVisible(false);
     }//GEN-LAST:event_jButtonCloseSesionActionPerformed
 
     private void btJefeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btJefeMouseClicked
@@ -295,14 +296,14 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-       FlatMTMaterialLighterIJTheme.setup();
-       
-      
+        FlatMTMaterialLighterIJTheme.setup();
+
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-               
+
             }
         });
     }
