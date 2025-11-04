@@ -36,13 +36,22 @@ public class ProyectoGradoService {
             ProyectoGrado proyectoExistente = null;
             String accion = "";
 
+            // 🔍 ESTRATEGIA 1: Buscar por ID principal primero
+            if (request.id() != null) {
+                Optional<ProyectoGrado> proyectoOpt = proyectoRepository.findById(request.id());
+                if (proyectoOpt.isPresent()) {
+                    proyectoExistente = proyectoOpt.get();
+                    accion = "ACTUALIZANDO proyecto existente por ID";
+                    System.out.println("🔍 Proyecto encontrado por ID: " + request.id());
+                }
+            }
 
             // 🔍 ESTRATEGIA 2: Buscar por FormatoA si no se encontró por ID
             if (proyectoExistente == null && request.IdFormatoA() != null) {
                 Optional<ProyectoGrado> proyectoOpt = proyectoRepository.findByIdFormatoA(request.IdFormatoA());
                 if (proyectoOpt.isPresent()) {
                     proyectoExistente = proyectoOpt.get();
-                    accion = "";
+                    accion = "ACTUALIZANDO proyecto existente por FormatoA";
                     System.out.println("🔍 Proyecto encontrado por FormatoA: " + request.IdFormatoA());
                 }
             }
@@ -52,7 +61,7 @@ public class ProyectoGradoService {
                 System.out.println("🔄 " + accion + " - ID: " + proyectoExistente.getId());
                 actualizarProyectoExistente(proyectoExistente, request);
             } else {
-                System.out.println("");
+                System.out.println("🆕 CREANDO nuevo proyecto");
                 crearNuevoProyectoSinId(request);
             }
 
