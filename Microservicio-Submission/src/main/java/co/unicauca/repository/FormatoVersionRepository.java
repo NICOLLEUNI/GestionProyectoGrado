@@ -15,5 +15,5 @@ public interface FormatoVersionRepository extends JpaRepository<FormatoAVersion,
 
     FormatoAVersion findTopByFormatoAOrderByNumeroVersionDesc(FormatoA formatoA);
     List<FormatoAVersion> findByFormatoAId(Long formatoAId);
-
+    void deleteByFormatoAId(Long formatoAId);
 }
