@@ -79,7 +79,7 @@ class AuthControllerTest {
                 "juan.perez@unicauca.edu.co",
                 "Password123!"
         );
-
+/*
         // Setup response objects
         personaResponse = new PersonaResponse(
                 1L,
@@ -90,7 +90,7 @@ class AuthControllerTest {
                 null,
                 "INGENIERIA_DE_SISTEMAS"
         );
-
+*/
         loginResponse = new LoginResponse(personaResponse, "jwt-token");
     }
 

@@ -14,10 +14,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // ================== COLAS (LAS MISMAS) ==================
+    // ================== COLAS ==================
     public static final String FORMATOA_EVALUACION_QUEUE = "formatoa.evaluacion.queue";
     public static final String FORMATOA_NOTIFICACIONES_QUEUE = "formatoa.notificaciones.queue";
     public static final String ANTEPROYECTO_EVALUACION_QUEUE = "anteproyecto.evaluacion.queue";
+    public static final String ANTEPROYECTO_EJECUCION_QUEUE = "anteproyecto.ejecucion.queue"; // ← NUEVA COLA EXCLUSIVA
     public static final String ANTEPROYECTO_NOTIFICACIONES_QUEUE = "anteproyecto.notificaciones.queue";
     public static final String FORMATOAVERSION_HISTORICO_QUEUE = "formatoaversion.historico.queue";
     public static final String FORMATOAVERSION_NOTIFICACIONES_QUEUE = "formatoaversion.notificaciones.queue";
@@ -26,39 +27,38 @@ public class RabbitMQConfig {
     public static final String USUARIO_QUEUE = "usuario.queue";
     public static final String REPORTES_QUEUE = "reportes.queue";
 
+    // ================== EXCHANGES (MISMOS QUE SUBMISSION) ==================
+    public static final String FORMATOA_CREADO_EXCHANGE = "formatoa.creado.exchange";
+    public static final String ANTEPROYECTO_CREADO_EXCHANGE = "anteproyecto.creado.exchange";
+    public static final String FORMATOAVERSION_CREADA_EXCHANGE = "formatoaversion.creada.exchange";
+    public static final String PROYECTO_GRADO_CREADO_EXCHANGE = "proyectogrado.creado.exchange";
 
-    // ================== EXCHANGES (DEBEN COINCIDIR CON QUIEN ENVÍA) ==================
-    public static final String ANTEPROYECTO_EXCHANGE = "anteproyecto.exchange";
-    public static final String PROYECTO_GRADO_EXCHANGE = "proyectogrado.exchange";
-    public static final String FORMATOA_EXCHANGE = "formatoa.exchange";
-    public static final String USUARIO_EXCHANGE = "usuario.exchange";
-
-    // ================== ROUTING KEYS (DEBEN COINCIDIR CON QUIEN ENVÍA) ==================
-    public static final String ANTEPROYECTO_CREADO_ROUTING_KEY = "anteproyecto.creado";
-    public static final String PROYECTO_GRADO_CREADO_ROUTING_KEY = "proyectogrado.creado";
+    // ================== ROUTING KEYS (MISMOS QUE SUBMISSION) ==================
     public static final String FORMATOA_CREADO_ROUTING_KEY = "formatoa.creado";
-    public static final String USUARIO_ACTUALIZADO_ROUTING_KEY = "usuario.actualizado";
+    public static final String ANTEPROYECTO_CREADO_ROUTING_KEY = "anteproyecto.creado";
+    public static final String FORMATOAVERSION_CREADA_ROUTING_KEY = "formatoaversion.creada";
+    public static final String PROYECTO_GRADO_CREADO_ROUTING_KEY = "proyectogrado.creado";
 
     // ================== BEANS DE EXCHANGES ==================
 
     @Bean
-    public DirectExchange anteproyectoExchange() {
-        return new DirectExchange(ANTEPROYECTO_EXCHANGE);
+    public DirectExchange formatoACreadoExchange() {
+        return new DirectExchange(FORMATOA_CREADO_EXCHANGE);
     }
 
     @Bean
-    public DirectExchange proyectoGradoExchange() {
-        return new DirectExchange(PROYECTO_GRADO_EXCHANGE);
+    public DirectExchange anteproyectoCreadoExchange() {
+        return new DirectExchange(ANTEPROYECTO_CREADO_EXCHANGE);
     }
 
     @Bean
-    public DirectExchange formatoAExchange() {
-        return new DirectExchange(FORMATOA_EXCHANGE);
+    public DirectExchange formatoAVersionCreadaExchange() {
+        return new DirectExchange(FORMATOAVERSION_CREADA_EXCHANGE);
     }
 
     @Bean
-    public DirectExchange usuarioExchange() {
-        return new DirectExchange(USUARIO_EXCHANGE);
+    public DirectExchange proyectoGradoCreadoExchange() {
+        return new DirectExchange(PROYECTO_GRADO_CREADO_EXCHANGE);
     }
 
     // ================== BEANS DE COLAS ==================
@@ -76,6 +76,11 @@ public class RabbitMQConfig {
     @Bean
     public Queue anteproyectoEvaluacionQueue() {
         return new Queue(ANTEPROYECTO_EVALUACION_QUEUE, true);
+    }
+
+    @Bean
+    public Queue anteproyectoEjecucionQueue() {
+        return new Queue(ANTEPROYECTO_EJECUCION_QUEUE, true); // ← NUEVA COLA
     }
 
     @Bean
@@ -107,38 +112,68 @@ public class RabbitMQConfig {
     public Queue usuarioActualizadoQueue() {
         return new Queue(USUARIO_QUEUE, true);
     }
-    @Bean Queue reportesQueue() {
+
+    @Bean
+    public Queue reportesQueue() {
         return new Queue(REPORTES_QUEUE, true);
     }
 
-    // ================== BINDINGS (LO MÁS IMPORTANTE) ==================
+    // ================== BINDINGS ==================
+
+    @Bean
+    public Binding bindingFormatoAEvaluacion() {
+        return BindingBuilder.bind(formatoAEvaluacionQueue())
+                .to(formatoACreadoExchange())
+                .with(FORMATOA_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingFormatoANotificaciones() {
+        return BindingBuilder.bind(formatoANotificacionesQueue())
+                .to(formatoACreadoExchange())
+                .with(FORMATOA_CREADO_ROUTING_KEY);
+    }
 
     @Bean
     public Binding bindingAnteproyectoEvaluacion() {
         return BindingBuilder.bind(anteproyectoEvaluacionQueue())
-                .to(anteproyectoExchange())
+                .to(anteproyectoCreadoExchange())
                 .with(ANTEPROYECTO_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingAnteproyectoEjecucion() {
+        return BindingBuilder.bind(anteproyectoEjecucionQueue())
+                .to(anteproyectoCreadoExchange())
+                .with(ANTEPROYECTO_CREADO_ROUTING_KEY); // ← NUEVO BINDING
+    }
+
+    @Bean
+    public Binding bindingAnteproyectoNotificaciones() {
+        return BindingBuilder.bind(anteproyectoNotificacionesQueue())
+                .to(anteproyectoCreadoExchange())
+                .with(ANTEPROYECTO_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingFormatoAVersionHistorico() {
+        return BindingBuilder.bind(formatoAVersionHistoricoQueue())
+                .to(formatoAVersionCreadaExchange())
+                .with(FORMATOAVERSION_CREADA_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingFormatoAVersionNotificaciones() {
+        return BindingBuilder.bind(formatoAVersionNotificacionesQueue())
+                .to(formatoAVersionCreadaExchange())
+                .with(FORMATOAVERSION_CREADA_ROUTING_KEY);
     }
 
     @Bean
     public Binding bindingProyectoGradoCreado() {
         return BindingBuilder.bind(proyectoGradoCreadoQueue())
-                .to(proyectoGradoExchange())
+                .to(proyectoGradoCreadoExchange())
                 .with(PROYECTO_GRADO_CREADO_ROUTING_KEY);
-    }
-
-    @Bean
-    public Binding bindingFormatoAEvaluacion() {
-        return BindingBuilder.bind(formatoAEvaluacionQueue())
-                .to(formatoAExchange())
-                .with(FORMATOA_CREADO_ROUTING_KEY);
-    }
-
-    @Bean
-    public Binding bindingUsuarioActualizado() {
-        return BindingBuilder.bind(usuarioActualizadoQueue())
-                .to(usuarioExchange())
-                .with(USUARIO_ACTUALIZADO_ROUTING_KEY);
     }
 
     // ================== CONFIGURACIÓN JSON ==================

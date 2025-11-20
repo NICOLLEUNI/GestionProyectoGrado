@@ -87,20 +87,25 @@ public class AnteproyectoService {
      * ✅ CORREGIDO: Crear nuevo anteproyecto SIN asignar ID manual
      */
     private void crearNuevoAnteproyectoSinId(AnteproyectoRequest request, ProyectoGrado proyecto) {
-        System.out.println("🆕 CREANDO NUEVO ANTEPROYECTO:");
+        System.out.println("🆕 CREANDO NUEVO ANTEPROYECTO CON ID MANUAL:");
+        System.out.println("   - ID: " + request.id());
         System.out.println("   - Título: " + request.titulo());
         System.out.println("   - Proyecto ID: " + proyecto.getId());
-        System.out.println("   - Estado: " + request.estado());
 
-        // ✅ Crear nueva entidad SIN asignar ID manualmente
+        // ✅ Validar que el ID venga en el request
+        if (request.id() == null) {
+            throw new RuntimeException("❌ ID es requerido para creación manual de anteproyecto");
+        }
+
+        // ✅ Crear nueva entidad CON asignación manual de ID
         Anteproyecto nuevoAnteproyecto = new Anteproyecto();
+        nuevoAnteproyecto.setId(request.id()); // ← ASIGNAR ID MANUALMENTE
         nuevoAnteproyecto.setTitulo(request.titulo());
         nuevoAnteproyecto.setFecha(request.fecha());
         nuevoAnteproyecto.setEstado(EnumEstadoAnteproyecto.valueOf(request.estado()));
         nuevoAnteproyecto.setObservaciones(request.observaciones());
         nuevoAnteproyecto.setProyectoGrado(proyecto);
 
-        // ❌ NO asignar ID manualmente - dejar que JPA lo genere automáticamente
         Anteproyecto guardado = anteproyectoRepository.save(nuevoAnteproyecto);
 
         // 💾 GUARDAR EN MEMENTO
@@ -108,12 +113,10 @@ public class AnteproyectoService {
         RequestMemento memento = historyManager.saveRequestState("ANTEPROYECTO",
                 guardado.getId(), guardado.getEstado().name(), requestData);
 
-        System.out.println("✅ ANTEPROYECTO CREADO - ID: " + guardado.getId() +
+        System.out.println("✅ ANTEPROYECTO CREADO CON ID MANUAL - ID: " + guardado.getId() +
                 " | Versión Memento: " + memento.getVersion() +
-                " | Estado: " + guardado.getEstado() +
-                " | Proyecto: " + guardado.getProyectoGrado().getId());
+                " | Estado: " + guardado.getEstado());
     }
-
     /**
      * ✅ ACTUALIZAR ANTEPROYECTO EXISTENTE CON MEMENTO
      */

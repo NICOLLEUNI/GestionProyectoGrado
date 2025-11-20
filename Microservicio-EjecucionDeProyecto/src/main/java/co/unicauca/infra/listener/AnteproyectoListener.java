@@ -18,7 +18,7 @@ public class AnteproyectoListener {
     /**
      * ✅ LISTENER SIMPLIFICADO - Solo recibe y delega al Service
      */
-    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
+    @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EJECUCION_QUEUE)
     public void receiveAnteproyecto(AnteproyectoRequest anteproyectoRequest) {
         System.out.println("📥 [LISTENER] Anteproyecto Request recibido: " + anteproyectoRequest.titulo() +
                 " | ID: " + anteproyectoRequest.id() +

@@ -29,6 +29,8 @@ public class RabbitMQConfig{
     // Colas para FormatoA (diferentes consumidores)
     public static final String FORMATOA_EVALUACION_QUEUE = "formatoa.evaluacion.queue";
     public static final String FORMATOA_NOTIFICACIONES_QUEUE = "formatoa.notificaciones.queue";
+    public static final String ANTEPROYECTO_EJECUCION_QUEUE = "anteproyecto.ejecucion.queue";
+
 
     // Colas para Anteproyecto (diferentes consumidores)
     public static final String ANTEPROYECTO_EVALUACION_QUEUE = "anteproyecto.evaluacion.queue";
@@ -86,6 +88,12 @@ public class RabbitMQConfig{
     }
 
     @Bean
+    public Queue anteproyectoEjecucionQueue() {
+        return new Queue(ANTEPROYECTO_EJECUCION_QUEUE, true);
+    }
+
+
+    @Bean
     public Queue anteproyectoNotificacionesQueue() {
         return new Queue(ANTEPROYECTO_NOTIFICACIONES_QUEUE, true);
     }
@@ -100,6 +108,13 @@ public class RabbitMQConfig{
     @Bean
     public Binding bindingAnteproyectoNotificaciones() {
         return BindingBuilder.bind(anteproyectoNotificacionesQueue())
+                .to(anteproyectoCreadoExchange())
+                .with(ANTEPROYECTO_CREADO_ROUTING_KEY);
+    }
+
+    @Bean
+    public Binding bindingAnteproyectoEjecucion() {
+        return BindingBuilder.bind(anteproyectoEjecucionQueue())
                 .to(anteproyectoCreadoExchange())
                 .with(ANTEPROYECTO_CREADO_ROUTING_KEY);
     }
