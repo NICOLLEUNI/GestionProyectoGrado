@@ -16,6 +16,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -26,6 +27,7 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
     Persona personaLogueado;
     SubmissionService submissionService;
     FormatoA formatoActual;
+   private File archivoPDFSeleccionado;
     /**
      * Creates new form SubirFormatoA
      */
@@ -37,44 +39,15 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
         initEvents();
     }
     private void initEvents() {
-        lblPDF.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                abrirPDF();
-            }
-        });
+
     }
 
 
     private void initStyles() {
-        // estilos del lblPDF
-        lblPDF.setForeground(new java.awt.Color(33, 150, 243));
-        lblPDF.setFont(new java.awt.Font("Roboto", java.awt.Font.BOLD, 13));
-        lblPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lblPDF.setToolTipText("Abrir PDF");
+
     }
 
-    private void abrirPDF() {
-        try {
-            // Obtiene la ruta del proyecto dinámicamente
-            String rutaBase = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "formatoA" + File.separator;
-            String nombreArchivo = lblPDF.getText();
 
-            File file = new File(rutaBase + nombreArchivo);
-
-            if (file.exists()) {
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(file);
-                } else {
-                    JOptionPane.showMessageDialog(this, "La función Desktop no está soportada en este sistema.");
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "El archivo no existe: " + file.getAbsolutePath());
-            }
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + e.getMessage());
-        }
-    }
     public void setFormatoA(FormatoA formato) {
         if (formato == null) return;
         this.formatoActual = formato;
@@ -128,18 +101,42 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
                 formato.getSpecificObjetives() != null ? formato.getSpecificObjetives() : "Sin objetivos específicos"
         );
 
-        // 📄 PDF
-        String rutaPDF = formato.getArchivoPDF();
-        if (rutaPDF != null && !rutaPDF.trim().isEmpty()) {
-            if (!rutaPDF.toLowerCase().endsWith(".pdf")) {
-                rutaPDF += ".pdf";
-            }
-            lblPDF.setText(rutaPDF);
-        } else {
-            lblPDF.setText("Sin archivo");
+
+    }
+    private String copiarPDFaProyecto(File archivoOrigen) {
+        try {
+            // 📌 Detectar ruta raíz del proyecto
+            File proyectoRoot = new File("").getAbsoluteFile();
+
+            // 📁 Carpeta destino: /uploads/anteproyecto/
+            File carpetaUploads = new File(proyectoRoot, "uploads");
+            File carpetaAnteproyecto = new File(carpetaUploads, "anteproyecto");
+
+            // Si no existen, crearlas
+            if (!carpetaUploads.exists()) carpetaUploads.mkdir();
+            if (!carpetaAnteproyecto.exists()) carpetaAnteproyecto.mkdir();
+
+            // 📄 Destino final
+            File destino = new File(carpetaAnteproyecto, archivoOrigen.getName());
+
+            // Copiar archivo
+            java.nio.file.Files.copy(
+                    archivoOrigen.toPath(),
+                    destino.toPath(),
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING
+            );
+
+            return destino.getName(); // Solo el nombre del archivo para BD
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error copiando el PDF al proyecto: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return null;
         }
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -176,9 +173,9 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
         lblUEstudiante2 = new javax.swing.JLabel();
         lblUObjGen = new javax.swing.JLabel();
         lblUObjEspec = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        lblPDF = new javax.swing.JLabel();
         lblRuta = new javax.swing.JLabel();
+        btPDF = new javax.swing.JButton();
+        txtRutaPDF = new javax.swing.JLabel();
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setPreferredSize(new java.awt.Dimension(646, 530));
@@ -289,33 +286,28 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
         lblUObjEspec.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         Contenido.add(lblUObjEspec, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 120, 210, 91));
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-
-        lblPDF.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
-        lblPDF.setForeground(new java.awt.Color(102, 102, 255));
-        lblPDF.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblPDF.setText("RUTA PDF");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lblPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 2, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-        );
-
-        Contenido.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 310, 210, -1));
-
         lblRuta.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblRuta.setForeground(new java.awt.Color(0, 0, 0));
         lblRuta.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblRuta.setText("Ruta");
-        Contenido.add(lblRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 280, -1, -1));
+        Contenido.add(lblRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 240, -1, -1));
+
+        btPDF.setBackground(new java.awt.Color(102, 102, 255));
+        btPDF.setText("Adjunte un PDF");
+        btPDF.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btPDF.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btPDFMousePressed(evt);
+            }
+        });
+        Contenido.add(btPDF, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 270, -1, -1));
+
+        txtRutaPDF.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        txtRutaPDF.setForeground(new java.awt.Color(51, 51, 255));
+        txtRutaPDF.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtRutaPDF.setText("Ruta");
+        txtRutaPDF.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        Contenido.add(txtRutaPDF, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 300, 250, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -339,10 +331,15 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
         Anteproyecto ante = new Anteproyecto();
         ante.setTitulo(formatoActual.getTitle());
         ante.setFecha(formatoActual.getDate());
-        ante.setArchivoPDF(formatoActual.getArchivoPDF());
+        if (archivoPDFSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo PDF antes de crear el anteproyecto.");
+            return;
+        }
+        ante.setRutaPdf(archivoPDFSeleccionado.getName());
+        String nombrePDF = copiarPDFaProyecto(archivoPDFSeleccionado);
         ante.setEstado("ENTREGADO");  // O el estado inicial que corresponda
         ante.setIdProyectoGrado(formatoActual.getId()); // Relación
-
+        System.out.println("PDF enviado: " + ante.getRutaPdf());
         // Enviar al backend
         Anteproyecto creado = submissionService.subirAnteproyecto(ante);
 
@@ -367,11 +364,24 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btCrearMouseClicked
 
+    private void btPDFMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btPDFMousePressed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Seleccionar archivo PDF");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos PDF", "pdf");
+        fileChooser.setFileFilter(filtro);
+
+        int resultado = fileChooser.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            archivoPDFSeleccionado = fileChooser.getSelectedFile();
+            txtRutaPDF.setText(archivoPDFSeleccionado.getName());
+        }
+    }//GEN-LAST:event_btPDFMousePressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JButton btCrear;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton btPDF;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparatorTitulo;
     private javax.swing.JSeparator jSeparatorTitulo1;
@@ -388,7 +398,6 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
     private javax.swing.JLabel lblEstudiante1;
     private javax.swing.JLabel lblEstudiante2;
     private javax.swing.JLabel lblObjetivosEspecificos;
-    private javax.swing.JLabel lblPDF;
     private javax.swing.JLabel lblRuta;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUCodirector;
@@ -399,5 +408,6 @@ public class SubirAnteproyecto extends javax.swing.JPanel {
     private javax.swing.JLabel lblUObjEspec;
     private javax.swing.JLabel lblUObjGen;
     private javax.swing.JLabel lblUTitulo;
+    private javax.swing.JLabel txtRutaPDF;
     // End of variables declaration//GEN-END:variables
 }
