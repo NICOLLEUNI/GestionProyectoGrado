@@ -429,4 +429,33 @@ public class ProyectoGradoService {
         System.out.println("✅ PROYECTO ENCONTRADO - ID: " + proyecto.getId() + " | Estudiantes: " + proyecto.getEstudiantesEmail());
         return convertirAResponse(proyecto);
     }
+
+    /**
+     * ✅ ELIMINAR PROYECTO POR FORMATOA ID
+     */
+    @Transactional
+    public void eliminarProyectoPorFormatoA(Long formatoAId) {
+        System.out.println(" [EJECUCION] Eliminando proyecto - FormatoA ID: " + formatoAId);
+
+        try {
+            // Buscar proyecto por FormatoA ID
+            Optional<ProyectoGrado> proyectoOpt = proyectoRepository.findByIdFormatoA(formatoAId);
+
+            if (proyectoOpt.isPresent()) {
+                ProyectoGrado proyecto = proyectoOpt.get();
+                System.out.println("🔍 Proyecto encontrado - ID: " + proyecto.getId() + ", Nombre: " + proyecto.getNombre());
+
+                // Eliminar el proyecto
+                proyectoRepository.delete(proyecto);
+                System.out.println(" [EJECUCION] Proyecto eliminado exitosamente - ID: " + proyecto.getId());
+            } else {
+                System.out.println(" [EJECUCION] No se encontró proyecto para FormatoA ID: " + formatoAId);
+            }
+
+        } catch (Exception e) {
+            System.err.println(" [EJECUCION] Error eliminando proyecto: " + e.getMessage());
+            throw new RuntimeException("No se pudo eliminar el proyecto asociado al FormatoA: " + formatoAId, e);
+        }
+    }
+
 }
