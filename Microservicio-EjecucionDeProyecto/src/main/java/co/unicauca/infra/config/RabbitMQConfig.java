@@ -39,6 +39,16 @@ public class RabbitMQConfig {
     public static final String FORMATOAVERSION_CREADA_ROUTING_KEY = "formatoaversion.creada";
     public static final String PROYECTO_GRADO_CREADO_ROUTING_KEY = "proyectogrado.creado";
 
+    // ================== ELIMINACIÓN DE FORMATOA ==================
+    public static final String FORMATOA_ELIMINADO_EXCHANGE = "formatoa.eliminado.exchange";
+    public static final String FORMATOA_ELIMINADO_ROUTING_KEY = "formatoa.eliminado";
+    public static final String FORMATOA_ELIMINADO_QUEUE = "formatoa.eliminado.queue";
+
+    // ================== ELIMINACIÓN DE PROYECTO ==================
+    public static final String PROYECTO_ELIMINADO_EXCHANGE = "proyecto.eliminado.exchange";
+    public static final String PROYECTO_ELIMINADO_ROUTING_KEY = "proyecto.eliminado";
+    public static final String PROYECTO_ELIMINADO_QUEUE = "proyecto.eliminado.queue";
+
     // ================== BEANS DE EXCHANGES ==================
 
     @Bean
@@ -62,6 +72,23 @@ public class RabbitMQConfig {
     }
 
     // ================== BEANS DE COLAS ==================
+
+    @Bean
+    public DirectExchange formatoAEliminadoExchange() {
+        return new DirectExchange(FORMATOA_ELIMINADO_EXCHANGE);
+    }
+
+    @Bean
+    public Queue formatoAEliminadoQueue() {
+        return new Queue(FORMATOA_ELIMINADO_QUEUE, true);
+    }
+
+    @Bean
+    public Binding bindingFormatoAEliminado() {
+        return BindingBuilder.bind(formatoAEliminadoQueue())
+                .to(formatoAEliminadoExchange())
+                .with(FORMATOA_ELIMINADO_ROUTING_KEY);
+    }
 
     @Bean
     public Queue formatoAEvaluacionQueue() {
@@ -174,6 +201,24 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(proyectoGradoCreadoQueue())
                 .to(proyectoGradoCreadoExchange())
                 .with(PROYECTO_GRADO_CREADO_ROUTING_KEY);
+    }
+
+    // Exchange y cola para eliminación de Proyecto
+    @Bean
+    public DirectExchange proyectoEliminadoExchange() {
+        return new DirectExchange(PROYECTO_ELIMINADO_EXCHANGE);
+    }
+
+    @Bean
+    public Queue proyectoEliminadoQueue() {
+        return new Queue(PROYECTO_ELIMINADO_QUEUE, true);
+    }
+
+    @Bean
+    public Binding bindingProyectoEliminado() {
+        return BindingBuilder.bind(proyectoEliminadoQueue())
+                .to(proyectoEliminadoExchange())
+                .with(PROYECTO_ELIMINADO_ROUTING_KEY);
     }
 
     // ================== CONFIGURACIÓN JSON ==================
