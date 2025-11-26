@@ -46,6 +46,16 @@ public class RabbitMQConfig{
     public static final String USUARIO_QUEUE = "usuario.queue";
     // ================== EXCHANGES Y BINDINGS ==================
 
+    // ================== EVENTO ELIMINACIÓN ==================
+    public static final String FORMATOA_ELIMINADO_EXCHANGE = "formatoa.eliminado.exchange";
+    public static final String FORMATOA_ELIMINADO_ROUTING_KEY = "formatoa.eliminado";
+    public static final String FORMATOA_ELIMINADO_QUEUE = "formatoa.eliminado.queue";
+
+    // ================== ELIMINACIÓN DE PROYECTO ==================
+    public static final String PROYECTO_ELIMINADO_EXCHANGE = "proyecto.eliminado.exchange";
+    public static final String PROYECTO_ELIMINADO_ROUTING_KEY = "proyecto.eliminado";
+    public static final String PROYECTO_ELIMINADO_QUEUE = "proyecto.eliminado.queue";
+
     // Exchange y colas para FormatoA
     @Bean
     public DirectExchange formatoACreadoExchange() {
@@ -147,6 +157,41 @@ public class RabbitMQConfig{
         return BindingBuilder.bind(formatoAVersionNotificacionesQueue())
                 .to(formatoAVersionCreadaExchange())
                 .with(FORMATOAVERSION_CREADA_ROUTING_KEY);
+    }
+
+    @Bean
+    public DirectExchange formatoAEliminadoExchange() {
+        return new DirectExchange(FORMATOA_ELIMINADO_EXCHANGE);
+    }
+
+    @Bean
+    public Queue formatoAEliminadoQueue() {
+        return new Queue(FORMATOA_ELIMINADO_QUEUE, true);
+    }
+
+    @Bean
+    public Binding bindingFormatoAEliminado() {
+        return BindingBuilder.bind(formatoAEliminadoQueue())
+                .to(formatoAEliminadoExchange())
+                .with(FORMATOA_ELIMINADO_ROUTING_KEY);
+    }
+
+    // Exchange y cola para eliminación de Proyecto
+    @Bean
+    public DirectExchange proyectoEliminadoExchange() {
+        return new DirectExchange(PROYECTO_ELIMINADO_EXCHANGE);
+    }
+
+    @Bean
+    public Queue proyectoEliminadoQueue() {
+        return new Queue(PROYECTO_ELIMINADO_QUEUE, true);
+    }
+
+    @Bean
+    public Binding bindingProyectoEliminado() {
+        return BindingBuilder.bind(proyectoEliminadoQueue())
+                .to(proyectoEliminadoExchange())
+                .with(PROYECTO_ELIMINADO_ROUTING_KEY);
     }
 
     // ================== COLAS DIRECTAS ==================

@@ -55,6 +55,10 @@ public class FormatoAService {
         // Eliminar proyecto asociado
         proyectoService.eliminarProyectoPorFormatoA(id);
 
+        // PUBLICAR EVENTO PARA EJECUCIÓN-PROYECTO
+        rabbitMQPublisher.publicarFormatoAEliminado(id, "tres_rechazos");
+        rabbitMQPublisher.publicarProyectoEliminado(id, "tres_rechazos");
+
         // Ahora sí eliminar FormatoA
         formatoARepository.delete(formatoA);
 

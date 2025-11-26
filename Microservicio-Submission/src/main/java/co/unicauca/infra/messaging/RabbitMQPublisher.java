@@ -11,6 +11,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import co.unicauca.infra.config.RabbitMQConfig;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Component
 public class RabbitMQPublisher {
@@ -82,5 +85,40 @@ public class RabbitMQPublisher {
                 evento
         );
         System.out.println("📧 Notificación Versión publicada: " + evento.versionId());
+    }
+
+    // ================== ELIMINACIÓN DE FORMATOA ==================
+
+    public void publicarFormatoAEliminado(Long formatoAId, String razon) {
+        Map<String, Object> mensaje = new HashMap<>();
+        mensaje.put("formatoAId", formatoAId);
+        mensaje.put("razon", razon);
+        mensaje.put("timestamp", java.time.LocalDateTime.now().toString());
+        mensaje.put("origen", "submission-service");
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.FORMATOA_ELIMINADO_EXCHANGE,
+                RabbitMQConfig.FORMATOA_ELIMINADO_ROUTING_KEY,
+                mensaje
+        );
+
+        System.out.println(" [SUBMISSION] Evento de eliminación publicado - " +
+                "FormatoA ID: " + formatoAId + ", Razón: " + razon);
+    }
+
+    public void publicarProyectoEliminado(Long formatoAId, String razon) {
+        Map<String, Object> mensaje = new HashMap<>();
+        mensaje.put("formatoAId", formatoAId);
+        mensaje.put("razon", razon);
+        mensaje.put("timestamp", java.time.LocalDateTime.now().toString());
+        mensaje.put("origen", "submission-service");
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.PROYECTO_ELIMINADO_EXCHANGE,
+                RabbitMQConfig.PROYECTO_ELIMINADO_ROUTING_KEY,
+                mensaje
+        );
+
+        System.out.println("🗑️ [SUBMISSION] Evento de PROYECTO eliminado publicado - FormatoA ID: " + formatoAId);
     }
 }

@@ -17,9 +17,9 @@ public class Anteproyecto {
     private Long id;
     private String titulo;
     public LocalDate fecha;
-    private String archivoPDF;
     private String estado;
     private Long idProyectoGrado;
+    private String rutaPdf;
 
 
 
