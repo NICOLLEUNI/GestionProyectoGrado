@@ -3,6 +3,13 @@ package co.unicauca.controller;
 import co.unicauca.infra.dto.AnteproyectoRequest;
 import co.unicauca.infra.dto.AnteproyectoResponse;
 import co.unicauca.service.AnteproyectoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,224 +21,286 @@ import java.util.Map;
 @RequestMapping("/api/anteproyectos")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(name = "Anteproyectos", description = "Operaciones relacionadas con la gestión de anteproyectos")
 public class AnteproyectoController {
 
     private final AnteproyectoService anteproyectoService;
 
+    // ===========================================================
+    //  POST - CREAR
+    // ===========================================================
+    @Operation(
+            summary = "Crear un anteproyecto",
+            description = "Crea un anteproyecto nuevo a partir de los datos enviados."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Anteproyecto creado exitosamente",
+                    content = @Content(schema = @Schema(implementation = AnteproyectoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Error en los datos enviados"
+            )
+    })
     @PostMapping
-    public ResponseEntity<?> crearAnteproyecto(@RequestBody AnteproyectoRequest request) {
+    public ResponseEntity<?> crearAnteproyecto(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos necesarios para crear el anteproyecto",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = AnteproyectoRequest.class))
+            )
+            @RequestBody AnteproyectoRequest request
+    ) {
         try {
-            System.out.println("📨 [CONTROLLER] Creando anteproyecto:");
-            System.out.println("   Título: " + request.titulo());
-            System.out.println("   Proyecto Grado ID: " + request.idProyectoGrado());
-            System.out.println("   Estado: " + request.estado());
-
             AnteproyectoResponse response = anteproyectoService.crearAnteproyecto(request);
-
-            System.out.println("✅ [CONTROLLER] Anteproyecto creado exitosamente - ID: " + response.id());
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] ERROR: " + e.getMessage());
-
-            if (e.getMessage() != null && e.getMessage().contains("Proyecto no encontrado")) {
-                return ResponseEntity.badRequest().body(
-                        Map.of(
-                                "error", "No se puede crear el anteproyecto",
-                                "detalle", e.getMessage(),
-                                "tipo", "PROYECTO_NO_ENCONTRADO"
-                        )
-                );
-            }
-
             return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "error", "Error al crear anteproyecto",
-                            "detalle", e.getMessage()
-                    )
+                    Map.of("error", "No se puede crear el anteproyecto", "detalle", e.getMessage())
             );
 
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR inesperado: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error interno del servidor")
             );
         }
     }
 
+    // ===========================================================
+    //  GET - BUSCAR POR ID
+    // ===========================================================
+    @Operation(
+            summary = "Obtener anteproyecto por ID",
+            description = "Retorna un anteproyecto específico mediante su identificador."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Anteproyecto encontrado",
+                    content = @Content(schema = @Schema(implementation = AnteproyectoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Anteproyecto no encontrado"
+            )
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
-            System.out.println("🔍 [CONTROLLER] Buscando anteproyecto por ID: " + id);
-
             AnteproyectoResponse response = anteproyectoService.buscarPorId(id);
-
-            System.out.println("✅ [CONTROLLER] Anteproyecto encontrado - ID: " + response.id());
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] Anteproyecto no encontrado - ID: " + id);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR buscando anteproyecto: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error interno del servidor")
             );
         }
     }
 
+    // ===========================================================
+    //  PUT - ACTUALIZAR
+    // ===========================================================
+    @Operation(
+            summary = "Actualizar un anteproyecto",
+            description = "Modifica los datos de un anteproyecto existente."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Anteproyecto actualizado",
+                    content = @Content(schema = @Schema(implementation = AnteproyectoResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Error en la actualización"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Anteproyecto no encontrado"
+            )
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarAnteproyecto(@PathVariable Long id, @RequestBody AnteproyectoRequest request) {
+    public ResponseEntity<?> actualizarAnteproyecto(
+            @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Nuevos datos del anteproyecto",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = AnteproyectoRequest.class))
+            )
+            @RequestBody AnteproyectoRequest request
+    ) {
         try {
-            System.out.println("✏️ [CONTROLLER] Actualizando anteproyecto - ID: " + id);
-            System.out.println("   Nuevo título: " + request.titulo());
-            System.out.println("   Nuevo estado: " + request.estado());
-
             AnteproyectoResponse response = anteproyectoService.actualizarAnteproyecto(id, request);
-
-            System.out.println("✅ [CONTROLLER] Anteproyecto actualizado - ID: " + response.id());
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] ERROR actualizando anteproyecto: " + e.getMessage());
-
             if (e.getMessage() != null && e.getMessage().contains("no encontrado")) {
                 return ResponseEntity.notFound().build();
             }
-
             return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "error", "Error al actualizar anteproyecto",
-                            "detalle", e.getMessage()
-                    )
+                    Map.of("error", "Error al actualizar anteproyecto", "detalle", e.getMessage())
             );
 
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR inesperado actualizando: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error interno del servidor")
             );
         }
     }
 
+    // ===========================================================
+    //  GET - LISTAR TODOS
+    // ===========================================================
+    @Operation(
+            summary = "Listar todos los anteproyectos",
+            description = "Retorna una lista con todos los anteproyectos registrados."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista obtenida correctamente",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnteproyectoResponse.class)))
+            )
+    })
     @GetMapping
     public ResponseEntity<?> listarTodos() {
         try {
-            System.out.println("📋 [CONTROLLER] Listando todos los anteproyectos");
-
             List<AnteproyectoResponse> anteproyectos = anteproyectoService.obtenerTodos();
-
-            System.out.println("✅ [CONTROLLER] Anteproyectos encontrados: " + anteproyectos.size());
             return ResponseEntity.ok(anteproyectos);
 
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR listando anteproyectos: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error interno del servidor")
             );
         }
     }
 
+    // ===========================================================
+    //  GET - BUSCAR POR PROYECTO
+    // ===========================================================
+    @Operation(
+            summary = "Buscar anteproyectos por proyecto",
+            description = "Obtiene todos los anteproyectos asociados a un proyecto específico."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Listado obtenido exitosamente",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = AnteproyectoResponse.class)))
+            )
+    })
     @GetMapping("/proyecto/{proyectoId}")
     public ResponseEntity<?> buscarPorProyecto(@PathVariable Long proyectoId) {
         try {
-            System.out.println("🔍 [CONTROLLER] Buscando anteproyectos por proyecto: " + proyectoId);
-
             List<AnteproyectoResponse> anteproyectos = anteproyectoService.buscarPorProyecto(proyectoId);
-
-            System.out.println("✅ [CONTROLLER] Anteproyectos encontrados para proyecto " + proyectoId + ": " + anteproyectos.size());
             return ResponseEntity.ok(anteproyectos);
 
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR buscando anteproyectos por proyecto: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error interno del servidor")
             );
         }
     }
 
-    // ========== ENDPOINTS DE RELACIONES ==========
-
+    // ===========================================================
+    //  GET - RELACIONES
+    // ===========================================================
+    @Operation(
+            summary = "Mostrar relaciones completas del anteproyecto",
+            description = "Imprime en consola todas las relaciones del anteproyecto."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Relación mostrada correctamente"),
+            @ApiResponse(responseCode = "400", description = "No fue posible mostrar la relación")
+    })
     @GetMapping("/{id}/mostrar-relacion")
     public ResponseEntity<String> mostrarRelacionCompleta(@PathVariable Long id) {
         try {
-            System.out.println("🔗 [CONTROLLER] Mostrando relación completa para anteproyecto: " + id);
             anteproyectoService.mostrarRelacionCompleta(id);
             return ResponseEntity.ok("Relación mostrada en consola para anteproyecto: " + id);
+
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] ERROR mostrando relación: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error mostrando relación: " + e.getMessage());
+
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR inesperado mostrando relación: " + e.getMessage());
             return ResponseEntity.internalServerError().body("Error interno mostrando relación");
         }
     }
 
+    @Operation(
+            summary = "Mostrar relación por proyecto",
+            description = "Imprime en consola todas las relaciones asociadas a un proyecto."
+    )
     @GetMapping("/proyecto/{proyectoId}/mostrar-relacion")
     public ResponseEntity<String> mostrarRelacionPorProyecto(@PathVariable Long proyectoId) {
         try {
-            System.out.println("🔗 [CONTROLLER] Mostrando relación por proyecto: " + proyectoId);
             anteproyectoService.mostrarRelacionPorProyecto(proyectoId);
             return ResponseEntity.ok("Relación mostrada en consola para proyecto: " + proyectoId);
+
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] ERROR mostrando relación por proyecto: " + e.getMessage());
             return ResponseEntity.badRequest().body("Error mostrando relación: " + e.getMessage());
+
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR inesperado mostrando relación: " + e.getMessage());
             return ResponseEntity.internalServerError().body("Error interno mostrando relación");
         }
     }
 
+    @Operation(
+            summary = "Mostrar todas las relaciones",
+            description = "Imprime en consola todas las relaciones de todos los anteproyectos."
+    )
     @GetMapping("/mostrar-todas-relaciones")
     public ResponseEntity<String> mostrarTodasLasRelaciones() {
         try {
-            System.out.println("🔗 [CONTROLLER] Mostrando todas las relaciones");
             anteproyectoService.listarTodasLasRelaciones();
             return ResponseEntity.ok("Todas las relaciones mostradas en consola");
+
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR mostrando todas las relaciones: " + e.getMessage());
             return ResponseEntity.internalServerError().body("Error interno mostrando relaciones");
         }
     }
 
-    // ========== ENDPOINTS PARA EL HISTORIAL MEMENTO ==========
-
+    // ===========================================================
+    //  HISTORIAL - MEMENTO
+    // ===========================================================
+    @Operation(
+            summary = "Obtener historial del anteproyecto",
+            description = "Retorna todas las versiones anteriores del anteproyecto."
+    )
     @GetMapping("/{id}/historial")
     public ResponseEntity<?> obtenerHistorial(@PathVariable Long id) {
         try {
-            System.out.println("📊 [CONTROLLER] Obteniendo historial del anteproyecto: " + id);
-
             var historial = anteproyectoService.obtenerHistorialAnteproyecto(id);
-
-            System.out.println("✅ [CONTROLLER] Historial obtenido - Versiones: " + historial.size());
             return ResponseEntity.ok(historial);
 
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR obteniendo historial: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error al obtener historial")
             );
         }
     }
 
+    @Operation(
+            summary = "Restaurar versión del anteproyecto",
+            description = "Restaura el anteproyecto a una versión previa almacenada en el historial."
+    )
     @PostMapping("/{id}/restaurar/{version}")
     public ResponseEntity<?> restaurarVersion(@PathVariable Long id, @PathVariable int version) {
         try {
-            System.out.println("⏪ [CONTROLLER] Restaurando anteproyecto " + id + " a versión: " + version);
-
             var anteproyectoRestaurado = anteproyectoService.restaurarAnteproyectoAVersion(id, version);
-
-            System.out.println("✅ [CONTROLLER] Anteproyecto restaurado - Nueva ID: " + anteproyectoRestaurado.getId());
             return ResponseEntity.ok(anteproyectoRestaurado);
 
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] ERROR restaurando versión: " + e.getMessage());
             return ResponseEntity.badRequest().body(
                     Map.of("error", e.getMessage())
             );
+
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR inesperado restaurando: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error interno del servidor")
             );
