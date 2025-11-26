@@ -10,6 +10,7 @@ import co.unicauca.entity.Persona;
 import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.service.EvaluacionService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,8 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     Anteproyecto anteproyectoActual;
     private EvaluacionService evaluacionService;
     private Persona personaLogueado;
+    private boolean cargandoCombos = false;
+    private List<String> evaluadoresOriginales;
     /**
      * Creates new form AsingnacionEvaluadores
      */
@@ -28,8 +31,61 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         this.personaLogueado = personaLogueado;
         this.evaluacionService = evaluacionService;
         initComponents();
+       agregarEventosCombos();
+    }
+    private void agregarEventosCombos() {
+        boxEvaluador1.addActionListener(e -> actualizarSegundoCombo());
+        boxEvaluador2.addActionListener(e -> actualizarPrimerCombo());
+    }
+    private void actualizarSegundoCombo() {
+        if (cargandoCombos) return;
+
+        String seleccionado1 = (String) boxEvaluador1.getSelectedItem();
+        if (seleccionado1 == null) return;
+
+        // 🔥 Saber si el segundo combo tenía algo seleccionado
+        boolean teniaSeleccion = boxEvaluador2.getSelectedIndex() != -1;
+
+        cargandoCombos = true;
+        boxEvaluador2.removeAllItems();
+
+        for (String email : evaluadoresOriginales) {
+            if (!email.equals(seleccionado1)) {
+                boxEvaluador2.addItem(email);
+            }
+        }
+
+        // ❗ Solo lo dejo sin seleccionar si NO tenía selección antes
+        if (!teniaSeleccion) {
+            boxEvaluador2.setSelectedIndex(-1);
+        }
+
+        cargandoCombos = false;
     }
 
+    private void actualizarPrimerCombo() {
+        if (cargandoCombos) return;
+
+        String seleccionado2 = (String) boxEvaluador2.getSelectedItem();
+        if (seleccionado2 == null) return;
+
+        boolean teniaSeleccion = boxEvaluador1.getSelectedIndex() != -1;
+
+        cargandoCombos = true;
+        boxEvaluador1.removeAllItems();
+
+        for (String email : evaluadoresOriginales) {
+            if (!email.equals(seleccionado2)) {
+                boxEvaluador1.addItem(email);
+            }
+        }
+
+        if (!teniaSeleccion) {
+            boxEvaluador1.setSelectedIndex(-1);
+        }
+
+        cargandoCombos = false;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -228,6 +284,19 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Evaluadores asignados correctamente.",
                     "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            // Cerrar este panel
+            this.setVisible(false);
+
+            // 🔄 Refrescar la tabla del GUIEvaluarFormato
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                java.awt.Container parent = this.getParent();
+                while (parent != null && !(parent instanceof co.unicauca.presentation.GUIAsingarEvaluadores)) {
+                    parent = parent.getParent();
+                }
+                if (parent instanceof co.unicauca.presentation.GUIAsingarEvaluadores gui) {
+                    gui.recargarTabla();
+                }
+            });
         } else {
             javax.swing.JOptionPane.showMessageDialog(this,
                     "No se pudo asignar los evaluadores. Verifique el backend.",
@@ -315,28 +384,33 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
 
     }
     private void cargarEvaluadoresDisponibles(Long idFormatoA) {
-        if (idFormatoA == null) return;
+        cargandoCombos = true;
 
-        // Obtener docentes
-        List<Persona> docentesDisponibles = evaluacionService.listarDocentesDisponibles(idFormatoA);
+        List<Persona> docentes = evaluacionService.listarDocentesDisponibles(idFormatoA);
 
-        // Limpiar comboboxes
         boxEvaluador1.removeAllItems();
         boxEvaluador2.removeAllItems();
 
-        // Llenar comboboxes
-        if (docentesDisponibles != null && !docentesDisponibles.isEmpty()) {
-            for (Persona docente : docentesDisponibles) {
-                boxEvaluador1.addItem(docente.getEmail());
-                boxEvaluador2.addItem(docente.getEmail());
+        // Llenar combos
+        if (docentes != null) {
+            for (Persona d : docentes) {
+                boxEvaluador1.addItem(d.getEmail());
+                boxEvaluador2.addItem(d.getEmail());
             }
         }
 
-        // ✅ Dejar ambos combos SIN selección por defecto
+        // 🔥 AHORA sí guardar la lista original
+        evaluadoresOriginales = new ArrayList<>();
+        for (int i = 0; i < boxEvaluador1.getItemCount(); i++) {
+            evaluadoresOriginales.add(boxEvaluador1.getItemAt(i));
+        }
+
+        // No seleccionar nada
         boxEvaluador1.setSelectedIndex(-1);
         boxEvaluador2.setSelectedIndex(-1);
-    }
 
+        cargandoCombos = false;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JLabel Icon;

@@ -44,6 +44,10 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
         // Poblar la tabla
         if (lista != null && !lista.isEmpty()) {
             for (Anteproyecto a : lista) {
+                // 🔥 FILTRO AQUÍ
+                if (!"ENTREGADO".equalsIgnoreCase(a.getEstado())) {
+                    continue; // Saltar si no cumple
+                }
                 Object[] fila = {
                         a.getId(),
                         a.getTitulo(),
@@ -86,8 +90,11 @@ public class GUIAsingarEvaluadores extends javax.swing.JFrame {
         Contenido.repaint();
 
     }
-    
-    
+
+    public void recargarTabla() {
+        cargarDatos(); // reutiliza el método existente
+        System.out.println("✅ Tabla de anteproyectos actualizada tras asignacion.");
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.

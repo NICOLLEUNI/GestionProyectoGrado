@@ -65,7 +65,9 @@ public class AnteproyectoController {
             @RequestParam String email1,
             @RequestParam String email2
     ) {
-        anteproyectoFacade.asignarEvaluadores(id, email1, email2);
-        return ResponseEntity.ok().build();
+        AnteproyectoResponseNotificacion response =
+                anteproyectoFacade.asignarEvaluadores(id, email1, email2);
+
+        return ResponseEntity.ok(response);  // ✔ AHORA SÍ DEVUELVES LA RESPUESTA
     }
 }
