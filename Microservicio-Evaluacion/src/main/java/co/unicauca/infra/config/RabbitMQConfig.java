@@ -23,6 +23,7 @@ public class RabbitMQConfig {
     public static final String FORMATOA_EVALUADO_QUEUE = "formatoa.evaluado.queue";
     public static final String FORMATOA_EVALUADO_NOTIFICATION_QUEUE = "formatoa.evaluado.notification.queue"; // nueva cola
     public static final String ANTEPROYECTO_EVALUACION_QUEUE = "anteproyecto.evaluacion.queue";
+    public static final String ANTEPROYECTO_ASIGNACION_QUEUE = "anteproyecto.asignacion.queue";
     public static final String AUDITORIA_QUEUE = "auditoria.queue";
 
 
@@ -48,6 +49,11 @@ public class RabbitMQConfig {
     @Bean
     public Queue anteproyectoQueue() {
         return new Queue(ANTEPROYECTO_EVALUACION_QUEUE, true);
+    }
+
+    @Bean
+    public Queue anteproyectoAsignacionQueue() {
+        return new Queue(ANTEPROYECTO_ASIGNACION_QUEUE, true);
     }
 
     @Bean

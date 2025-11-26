@@ -7,6 +7,7 @@ package co.unicauca.presentation;
 import co.unicauca.entity.Persona;
 import co.unicauca.presentation.views.DatosFormatoA;
 import co.unicauca.presentation.views.ListaFormatosA;
+import co.unicauca.presentation.views.Principal;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +24,12 @@ public class GUIMenuDocente extends javax.swing.JFrame {
     public GUIMenuDocente(Persona personaLogueado) {
         this.personaLogueado = personaLogueado;
         initComponents();
+        initContent();
     }
-
+    // Inicializa el contenido central con la vista principal
+    private void initContent() {
+        showJPanel(new Principal(personaLogueado));
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

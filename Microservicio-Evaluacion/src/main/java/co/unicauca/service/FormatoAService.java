@@ -2,6 +2,7 @@ package co.unicauca.service;
 
 import co.unicauca.entity.*;
 import co.unicauca.infra.dto.*;
+import co.unicauca.infra.dto.notificacion.FormatoAReponseNotificacion;
 import co.unicauca.repository.*;
 import org.springframework.stereotype.Service;
 

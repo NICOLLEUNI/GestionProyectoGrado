@@ -2,6 +2,7 @@ package co.unicauca.service.facade;
 
 import co.unicauca.entity.Anteproyecto;
 import co.unicauca.infra.dto.*;
+import co.unicauca.infra.dto.notificacion.AnteproyectoResponseNotificacion;
 import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.service.AnteproyectoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,18 @@ public class AnteproyectoFacade {
                 anteproyecto.getIdProyectoGrado()
         );
 
+        return response;
+    }
+    public AnteproyectoResponseNotificacion asignarEvaluadores(Long idAnteproyecto, String email1, String email2) {
+        Anteproyecto anteproyecto = anteproyectoService.asignarEvaluadores(idAnteproyecto, email1, email2);
+
+        AnteproyectoResponseNotificacion response = new AnteproyectoResponseNotificacion(
+                anteproyecto.getId(),
+                anteproyecto.getTitulo(),
+                anteproyecto.getEmailEvaluador1(),
+                anteproyecto.getEmailEvaluador2()
+        );
+        publisher.publishAnteproyectoAsignacion(response);
         return response;
     }
 }

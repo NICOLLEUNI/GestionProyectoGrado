@@ -38,6 +38,9 @@ public class Anteproyecto {
     @Column(nullable = false)
     private String rutaPdf;
 
+
+
+
     public Anteproyecto(Long id, String titulo, LocalDate fechaCreacion, EnumEstadoAnteproyecto estado, ProyectoGrado proyectoGrado, String rutaPdf) {
         this.id = id;
         this.titulo = titulo;
@@ -45,6 +48,7 @@ public class Anteproyecto {
         this.estado = estado;
         this.proyectoGrado = proyectoGrado;
         this.rutaPdf = rutaPdf;
+
     }
 
     public Anteproyecto() {

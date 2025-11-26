@@ -1,6 +1,8 @@
 package co.unicauca.controller;
 
+import co.unicauca.entity.Anteproyecto;
 import co.unicauca.infra.dto.*;
+import co.unicauca.infra.dto.notificacion.AnteproyectoResponseNotificacion;
 import co.unicauca.service.facade.AnteproyectoFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +57,15 @@ public class AnteproyectoController {
     public ResponseEntity<AnteproyectoResponse> buscarPorId(@PathVariable Long id) {
         AnteproyectoResponse response = anteproyectoFacade.buscarPorId(id);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/evaluadores")
+    public ResponseEntity<AnteproyectoResponseNotificacion> asignarEvaluadores(
+            @PathVariable Long id,
+            @RequestParam String email1,
+            @RequestParam String email2
+    ) {
+        anteproyectoFacade.asignarEvaluadores(id, email1, email2);
+        return ResponseEntity.ok().build();
     }
 }

@@ -3,7 +3,7 @@ package co.unicauca.service;
 import co.unicauca.entity.EnumEstado;
 import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
-import co.unicauca.infra.dto.FormatoAReponseNotificacion;
+import co.unicauca.infra.dto.notificacion.FormatoAReponseNotificacion;
 import co.unicauca.infra.dto.FormatoARequest;
 import co.unicauca.infra.dto.FormatoAResponse;
 import co.unicauca.repository.FormatoARepository;

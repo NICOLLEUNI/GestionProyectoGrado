@@ -1,5 +1,6 @@
 package co.unicauca.infra.listener;
 
+import co.unicauca.entity.Anteproyecto;
 import co.unicauca.infra.dto.AnteproyectoCreado;
 import co.unicauca.service.AnteproyectoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,5 +20,13 @@ public class AnteproyectoListener {
     @RabbitListener(queues = "anteproyecto.notificaciones.queue")
     public void recibirMensaje(AnteproyectoCreado evento) {
         anteproyectoService.procesarNotificacionCreado(evento);
+    }
+
+    /**
+     * Escucha los mensajes cuando un Anteproyecto es asignado.
+     */
+    @RabbitListener(queues = "anteproyecto.asignacion.queue")
+    public void recibirMensajeEvaluado(Anteproyecto anteproyecto) {
+        anteproyectoService.procesarNotificacionAsignado(anteproyecto);
     }
 }

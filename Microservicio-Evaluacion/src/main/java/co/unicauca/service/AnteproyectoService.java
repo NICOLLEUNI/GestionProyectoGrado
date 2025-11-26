@@ -44,4 +44,24 @@ public class AnteproyectoService {
         return anteproyectoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anteproyecto no encontrado con ID: " + id));
     }
+
+    /**
+     * Asigna los evaluadores a un anteproyecto ya existente.
+     */
+    public Anteproyecto asignarEvaluadores(Long idAnteproyecto, String evaluador1, String evaluador2) {
+        // Buscar el anteproyecto existente
+        Anteproyecto anteproyecto = anteproyectoRepository.findById(idAnteproyecto)
+                .orElseThrow(() -> new RuntimeException("❌ Anteproyecto no encontrado con ID: " + idAnteproyecto));
+
+        // Asignar evaluadores
+        anteproyecto.setEmailEvaluador1(evaluador1);
+        anteproyecto.setEmailEvaluador2(evaluador2);
+        if (evaluador1 == null || evaluador1.isBlank() ||
+                evaluador2 == null || evaluador2.isBlank()) {
+            throw new RuntimeException("❌ Debe proporcionar ambos emails de evaluadores.");
+        }
+
+        // Guardar cambios
+        return anteproyectoRepository.save(anteproyecto);
+    }
 }

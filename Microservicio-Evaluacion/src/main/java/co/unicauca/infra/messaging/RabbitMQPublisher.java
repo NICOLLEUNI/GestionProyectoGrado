@@ -45,7 +45,7 @@ public class RabbitMQPublisher {
         publish(RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE, anteproyectoResponse);
     }
 
-    public void publishUsuario(Object usuarioResponse) {
-        publish(RabbitMQConfig.AUDITORIA_QUEUE, usuarioResponse);
+    public void publishAnteproyectoAsignacion(Object anteproyectoResponseNotificacion) {
+        publish(RabbitMQConfig.ANTEPROYECTO_ASIGNACION_QUEUE, anteproyectoResponseNotificacion);
     }
 }

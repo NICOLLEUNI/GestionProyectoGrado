@@ -15,6 +15,7 @@ public class RabbitMQConfig {
     public static final String ANTEPROYECTO_NOTIFICACIONES_QUEUE = "anteproyecto.notificaciones.queue";
     public static final String NOTIFICACION_QUEUE = "notificacion.queue";
     public static final String FORMATOAVERSION_NOTIFICACIONES_QUEUE = "formatoaversion.notificaciones.queue";
+    public static final String ANTEPROYECTO_ASIGNACION_QUEUE = "anteproyecto.asignacion.queue";
 
     // Declara la cola para que Spring pueda escucharla
     @Bean
@@ -36,6 +37,10 @@ public class RabbitMQConfig {
     @Bean
     public Queue usuarioQueue() {
         return new Queue(NOTIFICACION_QUEUE, true);
+    }
+    @Bean
+    public Queue anteproyectoAsignacionQueue() {
+        return new Queue(ANTEPROYECTO_ASIGNACION_QUEUE, true);
     }
 
     // Convierte automáticamente los mensajes JSON a objetos Java (y viceversa)
