@@ -5,11 +5,19 @@ import co.unicauca.infra.dto.FormatoAVersionResponse;
 import co.unicauca.infra.dto.ProyectoGradoRequest;
 import co.unicauca.infra.dto.ProyectoGradoResponse;
 import co.unicauca.service.ProyectoGradoService;
+
+import co.unicauca.service.FormatoAVersionService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import co.unicauca.service.FormatoAVersionService;
 
 import java.util.List;
 import java.util.Map;
@@ -18,168 +26,168 @@ import java.util.Map;
 @RequestMapping("/api/proyectos-grado")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
+@Tag(
+        name = "Gestión de Proyectos de Grado",
+        description = "Endpoints para crear, consultar, actualizar y administrar el historial de proyectos de grado."
+)
 public class ProyectoGradoController {
 
     private final ProyectoGradoService proyectoGradoService;
     private final FormatoAVersionService formatoAVersionService;
 
-    /**
-     * ✅ CREAR NUEVO PROYECTO DE GRADO
-     */
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Crear un nuevo proyecto de grado",
+            description = "Registra un nuevo proyecto de grado a partir de la información enviada en el cuerpo de la solicitud."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Proyecto creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos o error creando el proyecto")
+    })
     @PostMapping
     public ResponseEntity<?> crearProyecto(@RequestBody ProyectoGradoRequest request) {
         try {
-            System.out.println("📨 [CONTROLLER] Creando proyecto de grado:");
-            System.out.println("   Nombre: " + request.nombre());
-            System.out.println("   FormatoA ID: " + request.IdFormatoA());
-            System.out.println("   Estudiantes: " + (request.estudiantesEmail() != null ? request.estudiantesEmail().size() : 0));
-
             ProyectoGradoResponse response = proyectoGradoService.crearProyecto(request);
-
-            System.out.println("✅ [CONTROLLER] Proyecto creado exitosamente - ID: " + response.id());
             return ResponseEntity.ok(response);
-
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR creando proyecto: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.badRequest().body(
-                    Map.of(
-                            "error", "Error al crear proyecto",
-                            "detalle", e.getMessage()
-                    )
+                    Map.of("error", "Error al crear proyecto", "detalle", e.getMessage())
             );
         }
     }
 
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Obtener proyecto de grado por email del estudiante",
+            description = "Retorna el proyecto asociado a un estudiante según su correo institucional."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Proyecto encontrado"),
+            @ApiResponse(responseCode = "404", description = "No existe un proyecto asociado al estudiante"),
+            @ApiResponse(responseCode = "500", description = "Error interno")
+    })
     @GetMapping("/estudiante/{email}")
-    public ResponseEntity<?> obtenerProyectoPorEstudiante(@PathVariable String email) {
-        try {
-            System.out.println("🔍 [CONTROLLER] Buscando proyecto de grado del estudiante: " + email);
+    public ResponseEntity<?> obtenerProyectoPorEstudiante(
+            @Parameter(description = "Correo electrónico del estudiante") @PathVariable String email) {
 
+        try {
             ProyectoGradoResponse proyecto = proyectoGradoService.buscarPorEmailEstudiante(email);
             return ResponseEntity.ok(proyecto);
-
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] No se encontró proyecto para el estudiante: " + email);
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR buscando proyecto del estudiante: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(
-                    Map.of("error", "Error interno al buscar proyecto del estudiante")
-            );
         }
     }
 
-
-
-
-    /**
-     * ✅ OBTENER PROYECTO POR ID
-     */
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Obtener proyecto por ID",
+            description = "Permite obtener la información completa de un proyecto de grado utilizando su ID único."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Proyecto encontrado"),
+            @ApiResponse(responseCode = "404", description = "Proyecto no encontrado")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        try {
-            System.out.println("🔍 [CONTROLLER] Buscando proyecto por ID: " + id);
+    public ResponseEntity<?> obtenerPorId(
+            @Parameter(description = "ID del proyecto a consultar") @PathVariable Long id) {
 
+        try {
             ProyectoGradoResponse proyecto = proyectoGradoService.buscarPorId(id);
-
-            System.out.println("✅ [CONTROLLER] Proyecto encontrado - ID: " + proyecto.id());
             return ResponseEntity.ok(proyecto);
-
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] Proyecto no encontrado - ID: " + id);
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR buscando proyecto: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(
-                    Map.of("error", "Error interno del servidor")
-            );
         }
     }
 
-    /**
-     * ✅ ACTUALIZAR PROYECTO
-     */
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Actualizar un proyecto de grado",
+            description = "Actualiza los datos del proyecto con base en la información enviada y el ID especificado."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Proyecto actualizado correctamente"),
+            @ApiResponse(responseCode = "404", description = "El proyecto no existe"),
+            @ApiResponse(responseCode = "500", description = "Error interno al actualizar")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarProyecto(@PathVariable Long id, @RequestBody ProyectoGradoRequest request) {
+    public ResponseEntity<?> actualizarProyecto(
+            @Parameter(description = "ID del proyecto a actualizar") @PathVariable Long id,
+            @RequestBody ProyectoGradoRequest request) {
+
         try {
-            System.out.println("✏️ [CONTROLLER] Actualizando proyecto - ID: " + id);
-            System.out.println("   Nuevo nombre: " + request.nombre());
-            System.out.println("   Nuevo FormatoA: " + request.IdFormatoA());
-
             ProyectoGradoResponse response = proyectoGradoService.actualizarProyecto(id, request);
-
-            System.out.println("✅ [CONTROLLER] Proyecto actualizado - ID: " + response.id());
             return ResponseEntity.ok(response);
-
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] ERROR actualizando proyecto: " + e.getMessage());
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR inesperado actualizando: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(
-                    Map.of("error", "Error interno del servidor")
-            );
         }
     }
 
-    /**
-     * ✅ ENDPOINTS PARA HISTORIAL MEMENTO
-     */
-
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Obtener historial del proyecto",
+            description = "Devuelve la lista de estados del proyecto almacenados mediante el patrón Memento."
+    )
     @GetMapping("/{id}/historial")
-    public ResponseEntity<?> obtenerHistorial(@PathVariable Long id) {
+    public ResponseEntity<?> obtenerHistorial(
+            @Parameter(description = "ID del proyecto") @PathVariable Long id) {
+
         try {
-            System.out.println("📊 [CONTROLLER] Obteniendo historial del proyecto: " + id);
-
             var historial = proyectoGradoService.obtenerHistorialProyecto(id);
-
-            System.out.println("✅ [CONTROLLER] Historial obtenido - Versiones: " + historial.size());
             return ResponseEntity.ok(historial);
-
         } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR obteniendo historial: " + e.getMessage());
             return ResponseEntity.internalServerError().body(
                     Map.of("error", "Error al obtener historial")
             );
         }
     }
 
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Obtener una versión específica dentro del historial",
+            description = "Consulta una versión puntual previamente almacenada del proyecto."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Versión encontrada en el historial"),
+            @ApiResponse(responseCode = "404", description = "La versión no existe dentro del historial")
+    })
     @GetMapping("/{id}/historial/{version}")
-    public ResponseEntity<?> obtenerVersionHistorial(@PathVariable Long id, @PathVariable int version) {
+    public ResponseEntity<?> obtenerVersionHistorial(
+            @Parameter(description = "ID del proyecto") @PathVariable Long id,
+            @Parameter(description = "Número de versión dentro del historial") @PathVariable int version) {
+
         try {
-            System.out.println("🔍 [CONTROLLER] Obteniendo versión " + version + " del historial: " + id);
-
             var memento = proyectoGradoService.obtenerEstadoProyectoVersion(id, version);
-
-            System.out.println("✅ [CONTROLLER] Versión del historial obtenida - Estado: " + memento.getEstado());
             return ResponseEntity.ok(memento);
-
         } catch (RuntimeException e) {
-            System.err.println("❌ [CONTROLLER] Versión no encontrada en historial: " + e.getMessage());
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            System.err.println("❌ [CONTROLLER] ERROR obteniendo versión del historial: " + e.getMessage());
-            return ResponseEntity.internalServerError().body(
-                    Map.of("error", "Error interno del servidor")
-            );
         }
     }
 
-    // 🔹 ENDPOINT para obtener el FormatoA de un proyecto específico
+    // --------------------------------------------------------------------
+    @Operation(
+            summary = "Obtener el Formato A asociado a un proyecto de grado",
+            description = "Retorna la última versión del Formato A vinculada al proyecto especificado."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Formato A encontrado"),
+            @ApiResponse(responseCode = "404", description = "El proyecto no tiene Formato A asociado")
+    })
     @GetMapping("/{proyectoId}/formato-a")
-    public ResponseEntity<?> getFormatoAByProyecto(@PathVariable Long proyectoId) {
+    public ResponseEntity<?> getFormatoAByProyecto(
+            @Parameter(description = "ID del proyecto") @PathVariable Long proyectoId) {
+
         try {
             FormatoAVersion version = formatoAVersionService.findByProyectoId(proyectoId);
             FormatoAVersionResponse response = convertirFormatoAResponse(version);
             return ResponseEntity.ok(response);
+
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", e.getMessage()));
         }
     }
 
-    // 🔹 Método de conversión para FormatoA (agregar esta clase interna)
+    // --------------------------------------------------------------------
     private FormatoAVersionResponse convertirFormatoAResponse(FormatoAVersion version) {
         return new FormatoAVersionResponse(
                 version.getId(),
@@ -193,6 +201,4 @@ public class ProyectoGradoController {
                 version.getIdFormatoA()
         );
     }
-
-
 }
