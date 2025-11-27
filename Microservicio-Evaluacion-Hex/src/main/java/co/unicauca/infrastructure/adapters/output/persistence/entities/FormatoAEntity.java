@@ -1,9 +1,9 @@
-package co.unicauca.infraestructure.adapters.output.persistence.entities;
+package co.unicauca.infrastructure.adapters.output.persistence.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
+
 import co.unicauca.domain.entities.EnumEstado;
 
 @Entity
@@ -18,12 +18,10 @@ public class FormatoAEntity {
 
     private String mode;
 
-    // RELACIÓN CON DIRECTOR
     @ManyToOne
     @JoinColumn(name = "project_manager_id")
     private PersonaEntity projectManager;
 
-    // RELACIÓN CON CO-DIRECTOR
     @ManyToOne
     @JoinColumn(name = "project_comanager_id")
     private PersonaEntity projectCoManager;
@@ -39,14 +37,13 @@ public class FormatoAEntity {
 
     private int counter;
 
-    // LISTA DE ESTUDIANTES
     @ManyToMany
     @JoinTable(
             name = "formato_a_estudiantes",
             joinColumns = @JoinColumn(name = "formato_a_id"),
             inverseJoinColumns = @JoinColumn(name = "persona_id")
     )
-    private List<PersonaEntity> estudiantes;
+    private List<PersonaEntity> estudiantes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private EnumEstado state;
@@ -54,8 +51,7 @@ public class FormatoAEntity {
     @Column(length = 2000)
     private String observations;
 
-    public FormatoAEntity() {
-    }
+    public FormatoAEntity() {}
 
     public FormatoAEntity(Long id, String title, String mode, PersonaEntity projectManager, PersonaEntity projectCoManager,
                           String generalObjective, String specificObjectives, String archivoPDF, String cartaLaboral,
@@ -75,8 +71,7 @@ public class FormatoAEntity {
         this.observations = observations;
     }
 
-    // ---------- GETTERS Y SETTERS ------------
-
+    // getters y setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -115,6 +110,4 @@ public class FormatoAEntity {
 
     public String getObservations() { return observations; }
     public void setObservations(String observations) { this.observations = observations; }
-
-
 }
