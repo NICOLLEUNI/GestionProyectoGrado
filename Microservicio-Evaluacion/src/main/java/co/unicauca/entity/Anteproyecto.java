@@ -24,4 +24,6 @@ public class Anteproyecto {
     private String archivoPDF;
     private String estado;
     private Long idProyectoGrado;
+    private String emailEvaluador1;
+    private String emailEvaluador2;
 }

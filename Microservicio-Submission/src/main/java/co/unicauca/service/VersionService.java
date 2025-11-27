@@ -175,8 +175,7 @@ public class VersionService {
         return (maxVersion != null ? maxVersion : 0) + 1;
     }
     @Transactional
-    public void eliminarVersionesPorFormatoA(Long formatoAId) {
-        List<FormatoAVersion> versiones = formatoVersionRepository.findByFormatoAId(formatoAId);
-        formatoVersionRepository.deleteAll(versiones);
+    public void eliminarVersionesPorFormatoA(Long idFormatoA) {
+        formatoVersionRepository.deleteByFormatoAId(idFormatoA);
     }
 }

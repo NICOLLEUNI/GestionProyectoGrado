@@ -179,4 +179,25 @@ public class EvaluacionService extends Subject {
             return new ArrayList<>();
         }
     }
+    public Anteproyecto asignarEvaluadores(Long id, String email1, String email2) {
+        try {
+            String url = "http://localhost:8082/api/anteproyectos/" + id
+                    + "/evaluadores?email1=" + email1 + "&email2=" + email2;
+
+            System.out.println("📤 Enviando petición de asignación de evaluadores:");
+            System.out.println("URL → " + url);
+
+            String jsonResponse = HttpUtil.put(url, ""); // PUT vacío
+
+            System.out.println("📦 Respuesta del backend Submission: " + jsonResponse);
+
+            // Convertimos la respuesta a objeto Anteproyecto
+            return gson.fromJson(jsonResponse, Anteproyecto.class);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error al asignar evaluadores: " + e.getMessage());
+            return null;
+        }
+    }
 }

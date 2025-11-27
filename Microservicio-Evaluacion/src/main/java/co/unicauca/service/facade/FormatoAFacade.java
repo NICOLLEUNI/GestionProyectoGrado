@@ -2,6 +2,7 @@ package co.unicauca.service.facade;
 
 import co.unicauca.entity.*;
 import co.unicauca.infra.dto.*;
+import co.unicauca.infra.dto.notificacion.FormatoAReponseNotificacion;
 import co.unicauca.infra.messaging.RabbitMQPublisher;
 import co.unicauca.service.FormatoAService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class FormatoAFacade {

@@ -35,12 +35,20 @@ public class Anteproyecto {
     @JoinColumn(name = "proyecto_grado_id")
     private ProyectoGrado proyectoGrado;
 
-    public Anteproyecto(Long id, String titulo, LocalDate fechaCreacion, EnumEstadoAnteproyecto estado, ProyectoGrado proyectoGrado) {
+    @Column(nullable = false)
+    private String rutaPdf;
+
+
+
+
+    public Anteproyecto(Long id, String titulo, LocalDate fechaCreacion, EnumEstadoAnteproyecto estado, ProyectoGrado proyectoGrado, String rutaPdf) {
         this.id = id;
         this.titulo = titulo;
         this.fechaCreacion = fechaCreacion;
         this.estado = estado;
         this.proyectoGrado = proyectoGrado;
+        this.rutaPdf = rutaPdf;
+
     }
 
     public Anteproyecto() {

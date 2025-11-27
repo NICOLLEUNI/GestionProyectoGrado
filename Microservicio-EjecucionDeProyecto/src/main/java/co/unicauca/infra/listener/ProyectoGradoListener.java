@@ -6,6 +6,8 @@ import co.unicauca.service.ProyectoGradoService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class ProyectoGradoListener {
 
@@ -31,6 +33,22 @@ public class ProyectoGradoListener {
 
         } catch (Exception e) {
             System.out.println("❌ [LISTENER] Error delegando Request al Service: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.PROYECTO_ELIMINADO_QUEUE)
+    public void recibirProyectoEliminado(Map<String, Object> mensaje) {
+        Long formatoAId = Long.valueOf(mensaje.get("formatoAId").toString());
+        String razon = (String) mensaje.get("razon");
+
+        System.out.println("️ [EJECUCION] Eliminando PROYECTO - FormatoA ID: " + formatoAId + ", Razón: " + razon);
+
+        try {
+            proyectoGradoService.eliminarProyectoPorFormatoA(formatoAId);
+            System.out.println("✅ [EJECUCION] Proyecto eliminado exitosamente");
+        } catch (Exception e) {
+            System.err.println("❌ [EJECUCION] Error eliminando proyecto: " + e.getMessage());
             e.printStackTrace();
         }
     }

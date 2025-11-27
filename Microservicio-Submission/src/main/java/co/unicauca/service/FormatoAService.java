@@ -46,32 +46,24 @@ public class FormatoAService {
 
     @Transactional
     public boolean eliminarFormatoA(Long id) {
-        Optional<FormatoA> formatoAOpt = formatoARepository.findById(id);
+        FormatoA formatoA = formatoARepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("FormatoA no encontrado"));
 
-        if (formatoAOpt.isPresent()) {
-            FormatoA formatoA = formatoAOpt.get();
+        // Eliminar versiones PRIMERO
+        versionService.eliminarVersionesPorFormatoA(id);
 
-            try {
-                proyectoService.eliminarProyectoPorFormatoA(id);
-            } catch (Exception e) {
-                System.err.println("⚠️ No se pudo eliminar proyecto asociado: " + e.getMessage());
-            }
+        // Eliminar proyecto asociado
+        proyectoService.eliminarProyectoPorFormatoA(id);
 
-            try {
-                versionService.eliminarVersionesPorFormatoA(id);
-            } catch (Exception e) {
-                System.err.println("⚠️ No se pudieron eliminar versiones asociadas: " + e.getMessage());
-            }
+        // PUBLICAR EVENTO PARA EJECUCIÓN-PROYECTO
+        rabbitMQPublisher.publicarFormatoAEliminado(id, "tres_rechazos");
+        rabbitMQPublisher.publicarProyectoEliminado(id, "tres_rechazos");
 
-            formatoARepository.delete(formatoA);
+        // Ahora sí eliminar FormatoA
+        formatoARepository.delete(formatoA);
 
-            return true;
-        } else {
-            System.err.println("❌ FormatoA no encontrado con id: " + id);
-            return false;
-        }
+        return true;
     }
-
 
     //metodo para subir un formatoA
     @Transactional

@@ -481,6 +481,76 @@ public class FormatoAVersionService {
     }
 
 
+    /**
+     *  ELIMINAR TODAS LAS VERSIONES DE UN FORMATOA
+     */
+    @Transactional
+    public void eliminarVersionesPorFormatoA(Long formatoAId) {
+        System.out.println("🗑️ [EJECUCION-PROYECTO] Eliminando versiones para FormatoA ID: " + formatoAId);
+
+        try {
+            // Eliminar versiones de la base de datos
+            versionRepository.deleteByFormatoAId(formatoAId);
+
+            // También limpiar el historial de mementos si es necesario
+            // historyManager.cleanHistory("FORMATO_A", formatoAId);
+
+            System.out.println(" [EJECUCION-PROYECTO] Versiones eliminadas exitosamente para FormatoA ID: " + formatoAId);
+
+        } catch (Exception e) {
+            System.err.println(" [EJECUCION-PROYECTO] Error eliminando versiones para FormatoA ID: " + formatoAId);
+            e.printStackTrace();
+            throw new RuntimeException("No se pudieron eliminar las versiones del FormatoA: " + formatoAId, e);
+        }
+    }
+
+    /**
+     *  ELIMINAR VERSIÓN ESPECÍFICA
+     */
+    @Transactional
+    public void eliminarVersion(Long id, Long formatoAId) {
+        System.out.println("Eliminando versión ID: " + id + " del FormatoA: " + formatoAId);
+
+        try {
+            versionRepository.deleteByIdAndFormatoAId(id, formatoAId);
+            System.out.println(" Versión eliminada exitosamente");
+
+        } catch (Exception e) {
+            System.err.println(" Error eliminando versión ID: " + id);
+            throw new RuntimeException("No se pudo eliminar la versión: " + id, e);
+        }
+    }
+
+    /**
+     * ✅ LIMPIAR VERSIONES ANTERIORES (mantener solo las N más recientes)
+     */
+    @Transactional
+    public void limpiarVersionesAnteriores(Long formatoAId, Integer mantenerVersiones) {
+        System.out.println(" Limpiando versiones anteriores para FormatoA: " + formatoAId + ", manteniendo: " + mantenerVersiones);
+
+        try {
+            // Obtener todas las versiones ordenadas
+            List<FormatoAVersion> versiones = versionRepository.findByIdFormatoAOrderByNumeroVersionDesc(formatoAId);
+
+            if (versiones.size() > mantenerVersiones) {
+                // Eliminar versiones antiguas
+                List<FormatoAVersion> versionesAEliminar = versiones.subList(mantenerVersiones, versiones.size());
+
+                for (FormatoAVersion version : versionesAEliminar) {
+                    versionRepository.delete(version);
+                }
+
+                System.out.println(" Eliminadas " + versionesAEliminar.size() + " versiones antiguas");
+            } else {
+                System.out.println("No hay versiones antiguas para eliminar");
+            }
+
+        } catch (Exception e) {
+            System.err.println(" Error limpiando versiones antiguas");
+            throw new RuntimeException("Error en limpieza de versiones", e);
+        }
+    }
+
 
 }
 

@@ -10,6 +10,7 @@ import co.unicauca.entity.Persona;
 import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.service.EvaluacionService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,6 +22,8 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     Anteproyecto anteproyectoActual;
     private EvaluacionService evaluacionService;
     private Persona personaLogueado;
+    private boolean cargandoCombos = false;
+    private List<String> evaluadoresOriginales;
     /**
      * Creates new form AsingnacionEvaluadores
      */
@@ -28,8 +31,61 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         this.personaLogueado = personaLogueado;
         this.evaluacionService = evaluacionService;
         initComponents();
+       agregarEventosCombos();
+    }
+    private void agregarEventosCombos() {
+        boxEvaluador1.addActionListener(e -> actualizarSegundoCombo());
+        boxEvaluador2.addActionListener(e -> actualizarPrimerCombo());
+    }
+    private void actualizarSegundoCombo() {
+        if (cargandoCombos) return;
+
+        String seleccionado1 = (String) boxEvaluador1.getSelectedItem();
+        if (seleccionado1 == null) return;
+
+        // 🔥 Saber si el segundo combo tenía algo seleccionado
+        boolean teniaSeleccion = boxEvaluador2.getSelectedIndex() != -1;
+
+        cargandoCombos = true;
+        boxEvaluador2.removeAllItems();
+
+        for (String email : evaluadoresOriginales) {
+            if (!email.equals(seleccionado1)) {
+                boxEvaluador2.addItem(email);
+            }
+        }
+
+        // ❗ Solo lo dejo sin seleccionar si NO tenía selección antes
+        if (!teniaSeleccion) {
+            boxEvaluador2.setSelectedIndex(-1);
+        }
+
+        cargandoCombos = false;
     }
 
+    private void actualizarPrimerCombo() {
+        if (cargandoCombos) return;
+
+        String seleccionado2 = (String) boxEvaluador2.getSelectedItem();
+        if (seleccionado2 == null) return;
+
+        boolean teniaSeleccion = boxEvaluador1.getSelectedIndex() != -1;
+
+        cargandoCombos = true;
+        boxEvaluador1.removeAllItems();
+
+        for (String email : evaluadoresOriginales) {
+            if (!email.equals(seleccionado2)) {
+                boxEvaluador1.addItem(email);
+            }
+        }
+
+        if (!teniaSeleccion) {
+            boxEvaluador1.setSelectedIndex(-1);
+        }
+
+        cargandoCombos = false;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -63,6 +119,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         lblPDF = new javax.swing.JLabel();
+        btAsignar = new javax.swing.JButton();
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setForeground(new java.awt.Color(255, 255, 255));
@@ -124,7 +181,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         Contenido.add(jSeparator12, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 166, 230, -1));
 
         Icon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
-        Contenido.add(Icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 194, 80));
+        Contenido.add(Icon, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 340, 194, 80));
 
         lblEvaluador1.setFont(new java.awt.Font("Roboto Light", 1, 14)); // NOI18N
         lblEvaluador1.setForeground(new java.awt.Color(0, 0, 0));
@@ -138,9 +195,9 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         lblCodirector.setForeground(new java.awt.Color(0, 0, 0));
         lblCodirector.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblCodirector.setText("Segundo Evaluador");
-        Contenido.add(lblCodirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, -1, -1));
+        Contenido.add(lblCodirector, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 290, -1, -1));
 
-        Contenido.add(boxEvaluador2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 380, 192, -1));
+        Contenido.add(boxEvaluador2, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, 192, -1));
 
         jLabel1.setFont(new java.awt.Font("Roboto Medium", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 255));
@@ -169,6 +226,16 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
 
         Contenido.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 193, -1, -1));
 
+        btAsignar.setBackground(new java.awt.Color(51, 51, 255));
+        btAsignar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btAsignar.setText("ASIGNAR");
+        btAsignar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btAsignarMouseClicked(evt);
+            }
+        });
+        Contenido.add(btAsignar, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 380, 100, 30));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -180,6 +247,62 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btAsignarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAsignarMouseClicked
+        if (anteproyectoActual == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "No hay un anteproyecto seleccionado.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener emails seleccionados en los combos
+        String email1 = (String) boxEvaluador1.getSelectedItem();
+        String email2 = (String) boxEvaluador2.getSelectedItem();
+
+        if (email1 == null || email2 == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar ambos evaluadores.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (email1.equals(email2)) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Los dos evaluadores deben ser diferentes.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Long id = anteproyectoActual.getId();
+
+        // 🔥 LLAMAR AL MÉTODO QUE ACABAMOS DE CREAR
+        Anteproyecto actualizado =
+                evaluacionService.asignarEvaluadores(id, email1, email2);
+
+        if (actualizado != null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Evaluadores asignados correctamente.",
+                    "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            // Cerrar este panel
+            this.setVisible(false);
+
+            // 🔄 Refrescar la tabla del GUIEvaluarFormato
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                java.awt.Container parent = this.getParent();
+                while (parent != null && !(parent instanceof co.unicauca.presentation.GUIAsingarEvaluadores)) {
+                    parent = parent.getParent();
+                }
+                if (parent instanceof co.unicauca.presentation.GUIAsingarEvaluadores gui) {
+                    gui.recargarTabla();
+                }
+            });
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "No se pudo asignar los evaluadores. Verifique el backend.",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btAsignarMouseClicked
     public void setAnteproyecto(Anteproyecto anteproyecto) {
         if (anteproyecto == null) return;
         this.anteproyectoActual = anteproyecto;
@@ -261,33 +384,39 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
 
     }
     private void cargarEvaluadoresDisponibles(Long idFormatoA) {
-        if (idFormatoA == null) return;
+        cargandoCombos = true;
 
-        // Obtener docentes
-        List<Persona> docentesDisponibles = evaluacionService.listarDocentesDisponibles(idFormatoA);
+        List<Persona> docentes = evaluacionService.listarDocentesDisponibles(idFormatoA);
 
-        // Limpiar comboboxes
         boxEvaluador1.removeAllItems();
         boxEvaluador2.removeAllItems();
 
-        // Llenar comboboxes
-        if (docentesDisponibles != null && !docentesDisponibles.isEmpty()) {
-            for (Persona docente : docentesDisponibles) {
-                boxEvaluador1.addItem(docente.getEmail());
-                boxEvaluador2.addItem(docente.getEmail());
+        // Llenar combos
+        if (docentes != null) {
+            for (Persona d : docentes) {
+                boxEvaluador1.addItem(d.getEmail());
+                boxEvaluador2.addItem(d.getEmail());
             }
         }
 
-        // ✅ Dejar ambos combos SIN selección por defecto
+        // 🔥 AHORA sí guardar la lista original
+        evaluadoresOriginales = new ArrayList<>();
+        for (int i = 0; i < boxEvaluador1.getItemCount(); i++) {
+            evaluadoresOriginales.add(boxEvaluador1.getItemAt(i));
+        }
+
+        // No seleccionar nada
         boxEvaluador1.setSelectedIndex(-1);
         boxEvaluador2.setSelectedIndex(-1);
-    }
 
+        cargandoCombos = false;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JLabel Icon;
     private javax.swing.JComboBox<String> boxEvaluador1;
     private javax.swing.JComboBox<String> boxEvaluador2;
+    private javax.swing.JButton btAsignar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator10;

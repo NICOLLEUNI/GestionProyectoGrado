@@ -307,4 +307,8 @@ public class SubmissionService {
             return List.of(); // Retorna lista vacía si ocurre un error
         }
     }
+    /**
+     * Asigna los dos evaluadores a un anteproyecto en el microservicio Submission.
+     */
+
 }
