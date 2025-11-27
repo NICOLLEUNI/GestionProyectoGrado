@@ -393,6 +393,7 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
         });
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel BackGround;
     private javax.swing.JLabel Logo;

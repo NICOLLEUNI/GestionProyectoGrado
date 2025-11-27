@@ -79,18 +79,21 @@ class AuthControllerTest {
                 "juan.perez@unicauca.edu.co",
                 "Password123!"
         );
-/*
+
         // Setup response objects
-        personaResponse = new PersonaResponse(
-                1L,
-                "Juan",
-                "Pérez",
-                "juan.perez@unicauca.edu.co",
-                Set.of("ESTUDIANTE"),
-                null,
-                "INGENIERIA_DE_SISTEMAS"
-        );
-*/
+        personaResponse = PersonaResponse.builder()
+                .id(1L)
+                .name("Juan")
+                .lastname("Pérez")
+                .email("juan.perez@unicauca.edu.co")
+                .roles(Set.of("ESTUDIANTE"))
+                .department(null)
+                .programa("INGENIERIA_DE_SISTEMAS")
+                .phone("3123456789")
+                .build();
+
+
+
         loginResponse = new LoginResponse(personaResponse, "jwt-token");
     }
 

@@ -558,6 +558,21 @@ private void cargarDepartamentosFallback() {
             erroresFrontend.add("• La contraseña es obligatoria");
         }
 
+        // Validar nombre - solo caracteres y mínimo 2
+        if (!nombre.isEmpty() && !nombre.equals("Ingrese su Nombre")) {
+            if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$")) {
+                erroresFrontend.add("• El nombre debe contener solo letras y tener al menos 2 caracteres");
+            }
+        }
+
+        // Validar apellidos - solo caracteres y mínimo 2
+        if (!apellidos.isEmpty() && !apellidos.equals("Ingrese sus Apellidos")) {
+            if (!apellidos.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$")) {
+                erroresFrontend.add("• Los apellidos deben contener solo letras y tener al menos 2 caracteres");
+            }
+        }
+
+
         // ✅ AGREGADO: Validar email institucional
         if (!email.isEmpty() && !email.equals("Ingrese su Email") && !email.toLowerCase().endsWith("@unicauca.edu.co")) {
             erroresFrontend.add("• El email debe ser institucional (@unicauca.edu.co)");

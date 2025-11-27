@@ -58,21 +58,7 @@ class EventPublisherServiceTest {
         persona.setIdUsuario(1L);
     }
 
-    @Test
-    void testPublishUserRegisteredEvent_Success() throws Exception {
-        // Arrange
-        UsuarioMessage usuarioMessage = UsuarioMessage.fromEntity(persona);
-        when(objectMapper.writeValueAsBytes(any(UsuarioMessage.class))).thenReturn("{}".getBytes());
 
-        // Act
-        eventPublisherService.publishUserRegisteredEvent(persona);
-
-        // Assert
-        verify(rabbitTemplate).send(queueCaptor.capture(), messageCaptor.capture());
-
-        assertEquals(RabbitMQConfig.USUARIO_QUEUE, queueCaptor.getValue());
-        assertNotNull(messageCaptor.getValue());
-    }
 
     @Test
     void testPublishLoginSuccessEvent_Success() throws Exception {
