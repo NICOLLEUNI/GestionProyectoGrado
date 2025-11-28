@@ -22,12 +22,7 @@ public class Anteproyecto {
                         String emailEvaluador1,
                         String emailEvaluador2) {
 
-        validarTitulo(titulo);
-        validarFechaCreacion(fechaCreacion);
-        validarArchivoPDF(archivoPDF);
-        validarEmail(emailEvaluador1, "Evaluador 1");
-        validarEmail(emailEvaluador2, "Evaluador 2");
-        validarIdProyecto(idProyectoGrado);
+
 
         this.id = id;
         this.titulo = titulo;
@@ -39,45 +34,63 @@ public class Anteproyecto {
         this.emailEvaluador2 = emailEvaluador2;
     }
 
+    public Anteproyecto() {
+    }
 
+    public void asignarId(Long id) {
+        if (id != null && id <= 0) {
+            throw new IllegalArgumentException("El ID del anteproyecto debe ser mayor a cero si es proporcionado.");
+        }
+        this.id = id;
+    }
 
-    private void validarTitulo(String titulo) {
+    public void asignarTitulo(String titulo) {
         if (titulo == null || titulo.isBlank()) {
             throw new IllegalArgumentException("El título del anteproyecto no puede estar vacío.");
         }
+        this.titulo = titulo;
     }
 
-    private void validarFechaCreacion(LocalDate fecha) {
+    public void asignarFechaCreacion(LocalDate fecha) {
         if (fecha == null) {
             throw new IllegalArgumentException("La fecha de creación es obligatoria.");
         }
         if (fecha.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("La fecha de creación no puede estar en el futuro.");
         }
+        this.fechaCreacion = fecha;
     }
 
-    private void validarArchivoPDF(String archivoPDF) {
+    public void asignarArchivoPDF(String archivoPDF) {
         if (archivoPDF == null || archivoPDF.isBlank()) {
             throw new IllegalArgumentException("El archivo PDF es obligatorio.");
         }
         if (!archivoPDF.toLowerCase().endsWith(".pdf")) {
             throw new IllegalArgumentException("El archivo debe ser un PDF válido.");
         }
+        this.archivoPDF = archivoPDF;
     }
 
-    private void validarEmail(String email, String campo) {
+    public void asignarEmailEvaluador(String email, String campo) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("El email de " + campo + " es obligatorio.");
         }
         if (!email.contains("@")) {
             throw new IllegalArgumentException("El email de " + campo + " no es válido.");
         }
+
+        if (campo.equals("Evaluador 1")) {
+            this.emailEvaluador1 = email;
+        } else if (campo.equals("Evaluador 2")) {
+            this.emailEvaluador2 = email;
+        }
     }
 
-    private void validarIdProyecto(Long idProyectoGrado) {
+    public void asignarIdProyecto(Long idProyectoGrado) {
         if (idProyectoGrado == null || idProyectoGrado <= 0) {
             throw new IllegalArgumentException("El ID del proyecto de grado debe ser válido.");
         }
+        this.idProyectoGrado = idProyectoGrado;
     }
 
     public void asignar() {
@@ -89,7 +102,13 @@ public class Anteproyecto {
 
         this.estado = "ASIGNAR";
     }
-
+    public void asignarEstado(String estado) {
+        if ("ENTREGADO".equalsIgnoreCase(estado)) {
+            this.estado = "ENTREGADO";
+        } else {
+            throw new IllegalArgumentException("El estado solo puede ser 'ENTREGADO'");
+        }
+    }
 
     public Long getId() { return id; }
     public String getTitulo() { return titulo; }
