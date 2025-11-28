@@ -11,11 +11,11 @@ public interface FormatoAFacadeInPort {
 
     FormatoAResponse crearFormatoA(FormatoARequest request);
 
-    List<FormatoA> listarFormatosA();
+    List<FormatoAResponse> listarFormatosA();
 
     FormatoAResponse actualizarEstado(Long id, EnumEstado nuevoEstado, String observaciones);
 
-    FormatoA obtenerFormatoAPorId(Long id);
+    FormatoAResponse obtenerFormatoAPorId(Long id);
 
-    List<FormatoA> listarFormatosPorPrograma(String programa);
+    List<FormatoAResponse> listarFormatosPorPrograma(String programa);
 }

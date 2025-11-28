@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormatoAFacade implements FormatoAFacadeInPort {
@@ -49,7 +50,15 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
      * Lista todos los FormatoA existentes.
      */
     public List<FormatoAResponse> listarFormatosA() {
-        return formatoAService.listarTodos();
+        return formatoAService.listarTodos().stream()
+                .map(f -> new FormatoAResponse(
+                        f.getId().intValue(),
+                        f.getTitle(),
+                        f.getState().toString(),
+                        f.getObservations(),
+                        f.getCounter()
+                ))
+                .collect(Collectors.toList());
     }
     /**
      * Actualiza el estado de un FormatoA y notifica por RabbitMQ.
@@ -81,22 +90,40 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
     /**
      * Buscar FormatoA por id.
      */
-    public FormatoA obtenerFormatoAPorId(Long id) {
-        return formatoAService.findById(id)
+    public FormatoAResponse obtenerFormatoAPorId(Long id) {
+        FormatoA formato = formatoAService.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe FormatoA con id: " + id));
+
+        FormatoAResponse response = new FormatoAResponse(
+                formato.getId().intValue(),
+                formato.getTitle(),
+                formato.getState().toString(),
+                formato.getObservations(),
+                formato.getCounter()
+        );
+
+        return response;
     }
 
     /**
      * Listar formatos por programa académico.
      */
-    public List<FormatoA> listarFormatosPorPrograma(String programa) {
+    public List<FormatoAResponse> listarFormatosPorPrograma(String programa) {
         List<FormatoA> lista = formatoAService.listarPorPrograma(programa);
 
         if (lista.isEmpty()) {
             throw new RuntimeException("No hay formatos para el programa: " + programa);
         }
 
-        return lista;
+        return lista.stream()
+                .map(f -> new FormatoAResponse(
+                        f.getId().intValue(),
+                        f.getTitle(),
+                        f.getState().toString(),
+                        f.getObservations(),
+                        f.getCounter()
+                ))
+                .toList();
     }
 
 }

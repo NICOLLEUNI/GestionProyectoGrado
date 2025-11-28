@@ -83,7 +83,7 @@ public class FormatoAService  {
     }
 
 
-    public List<FormatoAResponse> listarTodos() {
+    public List<FormatoA> listarTodos() {
         return formatoARepo.findAll();
     }
 
@@ -95,9 +95,9 @@ public class FormatoAService  {
                 .toList();
     }
 
-    // En FormatoAService - CORREGIDO
+
     public Optional<FormatoA> findById(Long id) {
-        return formatoARepo.findById(id); // ← Ya retorna Optional, no uses orElse(null)
+        return formatoARepo.findById(id);
     }
 
 }
