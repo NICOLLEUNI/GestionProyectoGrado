@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormatoAService  {
@@ -24,47 +25,48 @@ public class FormatoAService  {
     }
 
 
-    public FormatoA crearOActualizar(FormatoARequest req) {
+    public FormatoA guardarFormatoA(FormatoARequest request) {
 
-        FormatoA formato = req.id() != null
-                ? formatoARepo.findById(req.id()).orElse(null)
-                : null;
+        FormatoA formatoA;
 
-        if (formato == null) {
-            formato = new FormatoA(
-                    req.id(),
-                    req.title(),
-                    req.mode(),
-                    null,
-                    null,
-                    req.generalObjetive(),
-                    req.specificObjetives(),
-                    req.archivoPDF(),
-                    req.cartaLaboral(),
-                    req.counter(),
-                    new ArrayList<>(),
-                    EnumEstado.ENTREGADO,
-                    null
-            );
+        if (request.id() != null) {
+            formatoA = formatoARepo.findById(request.id())
+                    .orElseGet(FormatoA::new);
+        } else {
+            formatoA = new FormatoA();
         }
 
-        Persona manager = personaRepo.findByEmail(req.projectManagerEmail()).orElse(null);
-        Persona coManager = personaRepo.findByEmail(req.projectCoManagerEmail()).orElse(null);
+        // Campos simples
+        formatoA.actualizarTituloD(request.title());
+        formatoA.actualizarModo(request.mode());
+        formatoA.actualizarGeneralObjective(request.generalObjetive());
+        formatoA.actualizarSpecificObjectives(request.specificObjetives());
+        formatoA.actualizarArchivoPDF(request.archivoPDF());
+        formatoA.actualizarCartaLaboral(request.cartaLaboral());
+        formatoA.actualizarCounter(request.counter());
 
-        if (manager != null) formato.asignarManager(manager);
-        if (coManager != null) formato.asignarCoManager(coManager);
+        // Director y codirector
+        Persona director = personaRepo.findByEmail(request.projectManagerEmail()).orElse(null);
+        Persona codirector = personaRepo.findByEmail(request.projectCoManagerEmail()).orElse(null);
 
-        if (req.estudiante() != null) {
-            for (String email : req.estudiante()) {
-                personaRepo.findByEmail(email)
-                        .ifPresent(formato::addEstudiante);
-            }
+        formatoA.asignarManagerD(director);
+        formatoA.asignarCoManagerD(codirector);
+
+        // Estudiantes
+        if (request.estudiante() != null) {
+           List<Persona> estudiantes = request.estudiante() .stream()
+                   .map(email -> personaRepo.findByEmail(email).orElse(null))
+                   .filter(e -> e != null)
+                   .collect(Collectors.toList());
+           formatoA.asignarEstudiantesD(estudiantes);
+
         }
 
-        formato.validarYAsignarEstadoInicial(EnumEstado.ENTREGADO);
+        formatoA.validarYAsignarEstadoInicialD(EnumEstado.ENTREGADO);
 
-        return formatoARepo.save(formato);
-    }
+        return formatoARepo.save(formatoA);
+     }
+
 
 
     public Optional<FormatoA> actualizarEstado(Long id, EnumEstado newState, String observations) {

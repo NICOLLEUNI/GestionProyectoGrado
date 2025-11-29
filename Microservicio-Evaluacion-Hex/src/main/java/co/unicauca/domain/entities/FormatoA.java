@@ -1,5 +1,6 @@
 package co.unicauca.domain.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FormatoA {
@@ -21,6 +22,10 @@ public class FormatoA {
     private EnumEstado state;
     private String observations;
 
+    public FormatoA() {
+        this.estudiantes = new ArrayList<>();
+    }
+
     public FormatoA(Long id, String title, String mode, Persona projectManager, Persona projectCoManager, String generalObjective, String specificObjectives, String archivoPDF, String cartaLaboral, int counter, List<Persona> estudiantes, EnumEstado state, String observations) {
         this.id = id;
         this.title = title;
@@ -32,35 +37,11 @@ public class FormatoA {
         this.archivoPDF = archivoPDF;
         this.cartaLaboral = cartaLaboral;
         this.counter = counter;
-        this.estudiantes = estudiantes;
+        this.estudiantes = estudiantes != null ? estudiantes : new ArrayList<>();
         this.state = state;
         this.observations = observations;
     }
 
-    public void asignarManager(Persona projectManager) {
-        if (projectManager == null) throw new IllegalArgumentException("Director no puede ser nulo");
-        if (!projectManager.tieneRol(EnumRol.DOCENTE)) throw new IllegalStateException("Persona no es docente");
-        this.projectManager = projectManager;
-    }
-
-    public void asignarCoManager(Persona projectCoManager) {
-        if (projectCoManager == null) throw new IllegalArgumentException("El Co-Director no puede ser nulo");
-        if (!projectCoManager.tieneRol(EnumRol.DOCENTE)) throw new IllegalStateException("Persona no es docente");
-        this.projectCoManager = projectCoManager;
-    }
-
-    public void addEstudiante(Persona estudiante) {
-        if (estudiante == null) throw new IllegalArgumentException("Estudiante inválido");
-        if (!estudiante.tieneRol(EnumRol.ESTUDIANTE)) throw new IllegalStateException("La persona no es estudiante");
-        this.estudiantes.add(estudiante);
-    }
-
-    public void validarYAsignarEstadoInicial(EnumEstado estado) {
-        if (estado != EnumEstado.ENTREGADO) {
-            throw new IllegalStateException("El FormatoA debe recibirse como ENTREGADO");
-        }
-        this.state = EnumEstado.ENTREGADO;
-    }
 
     public void aprobar() {
         if (this.state != EnumEstado.ENTREGADO) {
@@ -141,15 +122,23 @@ public class FormatoA {
     }
 
     public void asignarCoManagerD(Persona co) {
-        if (co == null) throw new IllegalArgumentException("El Co-Director no puede ser nulo");
-        if (!co.tieneRol(EnumRol.DOCENTE)) throw new IllegalStateException("Persona no es docente");
+        // Codirector puede ser null (opcional)
+        if (co != null && !co.tieneRol(EnumRol.DOCENTE)) {
+            throw new IllegalStateException("Persona no es docente");
+        }
         this.projectCoManager = co;
     }
 
-    public void addEstudianteD(Persona estudiante) {
-        if (estudiante == null) throw new IllegalArgumentException("Estudiante inválido");
-        if (!estudiante.tieneRol(EnumRol.ESTUDIANTE)) throw new IllegalStateException("La persona no es estudiante");
-        this.estudiantes.add(estudiante);
+    public void asignarEstudiantesD(List<Persona> lista) {
+        if (lista == null) return;
+
+        this.estudiantes.clear();
+
+        for (Persona e : lista) {
+            if (e == null) throw new IllegalArgumentException("Estudiante inválido");
+            if (!e.tieneRol(EnumRol.ESTUDIANTE)) throw new IllegalStateException("La persona no es estudiante");
+            this.estudiantes.add(e);
+        }
     }
 
     public void validarYAsignarEstadoInicialD(EnumEstado estado) {
@@ -157,10 +146,6 @@ public class FormatoA {
         this.state = EnumEstado.ENTREGADO;
     }
 
-    public void aprobarD() {
-        if (this.state != EnumEstado.ENTREGADO) throw new IllegalStateException("Solo se puede aprobar un formato entregado");
-        this.state = EnumEstado.APROBADO;
-    }
 
     public void rechazarD(String observations) {
         if (observations == null || observations.isBlank()) throw new IllegalArgumentException("Debe proveer observaciones para rechazo");

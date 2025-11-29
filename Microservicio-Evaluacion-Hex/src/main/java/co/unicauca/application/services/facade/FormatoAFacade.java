@@ -30,7 +30,7 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
      * Guarda un nuevo FormatoA y publica un evento a RabbitMQ.
      */
     public FormatoA crearFormatoA(FormatoARequest request) {
-        FormatoA formato = formatoAService.crearOActualizar(request);
+        FormatoA formato = formatoAService.guardarFormatoA(request);
 
         FormatoAResponse response = new FormatoAResponse(
                 formato.getId().intValue(),
