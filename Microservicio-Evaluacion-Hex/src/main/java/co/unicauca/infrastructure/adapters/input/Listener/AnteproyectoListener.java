@@ -5,7 +5,9 @@ import co.unicauca.domain.entities.Anteproyecto;
 import co.unicauca.infrastructure.config.RabbitMQConfig;
 import co.unicauca.infrastructure.dto.request.AnteproyectoRequest;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
 
+@Component
 public class    AnteproyectoListener {
 
     private final AnteproyectoFacadeInPort anteproyectoService;

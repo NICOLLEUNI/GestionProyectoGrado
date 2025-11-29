@@ -8,7 +8,7 @@ import co.unicauca.infrastructure.dto.response.FormatoAResponse;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-
+@Component
 public class FormatoAListener {
 
     private final FormatoAFacadeInPort formatoAService;

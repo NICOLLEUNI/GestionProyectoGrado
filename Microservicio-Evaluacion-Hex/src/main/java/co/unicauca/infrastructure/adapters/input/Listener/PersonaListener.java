@@ -4,7 +4,10 @@ import co.unicauca.application.ports.input.PersonaInPort;
 import co.unicauca.infrastructure.config.RabbitMQConfig;
 import co.unicauca.infrastructure.dto.request.PersonaRequest;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class PersonaListener {
 
     private final PersonaInPort personaInputPort;
