@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface FormatoAFacadeInPort {
 
-    FormatoAResponse crearFormatoA(FormatoARequest request);
+    FormatoA crearFormatoA(FormatoARequest request);
 
     List<FormatoAResponse> listarFormatosA();
 

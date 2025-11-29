@@ -29,7 +29,7 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
     /**
      * Guarda un nuevo FormatoA y publica un evento a RabbitMQ.
      */
-    public FormatoAResponse crearFormatoA(FormatoARequest request) {
+    public FormatoA crearFormatoA(FormatoARequest request) {
         FormatoA formato = formatoAService.crearOActualizar(request);
 
         FormatoAResponse response = new FormatoAResponse(
@@ -42,7 +42,7 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
 
         publisher.publishFormatoA(response);
 
-        return response;
+        return formato;
     }
 
 

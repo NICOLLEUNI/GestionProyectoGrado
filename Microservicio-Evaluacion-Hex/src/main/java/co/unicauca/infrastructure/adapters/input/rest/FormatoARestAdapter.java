@@ -1,6 +1,7 @@
 package co.unicauca.infrastructure.adapters.input.rest;
 
 import co.unicauca.application.ports.input.FormatoAFacadeInPort;
+import co.unicauca.domain.entities.FormatoA;
 import co.unicauca.infrastructure.dto.request.FormatoARequest;
 import co.unicauca.infrastructure.dto.response.FormatoAResponse;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class FormatoARestAdapter {
     }
 
     @PostMapping
-    public ResponseEntity<FormatoAResponse> crearFormatoA(@RequestBody FormatoARequest request) {
-        FormatoAResponse response = formatoAFacade.crearFormatoA(request);
+    public ResponseEntity<FormatoA> crearFormatoA(@RequestBody FormatoARequest request) {
+        FormatoA response = formatoAFacade.crearFormatoA(request);
         return ResponseEntity.ok(response);
     }
 
