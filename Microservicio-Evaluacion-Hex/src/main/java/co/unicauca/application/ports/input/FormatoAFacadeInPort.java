@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface FormatoAFacadeInPort {
 
-    FormatoA crearFormatoA(FormatoARequest request);
+    FormatoAResponse crearFormatoA(FormatoARequest request);
 
-    List<FormatoAResponse> listarFormatosA();
+    List<FormatoA> listarFormatosA();
 
     FormatoAResponse actualizarEstado(Long id, EnumEstado nuevoEstado, String observaciones);
 
-    FormatoAResponse obtenerFormatoAPorId(Long id);
+    FormatoA obtenerFormatoAPorId(Long id);
 
-    List<FormatoAResponse> listarFormatosPorPrograma(String programa);
+    List<FormatoA> listarFormatosPorPrograma(String programa);
 }

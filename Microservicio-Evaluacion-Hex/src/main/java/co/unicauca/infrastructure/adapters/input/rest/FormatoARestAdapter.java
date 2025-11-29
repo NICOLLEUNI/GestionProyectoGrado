@@ -1,6 +1,7 @@
 package co.unicauca.infrastructure.adapters.input.rest;
 
 import co.unicauca.application.ports.input.FormatoAFacadeInPort;
+import co.unicauca.domain.entities.EnumEstado;
 import co.unicauca.domain.entities.FormatoA;
 import co.unicauca.infrastructure.dto.request.FormatoARequest;
 import co.unicauca.infrastructure.dto.response.FormatoAResponse;
@@ -19,38 +20,36 @@ public class FormatoARestAdapter {
     }
 
     @PostMapping
-    public ResponseEntity<FormatoA> crearFormatoA(@RequestBody FormatoARequest request) {
-        FormatoA response = formatoAFacade.crearFormatoA(request);
+    public ResponseEntity<FormatoAResponse> crearFormatoA(@RequestBody FormatoARequest request) {
+        FormatoAResponse response = formatoAFacade.crearFormatoA(request);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<FormatoAResponse>> listarFormatosA() {
-        List<FormatoAResponse> formatos = formatoAFacade.listarFormatosA();
+    public ResponseEntity<List<FormatoA>> listarFormatosA() {
+        List<FormatoA> formatos = formatoAFacade.listarFormatosA();
         return ResponseEntity.ok(formatos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FormatoAResponse> obtenerFormatoAPorId(@PathVariable Long id) {
-        FormatoAResponse response = formatoAFacade.obtenerFormatoAPorId(id);
+    public ResponseEntity<FormatoA> obtenerFormatoAPorId(@PathVariable Long id) {
+        FormatoA response = formatoAFacade.obtenerFormatoAPorId(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/programa/{programa}")
-    public ResponseEntity<List<FormatoAResponse>> listarFormatosPorPrograma(@PathVariable String programa) {
-        List<FormatoAResponse> formatos = formatoAFacade.listarFormatosPorPrograma(programa);
+    public ResponseEntity<List<FormatoA>> listarFormatosPorPrograma(@PathVariable String programa) {
+        List<FormatoA> formatos = formatoAFacade.listarFormatosPorPrograma(programa);
         return ResponseEntity.ok(formatos);
     }
 
-    @PutMapping("/{id}/estado/{nuevoEstado}")
+    @PutMapping("/{id}/estado/{nuevoEstado}/{observaciones}")
     public ResponseEntity<FormatoAResponse> actualizarEstado(
             @PathVariable Long id,
-            @PathVariable String nuevoEstado,
-            @RequestParam(required = false) String observaciones
+            @PathVariable EnumEstado nuevoEstado,
+            @PathVariable (required = false)String observaciones
     ) {
-        FormatoAResponse response = formatoAFacade.actualizarEstado(id,
-                Enum.valueOf(co.unicauca.domain.entities.EnumEstado.class, nuevoEstado),
-                observaciones);
+        FormatoAResponse response = formatoAFacade.actualizarEstado(id, nuevoEstado, observaciones);
         return ResponseEntity.ok(response);
     }
 }

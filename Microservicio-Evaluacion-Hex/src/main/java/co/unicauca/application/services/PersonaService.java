@@ -94,7 +94,7 @@ public class PersonaService implements PersonaInPort {
 
     public List<Persona> listarDocentesDisponiblesParaEvaluar(Long idFormatoA) {
         // 1️⃣ Obtener el FormatoA
-        Optional<FormatoA> formatoOpt = formatoAService.findById(idFormatoA);
+        Optional<FormatoA> formatoOpt = Optional.ofNullable(formatoAService.findById(idFormatoA));
         if (formatoOpt.isEmpty()) {
             return List.of(); // retornar lista vacía si no existe el formato
         }

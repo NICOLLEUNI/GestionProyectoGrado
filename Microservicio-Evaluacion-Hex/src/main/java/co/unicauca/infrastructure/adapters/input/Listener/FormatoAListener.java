@@ -22,8 +22,8 @@ public class FormatoAListener {
 
         System.out.println("Mensaje recibido en formatoa.queue: " + request);
 
-        FormatoA formatoA = formatoAService.crearFormatoA(request);
+        FormatoAResponse formatoA = formatoAService.crearFormatoA(request);
 
-        System.out.println("Formato A guardado con ID: " + formatoA.getId());
+        System.out.println("Formato A guardado con ID: " + formatoA.id());
     }
 }

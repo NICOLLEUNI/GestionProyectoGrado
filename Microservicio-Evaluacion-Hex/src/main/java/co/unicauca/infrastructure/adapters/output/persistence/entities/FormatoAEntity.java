@@ -3,7 +3,6 @@ package co.unicauca.infrastructure.adapters.output.persistence.entities;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
-
 import co.unicauca.domain.entities.EnumEstado;
 
 @Entity
@@ -11,7 +10,7 @@ import co.unicauca.domain.entities.EnumEstado;
 public class FormatoAEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String title;
@@ -37,7 +36,7 @@ public class FormatoAEntity {
 
     private int counter;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "formato_a_estudiantes",
             joinColumns = @JoinColumn(name = "formato_a_id"),
@@ -46,7 +45,7 @@ public class FormatoAEntity {
     private List<PersonaEntity> estudiantes = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private EnumEstado state;
+    private EnumEstado state = EnumEstado.ENTREGADO; // valor por defecto
 
     @Column(length = 2000)
     private String observations;
@@ -66,8 +65,8 @@ public class FormatoAEntity {
         this.archivoPDF = archivoPDF;
         this.cartaLaboral = cartaLaboral;
         this.counter = counter;
-        this.estudiantes = estudiantes;
-        this.state = state;
+        this.estudiantes = estudiantes != null ? estudiantes : new ArrayList<>();
+        this.state = state != null ? state : EnumEstado.ENTREGADO;
         this.observations = observations;
     }
 
@@ -103,10 +102,12 @@ public class FormatoAEntity {
     public void setCounter(int counter) { this.counter = counter; }
 
     public List<PersonaEntity> getEstudiantes() { return estudiantes; }
-    public void setEstudiantes(List<PersonaEntity> estudiantes) { this.estudiantes = estudiantes; }
+    public void setEstudiantes(List<PersonaEntity> estudiantes) {
+        this.estudiantes = estudiantes != null ? estudiantes : new ArrayList<>();
+    }
 
     public EnumEstado getState() { return state; }
-    public void setState(EnumEstado state) { this.state = state; }
+    public void setState(EnumEstado state) { this.state = state != null ? state : EnumEstado.ENTREGADO; }
 
     public String getObservations() { return observations; }
     public void setObservations(String observations) { this.observations = observations; }

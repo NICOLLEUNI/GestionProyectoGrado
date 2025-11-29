@@ -10,6 +10,7 @@ import co.unicauca.infrastructure.dto.response.FormatoAResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,37 +30,28 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
     /**
      * Guarda un nuevo FormatoA y publica un evento a RabbitMQ.
      */
-    public FormatoA crearFormatoA(FormatoARequest request) {
+    public FormatoAResponse crearFormatoA(FormatoARequest request) {
         FormatoA formato = formatoAService.guardarFormatoA(request);
 
+        if (formato.getId() == null) {
+            throw new RuntimeException("Error: ID del FormatoA es nulo después de guardar");
+        }
         FormatoAResponse response = new FormatoAResponse(
                 formato.getId().intValue(),
                 formato.getTitle(),
-                formato.getState().toString(),
+                formato.getState().name(),
                 formato.getObservations(),
                 formato.getCounter()
         );
 
-        publisher.publishFormatoA(response);
-
-        return formato;
+        return response;
     }
 
 
     /**
      * Lista todos los FormatoA existentes.
      */
-    public List<FormatoAResponse> listarFormatosA() {
-        return formatoAService.listarTodos().stream()
-                .map(f -> new FormatoAResponse(
-                        f.getId().intValue(),
-                        f.getTitle(),
-                        f.getState().toString(),
-                        f.getObservations(),
-                        f.getCounter()
-                ))
-                .collect(Collectors.toList());
-    }
+    public List<FormatoA>listarFormatosA(){return formatoAService.listarTodos();}
     /**
      * Actualiza el estado de un FormatoA y notifica por RabbitMQ.
      */
@@ -77,12 +69,14 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
         FormatoAResponse response = new FormatoAResponse(
                 formato.getId().intValue(),
                 formato.getTitle(),
-                formato.getState().toString(),
+                formato.getState().name(),
                 formato.getObservations(),
                 formato.getCounter()
         );
 
         publisher.publishFormatoAEvaluado(response);
+
+        publisher.publishFormatoAEvaluadoNotificacion(response);
 
         return response;
     }
@@ -90,40 +84,27 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
     /**
      * Buscar FormatoA por id.
      */
-    public FormatoAResponse obtenerFormatoAPorId(Long id) {
-        FormatoA formato = formatoAService.findById(id)
-                .orElseThrow(() -> new RuntimeException("No existe FormatoA con id: " + id));
+    public FormatoA obtenerFormatoAPorId(Long id) {
+        Optional<FormatoA> formatoAOpt = Optional.ofNullable(formatoAService.findById(id));
 
-        FormatoAResponse response = new FormatoAResponse(
-                formato.getId().intValue(),
-                formato.getTitle(),
-                formato.getState().toString(),
-                formato.getObservations(),
-                formato.getCounter()
-        );
+        if (formatoAOpt.isEmpty()) {
+            throw new RuntimeException("❌ No se encontró el FormatoA con id: " + id);
+        }
 
-        return response;
+        return formatoAOpt.get();
     }
 
     /**
      * Listar formatos por programa académico.
      */
-    public List<FormatoAResponse> listarFormatosPorPrograma(String programa) {
-        List<FormatoA> lista = formatoAService.listarPorPrograma(programa);
+    public List<FormatoA> listarFormatosPorPrograma(String programa) {
+        List<FormatoA> formatos = formatoAService.listarPorPrograma(programa);
 
-        if (lista.isEmpty()) {
+        if (formatos.isEmpty()) {
             throw new RuntimeException("No hay formatos para el programa: " + programa);
         }
 
-        return lista.stream()
-                .map(f -> new FormatoAResponse(
-                        f.getId().intValue(),
-                        f.getTitle(),
-                        f.getState().toString(),
-                        f.getObservations(),
-                        f.getCounter()
-                ))
-                .toList();
+        return formatos;
     }
 
 }

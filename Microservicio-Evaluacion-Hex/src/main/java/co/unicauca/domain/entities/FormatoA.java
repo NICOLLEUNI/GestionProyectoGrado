@@ -59,6 +59,20 @@ public class FormatoA {
         this.counter = this.counter + 1;
     }
 
+    public void asignarEstado(EnumEstado nuevoEstado) {
+        if (nuevoEstado == null) {
+            throw new IllegalArgumentException("El estado no puede ser nulo");
+        }
+        this.state = nuevoEstado;
+    }
+
+    public void asignarObservaciones(String observaciones) {
+        if (observaciones == null || observaciones.isBlank()) {
+            throw new IllegalArgumentException("Las observaciones no pueden estar vacías");
+        }
+        this.observations = observaciones;
+    }
+
 
 
     public Long getId() {
@@ -116,8 +130,17 @@ public class FormatoA {
     //setters que no son setters
 
     public void asignarManagerD(Persona manager) {
-        if (manager == null) throw new IllegalArgumentException("Director no puede ser nulo");
-        if (!manager.tieneRol(EnumRol.DOCENTE)) throw new IllegalStateException("Persona no es docente");
+        // Permitir nulo → simplemente no asigna nada
+        if (manager == null) {
+            this.projectManager = null;
+            return;
+        }
+
+        // Si no es nulo, validar
+        if (!manager.tieneRol(EnumRol.DOCENTE)) {
+            throw new IllegalStateException("Persona no es docente");
+        }
+
         this.projectManager = manager;
     }
 
@@ -164,6 +187,12 @@ public class FormatoA {
         this.mode = mode;
     }
 
+    public void asignarId(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+        this.id = id;
+    }
     public void actualizarGeneralObjective(String obj) {
         this.generalObjective = obj;
     }
