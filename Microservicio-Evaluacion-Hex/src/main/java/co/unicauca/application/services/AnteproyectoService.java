@@ -14,8 +14,15 @@ import java.time.LocalDate;
 @Service
 public class AnteproyectoService {
 
-    private AnteproyectoRepoOutPort anteproyectoRepoOutPort;
-    private PersonaRepoOutPort personaRepoOutPort;
+    private final AnteproyectoRepoOutPort anteproyectoRepoOutPort;
+    private final PersonaRepoOutPort personaRepoOutPort;
+
+    public AnteproyectoService(AnteproyectoRepoOutPort anteproyectoRepoOutPort,
+                               PersonaRepoOutPort personaRepoOutPort) {
+        this.anteproyectoRepoOutPort = anteproyectoRepoOutPort;
+        this.personaRepoOutPort = personaRepoOutPort;
+    }
+
 
     public Anteproyecto guardarAnteproyecto(AnteproyectoRequest request) {
 

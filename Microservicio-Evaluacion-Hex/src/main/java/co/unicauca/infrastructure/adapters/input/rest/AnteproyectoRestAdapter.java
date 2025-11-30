@@ -23,12 +23,9 @@ public class AnteproyectoRestAdapter {
     }
 
     @PostMapping
-    public ResponseEntity<Anteproyecto> crearAnteproyecto(@RequestBody AnteproyectoRequest request) {
-        // Llamas al servicio y obtienes la entidad completa
-        Anteproyecto anteproyecto = anteproyectoFacade.crearAnteproyecto(request);
-
-        // Devuelves la entidad directamente en ResponseEntity
-        return ResponseEntity.ok(anteproyecto);
+    public ResponseEntity<AnteproyectoResponse> crearAnteproyecto(@RequestBody AnteproyectoRequest request) {
+        AnteproyectoResponse response = anteproyectoFacade.crearAnteproyecto(request);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
 public interface AnteproyectoFacadeInPort {
-    Anteproyecto crearAnteproyecto(AnteproyectoRequest request);
+    AnteproyectoResponse crearAnteproyecto(AnteproyectoRequest request);
 
     List<AnteproyectoResponse> listarAnteproyectos();
 

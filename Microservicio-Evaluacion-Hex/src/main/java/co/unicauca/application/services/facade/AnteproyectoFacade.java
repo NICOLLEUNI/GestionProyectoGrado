@@ -28,11 +28,20 @@ public class AnteproyectoFacade  implements AnteproyectoFacadeInPort {
     /**
      * Guarda un nuevo anteproyecto .
      */
-    public Anteproyecto crearAnteproyecto(AnteproyectoRequest request) {
+    public AnteproyectoResponse crearAnteproyecto(AnteproyectoRequest request) {
         Anteproyecto anteproyecto = anteproyectoService.guardarAnteproyecto(request);
-        return anteproyecto;
-    }
+        AnteproyectoResponse response = new AnteproyectoResponse(
+                anteproyecto.getId(),
+                anteproyecto.getTitulo(),
+                anteproyecto.getFechaCreacion(),
+                anteproyecto.getEstado(),
+                anteproyecto.getIdProyectoGrado()
+        );
 
+
+
+        return response;
+    }
     /**
      * Lista todos los anteproyectos existentes.
      */
