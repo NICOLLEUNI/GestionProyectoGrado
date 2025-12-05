@@ -4,6 +4,7 @@ import co.unicauca.application.ports.input.AnteproyectoFacadeInPort;
 import co.unicauca.domain.entities.Anteproyecto;
 import co.unicauca.infrastructure.config.RabbitMQConfig;
 import co.unicauca.infrastructure.dto.request.AnteproyectoRequest;
+import co.unicauca.infrastructure.dto.response.AnteproyectoResponse;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class    AnteproyectoListener {
     @RabbitListener(queues = RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE)
     public void recibirAnteproyecto(AnteproyectoRequest request) {
         System.out.println("📩 Mensaje recibido en anteproyecto.queue: " + request);
-        Anteproyecto anteproyecto = anteproyectoService.crearAnteproyecto(request);
-        System.out.println("✅ Anteproyecto guardado con ID: " + anteproyecto.getId());
+        AnteproyectoResponse anteproyecto = anteproyectoService.crearAnteproyecto(request);
+        System.out.println("✅ Anteproyecto guardado con ID: " + anteproyecto.id());
     }
 }

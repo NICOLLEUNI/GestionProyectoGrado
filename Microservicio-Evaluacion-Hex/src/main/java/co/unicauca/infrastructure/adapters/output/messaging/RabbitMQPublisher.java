@@ -40,7 +40,9 @@ public class RabbitMQPublisher implements MessagingPort {
         publish(RabbitMQConfig.FORMATOA_EVALUADO_NOTIFICATION_QUEUE, formatoAResponseNotificacion);
     }
 
-
+    public void publishAnteproyecto(Object anteproyectoResponse) {
+        publish(RabbitMQConfig.ANTEPROYECTO_EVALUACION_QUEUE, anteproyectoResponse);
+    }
 
     public void publishAnteproyectoAsignacion(Object anteproyectoResponseNotificacion) {
         publish(RabbitMQConfig.ANTEPROYECTO_ASIGNACION_QUEUE, anteproyectoResponseNotificacion);
