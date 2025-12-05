@@ -47,29 +47,10 @@ public class FormatoAService  {
         formatoA.actualizarCounter(request.counter());
 
         // Director y codirector
-        System.out.println("🔍 Buscando director con email: " + request.projectManagerEmail());
         Persona director = personaRepo.findByEmail(request.projectManagerEmail()).orElse(null);
-        System.out.println("👤 Director encontrado: " + (director != null));
-        if (director != null) {
-            System.out.println("✅ Director ID: " + director.getIdUsuario());
-            System.out.println("✅ Director Email: " + director.getEmail());
-            System.out.println("✅ Director Roles: " + director.getRoles());
-            System.out.println("✅ Es DOCENTE? " + director.tieneRol(EnumRol.DOCENTE));
-        }
-
-        System.out.println("🔍 Buscando codirector con email: " + request.projectCoManagerEmail());
         Persona codirector = personaRepo.findByEmail(request.projectCoManagerEmail()).orElse(null);
-        System.out.println("👤 Codirector encontrado: " + (codirector != null));
-        if (codirector != null) {
-            System.out.println("✅ Codirector ID: " + codirector.getIdUsuario());
-            System.out.println("✅ Codirector Email: " + codirector.getEmail());
-            System.out.println("✅ Codirector Roles: " + codirector.getRoles());
-            System.out.println("✅ Es DOCENTE? " + codirector.tieneRol(EnumRol.DOCENTE));
-        }
 
-        System.out.println("🔄 ASIGNANDO DIRECTOR...");
         formatoA.asignarManagerD(director);
-        System.out.println("🔄 ASIGNANDO CODIRECTOR...");
         formatoA.asignarCoManagerD(codirector);
 
         // Estudiantes
