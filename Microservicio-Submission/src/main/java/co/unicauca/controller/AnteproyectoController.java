@@ -33,4 +33,13 @@ public class AnteproyectoController {
             return ResponseEntity.badRequest().body(null);
         }
     }
+    @GetMapping("/{id}/ruta-pdf")
+    public ResponseEntity<String> obtenerRutaPdf(@PathVariable("id") Long idAnteproyecto) {
+        try {
+            String ruta = anteproyectoService.obtenerRutaPdf(idAnteproyecto);
+            return ResponseEntity.ok(ruta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

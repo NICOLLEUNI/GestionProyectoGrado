@@ -9,7 +9,12 @@ import co.unicauca.entity.FormatoA;
 import co.unicauca.entity.Persona;
 import co.unicauca.infra.DtoFormatoA;
 import co.unicauca.service.EvaluacionService;
+import co.unicauca.service.SubmissionService;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +29,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     private Persona personaLogueado;
     private boolean cargandoCombos = false;
     private List<String> evaluadoresOriginales;
+    private SubmissionService submissionService= new SubmissionService();
     /**
      * Creates new form AsingnacionEvaluadores
      */
@@ -32,6 +38,15 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         this.evaluacionService = evaluacionService;
         initComponents();
        agregarEventosCombos();
+        initEvents();
+    }
+    private void initEvents() {
+        lblPDF.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                abrirPDF();
+            }
+        });
     }
     private void agregarEventosCombos() {
         boxEvaluador1.addActionListener(e -> actualizarSegundoCombo());
@@ -118,6 +133,8 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         boxEvaluador2 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         btAsignar = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        lblPDF = new javax.swing.JLabel();
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
         Contenido.setForeground(new java.awt.Color(255, 255, 255));
@@ -214,11 +231,33 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         });
         Contenido.add(btAsignar, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 380, 100, 30));
 
+        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+
+        lblPDF.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
+        lblPDF.setForeground(new java.awt.Color(102, 102, 255));
+        lblPDF.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPDF.setText("RUTA PDF");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+        );
+
+        Contenido.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 420, -1));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Contenido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(Contenido, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -353,6 +392,18 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             lblUEstudiante.setText("Sin estudiantes");
             lblUEstudiante2.setText("Sin segundo estudiante");
         }
+            try {
+                String rutaPdf = submissionService.obtenerRutaPdfAnteproyecto(anteproyecto.getId());
+
+                if (rutaPdf != null && !rutaPdf.isBlank()) {
+                    lblPDF.setText(rutaPdf);
+                } else {
+                    lblPDF.setText("Sin PDF asociado");
+                }
+            } catch (Exception ex) {
+                lblPDF.setText("Error obteniendo PDF");
+                ex.printStackTrace();
+            }
 
     }}
     private void cargarEvaluadoresDisponibles(Long idFormatoA) {
@@ -383,6 +434,27 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
 
         cargandoCombos = false;
     }
+    private void abrirPDF() {
+        try {
+            // Obtiene la ruta del proyecto dinámicamente
+            String rutaBase = System.getProperty("user.dir") + File.separator + "uploads"  + File.separator +"anteproyecto" + File.separator;
+            String nombreArchivo = lblPDF.getText();
+
+            File file = new File(rutaBase + nombreArchivo);
+
+            if (file.exists()) {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                } else {
+                    JOptionPane.showMessageDialog(this, "La función Desktop no está soportada en este sistema.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "El archivo no existe: " + file.getAbsolutePath());
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error al abrir el archivo: " + e.getMessage());
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Contenido;
     private javax.swing.JLabel Icon;
@@ -390,6 +462,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> boxEvaluador2;
     private javax.swing.JButton btAsignar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator10;
     private javax.swing.JSeparator jSeparator11;
     private javax.swing.JSeparator jSeparator12;
@@ -401,6 +474,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     private javax.swing.JLabel lblEstudiante2;
     private javax.swing.JLabel lblEvaluador1;
     private javax.swing.JLabel lblModalidad;
+    private javax.swing.JLabel lblPDF;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUDirector;
     private javax.swing.JLabel lblUEstudiante;

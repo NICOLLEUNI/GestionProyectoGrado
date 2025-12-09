@@ -125,5 +125,11 @@ public class AnteproyectoService {
 
         System.out.println("✅ VALIDACIONES PASADAS");
     }
+    public String obtenerRutaPdf(Long idAnteproyecto) {
+        Anteproyecto anteproyecto = anteproyectoRepository.findById(idAnteproyecto)
+                .orElseThrow(() -> new RuntimeException(
+                        "No se encontró el anteproyecto con ID: " + idAnteproyecto));
 
+        return anteproyecto.getRutaPdf();
+    }
 }

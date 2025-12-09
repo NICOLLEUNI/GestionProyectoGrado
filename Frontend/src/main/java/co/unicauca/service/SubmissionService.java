@@ -310,5 +310,18 @@ public class SubmissionService {
     /**
      * Asigna los dos evaluadores a un anteproyecto en el microservicio Submission.
      */
+    public String obtenerRutaPdfAnteproyecto(Long idAnteproyecto) {
+        try {
+            String url = BASE_URL + "/anteproyectos/" + idAnteproyecto + "/ruta-pdf";
+            String respuesta = HttpUtil.get(url);
 
+            // La respuesta es un String crudo (ej: "/uploads/anteproyectos/1234.pdf")
+            return respuesta != null ? respuesta.replace("\"", "") : null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("❌ Error obteniendo ruta PDF del anteproyecto: " + e.getMessage());
+            return null;
+        }
+    }
 }
