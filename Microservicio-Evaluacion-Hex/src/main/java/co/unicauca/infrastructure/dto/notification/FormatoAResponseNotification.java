@@ -1,4 +1,11 @@
 package co.unicauca.infrastructure.dto.notification;
 
-public record FormatoAResponseNotification() {
-}
+import java.util.List;
+
+public record FormatoAResponseNotification(
+        Long id,
+        String titulo,
+        List<String>correosEstudiantes,
+        List<String> correosDocentes
+) { }
+

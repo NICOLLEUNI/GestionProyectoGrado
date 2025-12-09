@@ -5,6 +5,7 @@ import co.unicauca.application.ports.output.FormatoARepoOutPort;
 import co.unicauca.application.ports.output.MessagingPort;
 import co.unicauca.application.services.FormatoAService;
 import co.unicauca.domain.entities.*;
+import co.unicauca.infrastructure.dto.notification.FormatoAResponseNotification;
 import co.unicauca.infrastructure.dto.request.FormatoARequest;
 import co.unicauca.infrastructure.dto.response.FormatoAResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
 
         FormatoA formato = opt.get();
 
-        FormatoAResponse response = new FormatoAResponse(
+        FormatoAResponse responseFormatoA = new FormatoAResponse(
                 formato.getId().intValue(),
                 formato.getTitle(),
                 formato.getState().name(),
@@ -74,11 +75,31 @@ public class FormatoAFacade implements FormatoAFacadeInPort {
                 formato.getCounter()
         );
 
-        publisher.publishFormatoAEvaluado(response);
+        FormatoAResponseNotification responseNotification = new FormatoAResponseNotification
+                (
 
-        publisher.publishFormatoAEvaluadoNotificacion(response);
+                    formato.getId(),
+                    formato.getTitle(),
+                    // Obtener correos de estudiantes
+                    formato.getEstudiantes() == null
+                            ? java.util.List.of()
+                            : formato.getEstudiantes()
+                            .stream()
+                            .map(e -> e.getEmail())
+                            .collect(Collectors.toList()),
+                    // Obtener correos de docentes: ProjectManager + ProjectCoManager
+                    java.util.List.of(
+                            formato.getProjectManager() != null ? formato.getProjectManager().getEmail() : null,
+                            formato.getProjectCoManager() != null ? formato.getProjectCoManager().getEmail() : null
+                    ).stream().filter(e -> e != null).collect(Collectors.toList())
 
-        return response;
+            );
+
+        publisher.publishFormatoAEvaluado(responseFormatoA);
+
+        publisher.publishFormatoAEvaluadoNotificacion(responseNotification);
+
+        return responseFormatoA;
     }
 
     /**
