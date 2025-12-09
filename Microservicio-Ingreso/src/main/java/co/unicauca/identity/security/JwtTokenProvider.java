@@ -16,20 +16,45 @@ import java.util.stream.Collectors;
 /**
  * Proveedor de tokens JWT para autenticación - Factory Pattern
  * SINGLE_TABLE: Adaptado para la entidad Persona única
+ *  Su responsabilidad incluye:
+ *  Generar tokens JWT firmados digitalmente.
+ *  Validar tokens en cada petición protegida.
+ *  Extraer información contenida en el token (claims).
+ *  Proveer herramientas relacionadas con expiración del token.
+ *
+ *  Se utiliza directamente desde:
+ *  AuthController (para generar tokens)
+ *  JwtAuthenticationFilter (para validar y leer tokens)
+ *
+ *
  */
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
+    /**
+     * Llave secreta utilizada para firmar los tokens JWT.
+     * Debe tener mínimo 32 caracteres para permitir firma HS256.
+     */
     @Value("${jwt.secret:default-secret-key-change-in-production-minimum-32-characters}")
     private String jwtSecret;
 
+// tiempo de expiracion del token en milisegundos
     @Value("${jwt.expiration:3600000}")
     private long jwtExpirationInMs;
 
     /**
      * Genera un token JWT para una persona autenticada
-     * SINGLE_TABLE: Usa campos directos de Persona sin casting
+     * SINGLE_TABLE: Usa campos directos de Persona que contiene
+     *   - subject (email del usuario)
+     *   - userId (ID único del usuario)
+     *   - roles (roles asignados)
+     *   - programa (claim personalizado)
+     *   - departamento (claim personalizado)
+     *   - nombre, apellido
+     *   - fecha de creación y expiración
+     * El token se firma digitalmente con una llave secreta HMAC-SHA.
+     * Si alguien intenta modificar el token, la firma se invalida.
      */
 
     /**
@@ -47,7 +72,7 @@ public class JwtTokenProvider {
                     persona.getEmail(), persona.getIdUsuario(), persona.getRoles());
 
             String token = Jwts.builder()
-                    .subject(persona.getEmail())
+                    .subject(persona.getEmail()) // Identificador principal
                     .claim("userId", persona.getIdUsuario())
                     .claim("roles", persona.getRoles().stream()
                             .map(Enum::name)
@@ -58,7 +83,7 @@ public class JwtTokenProvider {
                     .claim("lastname", persona.getLastname())
                     .issuedAt(now)
                     .expiration(expiryDate)
-                    .signWith(getSigningKey())
+                    .signWith(getSigningKey()) // firma del token
                     .compact();
 
             log.debug("Token generado exitosamente para: {}", persona.getEmail());
@@ -72,13 +97,20 @@ public class JwtTokenProvider {
     }
     /**
      * Valida un token JWT
+     * Este método verifica:
+     * Que la firma sea válida.
+     * Que el token no esté expirado.
+     * Que el token no haya sido malformado.
+     * Que el formato sea compatible
+     *  Si ocurre cualquier problema, se lanza InvalidTokenException.
+     *  Esto es consumido por JwtAuthenticationFilter.
      */
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .verifyWith(getSigningKey())
+                    .verifyWith(getSigningKey()) // calida firma
                     .build()
-                    .parseSignedClaims(token);
+                    .parseSignedClaims(token); // valida estructura
             return true;
         } catch (SecurityException e) {
             log.error("Firma JWT inválida: {}", e.getMessage());
@@ -127,7 +159,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Extrae todas las claims del token JWT
+     *Este método permite leer TODA la información (claims) del token.
      */
     public Claims getAllClaimsFromToken(String token) {
         try {
@@ -143,6 +175,10 @@ public class JwtTokenProvider {
         }
     }
 
+
+    /**
+     * Devuelve la llave secreta para firmar/verificar tokens.
+     */
     private SecretKey getSigningKey() {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);

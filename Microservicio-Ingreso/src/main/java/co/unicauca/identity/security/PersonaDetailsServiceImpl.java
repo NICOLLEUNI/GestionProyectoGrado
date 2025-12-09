@@ -17,8 +17,17 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * Implementación de UserDetailsService para cargar detalles de Persona
- * SINGLE_TABLE: Adaptado para la entidad Persona única
+ * Servicio encargado de cargar usuarios desde la base de datos
+ * para que Spring Security pueda autenticar y autorizar.
+ *
+ * Esta clase implementa UserDetailsService, lo que significa que
+ * Spring Security la usará automáticamente cuando necesite:
+ *  - Buscar un usuario por email (username)
+ *  - Validar la contraseña durante login
+ *  - Recuperar roles para construir el contexto de seguridad
+ *
+ * SINGLE_TABLE:
+ * Adaptado al modelo único Persona, el cual contiene roles directamente.
  */
 @Service
 @Slf4j
@@ -29,6 +38,18 @@ public class PersonaDetailsServiceImpl implements UserDetailsService {
     public PersonaDetailsServiceImpl(PersonaRepository personaRepository) {
         this.personaRepository = personaRepository;
     }
+
+    /**
+     * Método principal usado por Spring Security.
+     *
+     * Se ejecuta cuando el sistema necesita validar credenciales
+     * (durante login o al rehidratar el usuario desde un token JWT).
+     *
+     * @param email Email del usuario (funciona como "username").
+     * @return UserDetails que contiene email, password y roles.
+     * @throws UsernameNotFoundException si el usuario no existe.
+     */
+
 
     @Override
     @Transactional(readOnly = true)
@@ -48,8 +69,12 @@ public class PersonaDetailsServiceImpl implements UserDetailsService {
     }
 
     /**
-     * Crea UserDetails a partir de una Persona
-     * SINGLE_TABLE: Usa los roles directamente de la entidad Persona
+     * Convierte una entidad Persona en un objeto UserDetails
+     * compatible con Spring Security.
+     *
+     * Conversión más importante:
+     * ▪ Roles (enum) → GrantedAuthority (formato requerido por Spring)
+     * Ejemplo: ADMIN → ROLE_ADMIN
      */
     private UserDetails createUserDetails(Persona persona) {
         Collection<GrantedAuthority> authorities = persona.getRoles().stream()
@@ -59,10 +84,11 @@ public class PersonaDetailsServiceImpl implements UserDetailsService {
         log.debug("Autoridades asignadas para {}: {}",
                 persona.getEmail(), authorities);
 
+        // Construcción del objeto UserDetails
         return User.builder()
-                .username(persona.getEmail())
-                .password(persona.getPassword())
-                .authorities(authorities)
+                .username(persona.getEmail()) // identificador del usuario
+                .password(persona.getPassword()) // contraseña encriptada
+                .authorities(authorities) // roles convertidos
                 .accountExpired(false)
                 .accountLocked(false)
                 .credentialsExpired(false)

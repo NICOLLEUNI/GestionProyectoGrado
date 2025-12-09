@@ -8,7 +8,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Configuración de propiedades JWT
+ * Configuración centralizada para las propiedades del sistema de autenticación JWT.
+ *
+ * Esta clase permite cargar, validar y exponer los valores esenciales del JWT,
+ * tales como:
+ *  - La clave secreta usada para firmar los tokens.
+ *  - El tiempo de expiración asignado a cada token.
+ *
+ * Los valores se obtienen desde el archivo application.properties o application.yml
+ * mediante el uso de @ConfigurationProperties, lo que facilita modificar estos valores
+ * sin tener que recompilar la aplicación. Esta configuración es utilizada por la clase
+ * JwtTokenProvider para generar y validar tokens de forma manual, cumpliendo con el
+ * requerimiento del proyecto de gestionar los JWT directamente desde la aplicación.
  */
 @Component
 @ConfigurationProperties(prefix = "jwt")
