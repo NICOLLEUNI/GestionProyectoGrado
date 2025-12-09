@@ -82,7 +82,7 @@ public class FormatoAFacade {
         Optional<FormatoA> formatoAOpt = Optional.ofNullable(formatoAService.findById(id));
 
         if (formatoAOpt.isEmpty()) {
-            throw new RuntimeException("❌ No se encontró el FormatoA con id: " + id);
+                    throw new RuntimeException("❌ No se encontró el FormatoA con id: " + id);
         }
 
         return formatoAOpt.get();

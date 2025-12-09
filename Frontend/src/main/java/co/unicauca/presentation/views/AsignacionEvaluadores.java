@@ -117,8 +117,6 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         lblCodirector = new javax.swing.JLabel();
         boxEvaluador2 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        lblPDF = new javax.swing.JLabel();
         btAsignar = new javax.swing.JButton();
 
         Contenido.setBackground(new java.awt.Color(255, 255, 255));
@@ -205,26 +203,6 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
         jLabel1.setText("EVALUADORES");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         Contenido.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 250, 194, 20));
-
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-
-        lblPDF.setFont(new java.awt.Font("Roboto Light", 0, 14)); // NOI18N
-        lblPDF.setForeground(new java.awt.Color(102, 102, 255));
-        lblPDF.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblPDF.setText("RUTA PDF");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblPDF, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-        );
-
-        Contenido.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 193, -1, -1));
 
         btAsignar.setBackground(new java.awt.Color(51, 51, 255));
         btAsignar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
@@ -347,13 +325,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
                     lblUModalidad.setText("Sin modalidad");
                 }
 
-// ✅ Mostrar PDF del FormatoA
-                if (formatoRelacionado.getArchivoPDF() != null && !formatoRelacionado.getArchivoPDF().isEmpty()) {
-                    lblPDF.setText(formatoRelacionado.getArchivoPDF());
-                } else {
-                    lblPDF.setText("Sin archivo");
-                }
-            }
+
             // 👩‍🎓 Estudiantes del formato relacionado
             List<Persona> estudiantes = formatoRelacionado.getEstudiantes();
 
@@ -382,7 +354,7 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
             lblUEstudiante2.setText("Sin segundo estudiante");
         }
 
-    }
+    }}
     private void cargarEvaluadoresDisponibles(Long idFormatoA) {
         cargandoCombos = true;
 
@@ -418,7 +390,6 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> boxEvaluador2;
     private javax.swing.JButton btAsignar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator10;
     private javax.swing.JSeparator jSeparator11;
     private javax.swing.JSeparator jSeparator12;
@@ -430,7 +401,6 @@ public class AsignacionEvaluadores extends javax.swing.JPanel {
     private javax.swing.JLabel lblEstudiante2;
     private javax.swing.JLabel lblEvaluador1;
     private javax.swing.JLabel lblModalidad;
-    private javax.swing.JLabel lblPDF;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblUDirector;
     private javax.swing.JLabel lblUEstudiante;
