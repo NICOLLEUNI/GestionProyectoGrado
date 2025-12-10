@@ -91,17 +91,13 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
         setMinimumSize(new java.awt.Dimension(910, 510));
-
         Background.setBackground(new java.awt.Color(26, 55, 171));
-
         Menu.setBackground(new java.awt.Color(26, 55, 171));
         Menu.setOpaque(false);
         Menu.setPreferredSize(new java.awt.Dimension(270, 510));
         Menu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
         Icono.setIcon(new javax.swing.ImageIcon(getClass().getResource("/co/unicauca/presentation/images/LogoPequeño.png"))); // NOI18N
         Menu.add(Icono, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 190, 80));
-
         btEst.setBackground(new java.awt.Color(65, 55, 171));
         btEst.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btEst.setForeground(new java.awt.Color(255, 255, 255));
@@ -117,7 +113,6 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
             }
         });
         Menu.add(btEst, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 270, 64));
-
         btCoord.setBackground(new java.awt.Color(65, 55, 171));
         btCoord.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         btCoord.setForeground(new java.awt.Color(255, 255, 255));
@@ -132,7 +127,6 @@ public class GUIMenuPrincipal extends javax.swing.JFrame {
             }
         });
         Menu.add(btCoord, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 280, 270, 64));
-
         jButtonCloseSesion.setBackground(new java.awt.Color(65, 55, 171));
         jButtonCloseSesion.setForeground(new java.awt.Color(255, 255, 255));
         jButtonCloseSesion.setText("Cerrar sesión");

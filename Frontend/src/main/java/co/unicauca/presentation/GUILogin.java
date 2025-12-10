@@ -340,15 +340,21 @@ private static final String AUTH_URL = "http://localhost:8080/api/auth/login";
             this.dispose();
 
         } catch (Exception e) {
-            // ✅ MOSTRAR MENSAJE DE ERROR DEL MICROSERVICIO
             JOptionPane.showMessageDialog(this,
-                    e.getMessage(),  // Mensaje del microservicio
-                    "Error de autenticación",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+                    "Por favor verifique sus credenciales ",
+                    "Credenciales invalidas",
+                    JOptionPane.WARNING_MESSAGE);
+            return;}
     }
 
 
+/**MOSTRAR MENSAJE DE ERROR DEL MICROSERVICIO
+        JOptionPane.showMessageDialog(this,
+ e.getMessage(),  // Mensaje del microservicio
+                "Credenciales invalidas",
+               JOptionPane.ERROR_MESSAGE);
+
+*/
 
 
 

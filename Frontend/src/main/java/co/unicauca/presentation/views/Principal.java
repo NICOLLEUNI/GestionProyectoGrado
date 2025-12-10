@@ -30,7 +30,8 @@ public class Principal extends javax.swing.JPanel {
         lbNombre.setText("Nombre: " + user.getName());
         lbApellido.setText("Apellido: " + user.getLastname());
         lbCodigo.setText("Código: " + user.getIdUsuario());
-        //lbPrograma.setText("Programa: " + user.getPrograma().getDescripcion());
+        lbPrograma.setText("Programa: " + user.getPrograma());        // ✅ DESCOMENTADO Y CORREGIDO
+        lbCelular.setText("Celular: " + user.getPhone());
         lbRol.setText("Rol: " + user.getRoles());
         lbRol1.setText("Email: " + user.getEmail());
     }
